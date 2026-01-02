@@ -13,6 +13,8 @@ class Player(models.Model):
     # Twitch интеграция
     twitch_username = models.CharField(max_length=255, blank=True, null=True, verbose_name="Twitch username")
     twitch_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="Twitch ID")
+    twitch_access_token = models.TextField(blank=True, null=True, verbose_name="Twitch access token")
+    twitch_refresh_token = models.TextField(blank=True, null=True, verbose_name="Twitch refresh token")
     twitch_connected = models.BooleanField(default=False, verbose_name="Twitch подключен")
 
     # Системные поля

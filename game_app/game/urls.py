@@ -8,4 +8,8 @@ urlpatterns = [
     path('api/status/', views.api_status, name='api_status'),
     path('api/telegram/webhook/', views.telegram_webhook, name='telegram_webhook'),
     path('api/create-character/', views.create_character, name='create_character'),
+
+    # Twitch OAuth
+    path('auth/twitch/', views.twitch_auth, name='twitch_auth'),
+    path('auth/twitch/callback/', views.twitch_callback, name='twitch_callback'),
 ]
