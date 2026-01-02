@@ -154,9 +154,10 @@ from urllib.parse import urlencode
 from django.shortcuts import redirect
 from django.urls import reverse
 
-TWITCH_CLIENT_ID = os.environ.get('TWITCH_CLIENT_ID', '')
-TWITCH_CLIENT_SECRET = os.environ.get('TWITCH_CLIENT_SECRET', '')
-TWITCH_REDIRECT_URI = os.environ.get('TWITCH_REDIRECT_URI', '')
+# Twitch OAuth Credentials (временно для тестирования)
+TWITCH_CLIENT_ID = os.environ.get('TWITCH_CLIENT_ID', 'duwoiegw4pnse0gq7c7oradhwdslah')
+TWITCH_CLIENT_SECRET = os.environ.get('TWITCH_CLIENT_SECRET', '01us0o6obskm3hh008yyw0y4rkcyzy')
+TWITCH_REDIRECT_URI = os.environ.get('TWITCH_REDIRECT_URI', 'https://twgame-production.up.railway.app/auth/twitch/callback/')
 
 @require_GET
 def twitch_auth(request):
