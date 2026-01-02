@@ -213,28 +213,36 @@
     </div>
 
     <script>
-// Telegram WebApp data - URL decode if needed
-let telegramUser = {{ telegram_user|safe }};
-try {
-    // If data is URL-encoded, decode it
-    if (typeof telegramUser === 'string' && telegramUser.includes('%')) {
-        telegramUser = JSON.parse(decodeURIComponent(telegramUser));
-    }
-    // Fix null values that come from Python as None
-    if (telegramUser && telegramUser.last_name === null) {
-        telegramUser.last_name = undefined;
-    }
-} catch (e) {
-    console.error('Error parsing telegram user data:', e);
-    // Fallback
-    telegramUser = {};
-}
+        console.log('Character creation script loaded');
+
+        // Telegram WebApp data - URL decode if needed
+        let telegramUser = {{ telegram_user|safe }};
+        try {
+            // If data is URL-encoded, decode it
+            if (typeof telegramUser === 'string' && telegramUser.includes('%')) {
+                telegramUser = JSON.parse(decodeURIComponent(telegramUser));
+            }
+            // Fix null values that come from Python as None
+            if (telegramUser && telegramUser.last_name === null) {
+                telegramUser.last_name = undefined;
+            }
+            console.log('Telegram user data parsed:', telegramUser);
+        } catch (e) {
+            console.error('Error parsing telegram user data:', e);
+            // Fallback
+            telegramUser = {};
+        }
+
         let selectedClass = null;
         let characterName = '';
+        console.log('Initial state - selectedClass:', selectedClass, 'characterName:', characterName);
 
         // Class selection
         document.querySelectorAll('.class-card').forEach(card => {
-            card.addEventListener('click', function() {
+            card.addEventListener('click', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+
                 // Remove selected class from all cards
                 document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
 
@@ -242,6 +250,7 @@ try {
                 this.classList.add('selected');
                 selectedClass = this.dataset.class;
 
+                console.log('Selected class:', selectedClass);
                 updateCreateButton();
             });
         });
@@ -249,17 +258,27 @@ try {
         // Name input
         document.getElementById('characterName').addEventListener('input', function() {
             characterName = this.value.trim();
+            console.log('Character name:', characterName);
             updateCreateButton();
         });
 
         function updateCreateButton() {
             const button = document.getElementById('createButton');
-            button.disabled = !selectedClass || !characterName;
+            const isDisabled = !selectedClass || !characterName;
+            button.disabled = isDisabled;
+            console.log('Button disabled:', isDisabled, 'selectedClass:', selectedClass, 'characterName:', characterName);
         }
 
         // Create character
-        document.getElementById('createButton').addEventListener('click', async function() {
-            if (!selectedClass || !characterName) return;
+        document.getElementById('createButton').addEventListener('click', async function(event) {
+            event.preventDefault();
+            console.log('Create button clicked');
+            console.log('selectedClass:', selectedClass, 'characterName:', characterName);
+
+            if (!selectedClass || !characterName) {
+                console.log('Validation failed - missing class or name');
+                return;
+            }
 
             const button = this;
             const errorDiv = document.getElementById('errorMessage');
@@ -324,7 +343,17 @@ try {
             }
         });
 
+        // Prevent accidental deselection
+        document.addEventListener('click', function(event) {
+            // Don't deselect if clicking on class cards or their children
+            if (!event.target.closest('.class-card')) {
+                // Optional: you can add logic here if needed
+                console.log('Clicked outside class cards');
+            }
+        });
+
         // Initialize
+        console.log('Initialization complete');
         updateCreateButton();
     </script>
 </body>
