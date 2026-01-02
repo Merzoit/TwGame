@@ -1191,7 +1191,7 @@
                     </div>
                     <div class="player-details">
                         <h2>{{ player.first_name }}{% if player.last_name %}{{ player.last_name }}{% endif %}</h2>
-                        <p>@{{ player.username }}Telegram / {% if player.username %}{{ player.last_name }}{% endif %} / {{ player.telegram_id }}</p>
+                        <p>Telegram / {{ player.username }} / {{ player.telegram_id }}</p>
                         {% if player.twitch_connected %}
                             <p>Twitch / {{ player.twitch_username }} / {{ player.twitch_id }}</p>
                         {% else %}
