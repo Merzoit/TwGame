@@ -261,6 +261,7 @@
             height: 140px;
             border-radius: var(--border-radius-small);
             object-fit: cover;
+            object-position: top center; /* Показывать верхнюю часть картинки */
             margin: 0 auto var(--spacing-sm);
             border: 2px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
@@ -422,6 +423,136 @@
             }
         }
 
+        /* Шторка с подробным описанием класса */
+        .class-detail-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-overlay);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .class-detail-panel.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .close-panel {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius-small);
+            transition: background 0.3s ease;
+        }
+
+        .close-panel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-content {
+            flex: 1;
+            padding: var(--spacing-xl);
+            display: flex;
+            gap: var(--spacing-xl);
+            align-items: flex-start;
+        }
+
+        .detail-image {
+            flex-shrink: 0;
+        }
+
+        .detail-image img {
+            width: 200px;
+            height: 280px;
+            border-radius: var(--border-radius);
+            object-fit: cover;
+            object-position: top center;
+            border: 2px solid var(--border-color);
+        }
+
+        .detail-info {
+            flex: 1;
+        }
+
+        .detail-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: var(--spacing-xl);
+            color: var(--text-secondary);
+        }
+
+        .detail-stats {
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-small);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: var(--accent-secondary);
+        }
+
+        /* Мобильная адаптация для шторки */
+        @media (max-width: 768px) {
+            .panel-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: var(--spacing-lg);
+            }
+
+            .detail-image img {
+                width: 150px;
+                height: 210px;
+            }
+
+            .detail-stats {
+                width: 100%;
+            }
+        }
+
         /* Анимации загрузки */
         @keyframes pulse {
             0%, 100% { opacity: 1; }
@@ -459,6 +590,46 @@
                         <div class="class-description">{{ class_info.description }}</div>
                     </div>
                     {% endfor %}
+                </div>
+
+                <!-- Шторка с подробным описанием класса -->
+                <div class="class-detail-panel" id="classDetailPanel">
+                    <div class="panel-header">
+                        <h3 id="detailTitle">Выберите класс</h3>
+                        <button class="close-panel" id="closePanel">✕</button>
+                    </div>
+                    <div class="panel-content">
+                        <div class="detail-image">
+                            <img id="detailImage" src="" alt="" style="display: none;">
+                        </div>
+                        <div class="detail-info">
+                            <div class="detail-description" id="detailDescription">
+                                Выберите класс персонажа, чтобы увидеть подробное описание его способностей и характеристик.
+                            </div>
+                            <div class="detail-stats" id="detailStats">
+                                <div class="stat-row">
+                                    <span class="stat-label">Здоровье:</span>
+                                    <span class="stat-value" id="healthStat">-</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Мана:</span>
+                                    <span class="stat-value" id="manaStat">-</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Атака:</span>
+                                    <span class="stat-value" id="attackStat">-</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Защита:</span>
+                                    <span class="stat-value" id="defenseStat">-</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">Скорость:</span>
+                                    <span class="stat-value" id="speedStat">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -499,8 +670,86 @@ console.log('Telegram user data loaded:', telegramUser);
                 selectedClass = this.dataset.class;
 
                 console.log('Selected class:', selectedClass);
+
+                // Show detail panel
+                showClassDetail(selectedClass);
+
                 updateCreateButton();
             });
+        });
+
+        // Class detail data
+        const classDetails = {
+            'warrior': {
+                title: 'Воин ⚔️',
+                description: 'Могучий боец ближнего боя, специализирующийся на защите и выживании. Воины обладают высокой силой и защитой, что делает их идеальными танками в команде. Они могут выдерживать большое количество урона и защищать союзников.',
+                image: '/static/images/warrior.jpg',
+                stats: {
+                    health: '120',
+                    mana: '60',
+                    attack: '15',
+                    defense: '12',
+                    speed: '8'
+                }
+            },
+            'mage': {
+                title: 'Маг 🔮',
+                description: 'Повелитель магии и заклинаний, обладающий огромной магической силой. Маги могут наносить массовый урон и контролировать поле боя с помощью мощных заклинаний. Они уязвимы в ближнем бою, но их магия компенсирует эту слабость.',
+                image: '/static/images/mage.jpg',
+                stats: {
+                    health: '80',
+                    mana: '120',
+                    attack: '12',
+                    defense: '6',
+                    speed: '10'
+                }
+            },
+            'assassin': {
+                title: 'Разбойник 🗡️',
+                description: 'Ловкий убийца и мастер скрытности, специализирующийся на быстрых и точных ударах. Разбойники могут наносить критический урон и уклоняться от атак. Они идеальны для тактики "бей и беги" и неожиданных нападений.',
+                image: '/static/images/assassin.jpg',
+                stats: {
+                    health: '90',
+                    mana: '70',
+                    attack: '14',
+                    defense: '7',
+                    speed: '14'
+                }
+            }
+        };
+
+        // Show class detail panel
+        function showClassDetail(classType) {
+            const panel = document.getElementById('classDetailPanel');
+            const detail = classDetails[classType];
+
+            if (detail) {
+                document.getElementById('detailTitle').textContent = detail.title;
+                document.getElementById('detailImage').src = detail.image;
+                document.getElementById('detailImage').style.display = 'block';
+                document.getElementById('detailDescription').textContent = detail.description;
+
+                // Update stats
+                document.getElementById('healthStat').textContent = detail.stats.health;
+                document.getElementById('manaStat').textContent = detail.stats.mana;
+                document.getElementById('attackStat').textContent = detail.stats.attack;
+                document.getElementById('defenseStat').textContent = detail.stats.defense;
+                document.getElementById('speedStat').textContent = detail.stats.speed;
+
+                panel.classList.add('active');
+            }
+        }
+
+        // Close panel
+        document.getElementById('closePanel').addEventListener('click', function() {
+            document.getElementById('classDetailPanel').classList.remove('active');
+        });
+
+        // Close panel when clicking outside
+        document.getElementById('classDetailPanel').addEventListener('click', function(event) {
+            if (event.target === this) {
+                this.classList.remove('active');
+            }
         });
 
         // Name input
