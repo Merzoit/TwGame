@@ -17,6 +17,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'twgame.settings')
 import django
 django.setup()
 
+from django.utils import asyncio as django_asyncio
+from asgiref.sync import sync_to_async
 from game.services import PlayerService
 
 # Настройки логирования
@@ -35,7 +37,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     # Создаем или получаем игрока из базы данных
     try:
-        player, created = PlayerService.get_or_create_player(
+        # Используем sync_to_async для работы с Django ORM в асинхронном контексте
+        player, created = await sync_to_async(PlayerService.get_or_create_player)(
             telegram_id=user.id,
             username=user.username,
             first_name=user.first_name,
@@ -100,7 +103,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif query.data == 'show_profile':
         # Показываем профиль игрока
         try:
-            profile = PlayerService.get_player_profile(user.id)
+            profile = await sync_to_async(PlayerService.get_player_profile)(user.id)
             if profile:
                 profile_text = (
                     f"👤 Ваш профиль:\n\n"
@@ -138,7 +141,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif query.data == 'back_to_menu':
         # Возвращаемся в главное меню
         try:
-            player = PlayerService.get_player_by_telegram_id(user.id)
+            player = await sync_to_async(PlayerService.get_player_by_telegram_id)(user.id)
             if player:
                 profile = player.profile
                 welcome_message = (
