@@ -71,57 +71,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Создаем или получаем игрока из базы данных
     try:
         # Используем sync_to_async для работы с Django ORM в асинхронном контексте
-        player, created = await sync_to_async(PlayerService.get_or_create_player)(
+        await sync_to_async(PlayerService.get_or_create_player)(
             telegram_id=user.id,
             username=user.username,
             first_name=user.first_name,
             last_name=user.last_name
         )
 
-        # Проверяем, есть ли у игрока персонаж
-        has_character = await sync_to_async(PlayerService.has_character)(user.id)
+        # Всегда показываем одинаковые кнопки - логика создания персонажа на сайте
+        welcome_message = (
+            f"🎉 Добро пожаловать в TwGame, {user.first_name or 'игрок'}!\n\n"
+            "Выберите действие:"
+        )
 
-        if not has_character:
-            # Персонаж не создан - перенаправляем на сайт для создания
-            welcome_message = (
-                f"🎉 Добро пожаловать в TwGame, {user.first_name or 'игрок'}!\n\n"
-                "Вы успешно зарегистрированы в игре!\n\n"
-                "🏗️ Теперь вам нужно создать персонажа, чтобы начать приключение.\n\n"
-                "Перейдите на сайт для создания персонажа:"
-            )
-
-            keyboard = [
-                [InlineKeyboardButton("🏗️ Создать персонажа", url="https://twgame-production.up.railway.app/")]
-            ]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-
-        else:
-            # Персонаж есть - показываем обычное меню
-            character = await sync_to_async(PlayerService.get_character)(user.id)
-            profile = player.profile
-
-            if created:
-                welcome_message = (
-                    f"🎉 Добро пожаловать в TwGame, {user.first_name or 'игрок'}!\n\n"
-                    f"🏆 Ваш персонаж: {character.name} ({character.class_display_name})\n"
-                    f"📊 Уровень: {profile.level}\n"
-                    f"💰 Золото: {profile.gold}\n\n"
-                    "Вы готовы к приключениям!"
-                )
-            else:
-                welcome_message = (
-                    f"🎮 С возвращением в TwGame, {user.first_name or 'игрок'}!\n\n"
-                    f"🏆 Персонаж: {character.name} ({character.class_display_name})\n"
-                    f"📊 Уровень: {profile.level}\n"
-                    f"💰 Золото: {profile.gold}\n\n"
-                )
-
-            keyboard = [
-                [InlineKeyboardButton("🎮 Играть", callback_data='play_game')],
-                [InlineKeyboardButton("👤 Профиль", callback_data='show_profile')]
-            ]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            welcome_message += "Выберите действие:"
+        keyboard = [
+            [InlineKeyboardButton("🎮 Играть", callback_data='play_game')],
+            [InlineKeyboardButton("👤 Профиль", callback_data='show_profile')]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
 
         await update.message.reply_text(
             welcome_message,
@@ -129,7 +96,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
 
     except Exception as e:
-        logger.error(f"Ошибка при создании игрока: {e}")
+        logger.error(f"Ошибка при регистрации игрока: {e}")
         await update.message.reply_text(
             "❌ Произошла ошибка при регистрации. Попробуйте позже."
         )
@@ -143,25 +110,29 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     if query.data == 'play_game':
         # Отправляем ссылку на веб-интерфейс игры
-        keyboard = [
-            [InlineKeyboardButton("🎮 Открыть игру", url="https://twgame-production.up.railway.app/")],
-            [InlineKeyboardButton("⬅️ Назад", callback_data='back_to_menu')]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
+        # Сайт сам определит - нужно ли создать персонажа или показать игру
+        await query.answer()
         await query.edit_message_text(
-            text="🎯 TwGame готова к игре!\n\n"
-                 "Нажмите кнопку ниже, чтобы открыть игровой интерфейс:",
-            reply_markup=reply_markup
+            text="🎯 Открываем TwGame!\n\n"
+                 "Перенаправляем вас в игру...",
+        )
+
+        # Отправляем ссылку в отдельном сообщении
+        await query.message.reply_text(
+            "🔗 [Открыть игру](https://twgame-production.up.railway.app/)",
+            parse_mode='Markdown'
         )
 
     elif query.data == 'show_profile':
         # Показываем профиль игрока
         try:
-            profile = await sync_to_async(PlayerService.get_player_profile)(user.id)
-            if profile:
+            has_character = await sync_to_async(PlayerService.has_character)(user.id)
+            if has_character:
+                profile = await sync_to_async(PlayerService.get_player_profile)(user.id)
+                character = await sync_to_async(PlayerService.get_character)(user.id)
                 profile_text = (
                     f"👤 Ваш профиль:\n\n"
+                    f"🏆 Персонаж: {character.name} ({character.class_display_name})\n"
                     f"📊 Уровень: {profile.level}\n"
                     f"⭐ Опыт: {profile.experience}\n"
                     f"💰 Золото: {profile.gold}\n"
@@ -172,7 +143,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                     f"🕐 Последний вход: {profile.last_login.strftime('%d.%m.%Y %H:%M')}"
                 )
             else:
-                profile_text = "❌ Профиль не найден. Попробуйте перезапустить бота командой /start"
+                profile_text = (
+                    "👤 Профиль\n\n"
+                    "❌ Персонаж не создан\n\n"
+                    "Чтобы увидеть свой профиль, сначала создайте персонажа через кнопку '🎮 Играть'"
+                )
 
             keyboard = [
                 [InlineKeyboardButton("⬅️ Назад", callback_data='back_to_menu')]
