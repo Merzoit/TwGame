@@ -341,10 +341,118 @@
         }
 
         .character-info-card h3 {
-            margin: 0 0 var(--spacing-md) 0;
-            font-size: 1.1rem;
+            margin: 0 0 var(--spacing-lg) 0;
+            font-size: 1.2rem;
             color: var(--text-primary);
             text-align: center;
+            font-weight: bold;
+        }
+
+        .character-content {
+            display: flex;
+            gap: var(--spacing-xl);
+            align-items: flex-start;
+        }
+
+        .character-left {
+            flex: 0 0 auto;
+            text-align: center;
+        }
+
+        .character-portrait-container {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .character-portrait {
+            width: 140px;
+            height: 180px;
+            object-fit: cover;
+            object-position: top center;
+            border-radius: var(--border-radius);
+            border: 3px solid var(--accent-secondary);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .character-info-basic {
+            text-align: center;
+        }
+
+        .character-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .character-class {
+            font-size: 1rem;
+            color: var(--accent-tertiary);
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+        }
+
+        .character-level {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .character-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        .character-stats-section {
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-small);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .stats-section-title {
+            font-size: 1rem;
+            color: var(--accent-secondary);
+            margin-bottom: var(--spacing-md);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .character-stat {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: var(--border-radius-small);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+        }
+
+        .character-stat:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-icon {
+            font-size: 1.1rem;
+            margin-right: var(--spacing-sm);
+            width: 24px;
+            text-align: center;
+        }
+
+        .character-stat .stat-label {
+            flex: 1;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .character-stat .stat-value {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--accent-secondary);
+            margin-left: var(--spacing-sm);
         }
 
         .player-twitch-info {
@@ -490,7 +598,7 @@
             display: block;
             font-size: 1.1rem;
             font-weight: 700;
-            color: var(--accent-primary);
+            color: var(--accent-secondary);
             margin-bottom: var(--spacing-xs);
         }
 
@@ -610,6 +718,23 @@
             .character-portrait {
                 width: 100px;
                 height: 140px;
+            }
+
+            .character-content {
+                flex-direction: column;
+                gap: var(--spacing-lg);
+            }
+
+            .character-left {
+                order: -1;
+            }
+
+            .character-right {
+                gap: var(--spacing-md);
+            }
+
+            .character-stats-section {
+                padding: var(--spacing-md);
             }
 
             .character-avatar {
@@ -895,6 +1020,30 @@
                 width: 80px;
                 height: 110px;
             }
+
+            .character-content {
+                gap: var(--spacing-md);
+            }
+
+            .character-stats-section {
+                padding: var(--spacing-sm);
+            }
+
+            .character-stat {
+                padding: var(--spacing-xs);
+            }
+
+            .character-name {
+                font-size: 1.1rem;
+            }
+
+            .character-class {
+                font-size: 0.9rem;
+            }
+
+            .stats-section-title {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -1044,44 +1193,58 @@
                 {% endif %}
 
                 <div class="character-info-card">
-                    <h3>Персонаж</h3>
-                    <div class="character-summary">
-                        <div class="character-basic">
-                            <div class="character-name-large">{{ character.name }}</div>
-                            <div class="character-class-large">{{ character.get_character_class_display }}</div>
-                            <div class="character-level-large">Уровень {{ character.level }}</div>
-                        </div>
-                        <!-- Картинка персонажа -->
-                        <div class="character-image-container">
-                            <img src="/static/images/{{ character.class_type|lower }}.jpg" alt="{{ character.name }}" class="character-portrait">
-                        </div>
-                        <!-- Характеристики по 3 в строчку -->
-                        <div class="character-stats-summary stats-row-3">
-                            <div class="stat-summary">
-                                <span class="stat-value">{{ character.current_health }}</span>
-                                <span class="stat-label">Здоровье</span>
+                    <h3>⚔️ Персонаж</h3>
+                    <div class="character-content">
+                        <!-- Левая часть - портрет и базовая информация -->
+                        <div class="character-left">
+                            <div class="character-portrait-container">
+                                <img src="/static/images/{{ character.class_type|lower }}.jpg" alt="{{ character.name }}" class="character-portrait">
                             </div>
-                            <div class="stat-summary">
-                                <span class="stat-value">{{ character.current_mana }}</span>
-                                <span class="stat-label">Мана</span>
-                            </div>
-                            <div class="stat-summary">
-                                <span class="stat-value">{{ character.experience }}</span>
-                                <span class="stat-label">Опыт</span>
+                            <div class="character-info-basic">
+                                <div class="character-name">{{ character.name }}</div>
+                                <div class="character-class">{{ character.get_character_class_display }}</div>
+                                <div class="character-level">Уровень {{ character.level }}</div>
                             </div>
                         </div>
-                        <div class="character-stats-summary stats-row-3">
-                            <div class="stat-summary">
-                                <span class="stat-value">{{ character.attack_power|floatformat:0 }}</span>
-                                <span class="stat-label">Атака</span>
+
+                        <!-- Правая часть - характеристики -->
+                        <div class="character-right">
+                            <div class="character-stats-section">
+                                <h4 class="stats-section-title">Основные</h4>
+                                <div class="character-stat">
+                                    <span class="stat-icon">❤️</span>
+                                    <span class="stat-label">Здоровье:</span>
+                                    <span class="stat-value">{{ character.current_health }}</span>
+                                </div>
+                                <div class="character-stat">
+                                    <span class="stat-icon">🔵</span>
+                                    <span class="stat-label">Мана:</span>
+                                    <span class="stat-value">{{ character.current_mana }}</span>
+                                </div>
+                                <div class="character-stat">
+                                    <span class="stat-icon">⭐</span>
+                                    <span class="stat-label">Опыт:</span>
+                                    <span class="stat-value">{{ character.experience }}</span>
+                                </div>
                             </div>
-                            <div class="stat-summary">
-                                <span class="stat-value">{{ character.defense|floatformat:0 }}</span>
-                                <span class="stat-label">Защита</span>
-                            </div>
-                            <div class="stat-summary">
-                                <span class="stat-value">{{ character.speed|floatformat:0 }}</span>
-                                <span class="stat-label">Скорость</span>
+
+                            <div class="character-stats-section">
+                                <h4 class="stats-section-title">Боевые</h4>
+                                <div class="character-stat">
+                                    <span class="stat-icon">⚔️</span>
+                                    <span class="stat-label">Атака:</span>
+                                    <span class="stat-value">{{ character.attack_power|floatformat:0 }}</span>
+                                </div>
+                                <div class="character-stat">
+                                    <span class="stat-icon">🛡️</span>
+                                    <span class="stat-label">Защита:</span>
+                                    <span class="stat-value">{{ character.defense|floatformat:0 }}</span>
+                                </div>
+                                <div class="character-stat">
+                                    <span class="stat-icon">💨</span>
+                                    <span class="stat-label">Скорость:</span>
+                                    <span class="stat-value">{{ character.speed|floatformat:0 }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
