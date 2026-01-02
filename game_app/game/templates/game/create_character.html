@@ -7,12 +7,16 @@
     {% csrf_token %}
     <style>
         :root {
-            --primary-color: #1a1a2e;
-            --secondary-color: #16213e;
-            --accent-color: #0f3460;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-tertiary: #1a1a24;
+            --bg-overlay: rgba(10, 10, 15, 0.95);
+            --accent-primary: #ff3366;
+            --accent-secondary: #00ff88;
+            --accent-tertiary: #0099ff;
             --text-primary: #ffffff;
             --text-secondary: #b0b0b0;
-            --text-muted: #888888;
+            --text-muted: #666666;
             --success-color: #00d4aa;
             --warning-color: #ff6b6b;
             --error-color: #ff4757;
@@ -24,16 +28,19 @@
             --gradient-warrior: linear-gradient(135deg, #ff6b35, #ff8e53);
             --gradient-mage: linear-gradient(135deg, #4ecdc4, #44a08d);
             --gradient-assassin: linear-gradient(135deg, #6c5ce7, #a29bfe);
-            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.15);
-            --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.3);
-            --shadow-glow: 0 0 20px rgba(0, 212, 170, 0.3);
-            --border-radius: 16px;
-            --border-radius-small: 12px;
-            --spacing-xs: 8px;
-            --spacing-sm: 12px;
-            --spacing-md: 16px;
-            --spacing-lg: 24px;
-            --spacing-xl: 32px;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-strong: 0 8px 40px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 20px rgba(255, 51, 102, 0.3);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            --border-radius: 12px;
+            --border-radius-small: 8px;
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 20px;
+            --spacing-2xl: 24px;
         }
 
         * {
@@ -43,9 +50,8 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--gradient-primary);
-            background-attachment: fixed;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
@@ -53,7 +59,7 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Анимированный фон */
+        /* Темный градиентный фон */
         body::before {
             content: '';
             position: fixed;
@@ -62,10 +68,9 @@
             width: 100%;
             height: 100%;
             background:
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
-            animation: float 20s ease-in-out infinite;
+                radial-gradient(circle at 20% 20%, rgba(255, 51, 102, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(0, 153, 255, 0.05) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
         }
@@ -82,9 +87,9 @@
             left: 0;
             right: 0;
             z-index: 100;
-            background: rgba(26, 26, 46, 0.95);
+            background: var(--bg-overlay);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--border-color);
             padding: var(--spacing-md);
             text-align: center;
             box-shadow: var(--shadow-soft);
@@ -93,7 +98,7 @@
         .game-title {
             font-size: 1.25rem;
             font-weight: 700;
-            background: var(--gradient-secondary);
+            background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -109,9 +114,9 @@
         }
 
         .character-creation {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--bg-overlay);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
             border-radius: var(--border-radius);
             padding: var(--spacing-xl);
             box-shadow: var(--shadow-strong);
@@ -166,8 +171,8 @@
         .input-field {
             width: 100%;
             padding: var(--spacing-md);
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
             border-radius: var(--border-radius-small);
             color: var(--text-primary);
             font-size: 1rem;
@@ -178,9 +183,9 @@
 
         .input-field:focus {
             outline: none;
-            border-color: var(--success-color);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.2);
+            border-color: var(--accent-primary);
+            background: var(--bg-secondary);
+            box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.2);
         }
 
         .input-field::placeholder {
@@ -196,8 +201,8 @@
 
         .class-card {
             position: relative;
-            background: rgba(255, 255, 255, 0.08);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
             border-radius: var(--border-radius-small);
             padding: var(--spacing-md);
             cursor: pointer;
@@ -220,7 +225,7 @@
         }
 
         .class-card.warrior.selected::before {
-            opacity: 1;
+            opacity: 0.1;
         }
 
         .class-card.mage::before {
@@ -228,7 +233,7 @@
         }
 
         .class-card.mage.selected::before {
-            opacity: 1;
+            opacity: 0.1;
         }
 
         .class-card.assassin::before {
@@ -236,19 +241,19 @@
         }
 
         .class-card.assassin.selected::before {
-            opacity: 1;
+            opacity: 0.1;
         }
 
         .class-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            border-color: var(--border-hover);
             box-shadow: var(--shadow-soft);
         }
 
         .class-card.selected {
-            border-color: var(--success-color);
+            border-color: var(--accent-primary);
             box-shadow: var(--shadow-glow);
-            transform: translateY(-5px);
+            transform: translateY(-3px);
         }
 
         .class-image {
@@ -293,12 +298,12 @@
         .create-button {
             width: 100%;
             padding: var(--spacing-lg) var(--spacing-xl);
-            background: var(--gradient-secondary);
-            color: white;
+            background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--bg-primary);
             border: none;
             border-radius: var(--border-radius-small);
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: var(--shadow-soft);
@@ -308,6 +313,8 @@
             align-items: center;
             justify-content: center;
             gap: var(--spacing-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .create-button::before {
@@ -317,7 +324,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transition: left 0.5s;
         }
 
@@ -335,9 +342,10 @@
         }
 
         .create-button:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+            background: var(--text-muted);
         }
 
         .create-button:disabled:hover {
@@ -349,19 +357,20 @@
             padding: var(--spacing-md);
             border-radius: var(--border-radius-small);
             margin-bottom: var(--spacing-lg);
-            font-weight: 500;
+            font-weight: 600;
             text-align: center;
+            border: 1px solid transparent;
         }
 
         .error-message {
             background: rgba(255, 71, 87, 0.1);
-            border: 1px solid var(--error-color);
+            border-color: var(--error-color);
             color: var(--error-color);
         }
 
         .success-message {
             background: rgba(0, 212, 170, 0.1);
-            border: 1px solid var(--success-color);
+            border-color: var(--success-color);
             color: var(--success-color);
         }
 

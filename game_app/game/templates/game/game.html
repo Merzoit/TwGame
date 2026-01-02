@@ -3,37 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#1a1a2e">
+    <meta name="theme-color" content="#0a0a0f">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>{{ game_name }} - Игра</title>
     <style>
         :root {
-            --primary-color: #1a1a2e;
-            --secondary-color: #16213e;
-            --accent-color: #0f3460;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-tertiary: #1a1a24;
+            --bg-overlay: rgba(10, 10, 15, 0.95);
+            --accent-primary: #ff3366;
+            --accent-secondary: #00ff88;
+            --accent-tertiary: #0099ff;
             --text-primary: #ffffff;
             --text-secondary: #b0b0b0;
-            --text-muted: #888888;
-            --success-color: #00d4aa;
-            --warning-color: #ff6b6b;
-            --error-color: #ff4757;
-            --info-color: #3742fa;
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --gradient-warrior: linear-gradient(135deg, #ff6b35, #ff8e53);
-            --gradient-mage: linear-gradient(135deg, #4ecdc4, #44a08d);
-            --gradient-assassin: linear-gradient(135deg, #6c5ce7, #a29bfe);
-            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.15);
-            --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.3);
-            --shadow-glow: 0 0 20px rgba(0, 212, 170, 0.3);
-            --border-radius: 16px;
-            --border-radius-small: 12px;
-            --spacing-xs: 8px;
-            --spacing-sm: 12px;
-            --spacing-md: 16px;
-            --spacing-lg: 24px;
-            --spacing-xl: 32px;
+            --text-muted: #666666;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            --shadow-glow: 0 0 20px rgba(255, 51, 102, 0.3);
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-strong: 0 8px 40px rgba(0, 0, 0, 0.5);
+            --border-radius: 12px;
+            --border-radius-small: 8px;
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 20px;
+            --spacing-2xl: 24px;
         }
 
         * {
@@ -43,17 +41,16 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--gradient-primary);
-            background-attachment: fixed;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
-            overflow-x: hidden;
+            overflow: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Анимированный фон */
+        /* Темный градиентный фон */
         body::before {
             content: '';
             position: fixed;
@@ -62,67 +59,354 @@
             width: 100%;
             height: 100%;
             background:
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.15) 0%, transparent 50%);
-            animation: float 25s ease-in-out infinite;
+                radial-gradient(circle at 20% 20%, rgba(255, 51, 102, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(0, 153, 255, 0.05) 0%, transparent 50%);
             pointer-events: none;
-            z-index: -1;
+            z-index: -2;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-15px) rotate(120deg); }
-            66% { transform: translateY(15px) rotate(240deg); }
+        /* Основной контейнер */
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-secondary);
         }
 
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+        /* Верхняя панель */
+        .top-bar {
+            position: relative;
             z-index: 100;
-            background: rgba(26, 26, 46, 0.95);
+            background: var(--bg-overlay);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: var(--spacing-md);
-            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding: var(--spacing-md) var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             box-shadow: var(--shadow-soft);
         }
 
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius-small);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-toggle::before {
+            content: '☰';
+            display: block;
+        }
+
+        .menu-toggle.active::before {
+            content: '✕';
+        }
+
         .game-title {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            background: var(--gradient-secondary);
+            background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .container {
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .resource-display {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: var(--bg-tertiary);
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--border-radius-small);
+            border: 1px solid var(--border-color);
+        }
+
+        .resource-icon {
+            font-size: 1.1rem;
+        }
+
+        .resource-value {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .resource-value.gold {
+            color: var(--accent-secondary);
+        }
+
+        .resource-value.level {
+            color: var(--accent-primary);
+        }
+
+        /* Боковое меню */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100vh;
+            background: var(--bg-overlay);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-color);
+            z-index: 200;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-strong);
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            left: 0;
+        }
+
+        .menu-header {
+            padding: var(--spacing-xl);
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .menu-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .menu-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .menu-content {
+            padding: var(--spacing-lg);
+        }
+
+        .menu-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: var(--spacing-xs);
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(4px);
+        }
+
+        .menu-item-icon {
+            font-size: 1.5rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .menu-item-content h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .menu-item-content p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.3;
+        }
+
+        .menu-item.coming-soon {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .menu-item.coming-soon::after {
+            content: 'СКОРО';
+            position: absolute;
+            right: var(--spacing-md);
+            background: var(--accent-primary);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 700;
+        }
+
+        /* Основной контент */
+        .main-content {
+            flex: 1;
             position: relative;
             z-index: 10;
-            min-height: 100vh;
-            padding: calc(var(--spacing-xl) + 80px) var(--spacing-lg) var(--spacing-xl);
-            max-width: 1200px;
-            margin: 0 auto;
+            transition: filter 0.3s ease;
         }
 
-        .hero-section {
-            background: rgba(255, 255, 255, 0.08);
+        .main-content.menu-open {
+            filter: blur(2px);
+        }
+
+        .character-display {
+            position: absolute;
+            bottom: var(--spacing-xl);
+            right: var(--spacing-xl);
+            width: 200px;
+            height: 200px;
+            background: var(--bg-overlay);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
             border-radius: var(--border-radius);
-            padding: var(--spacing-xl);
-            margin-bottom: var(--spacing-xl);
             box-shadow: var(--shadow-strong);
-            animation: slideInUp 0.8s ease-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: var(--spacing-lg);
         }
 
-        @keyframes slideInUp {
+        .character-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-primary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .character-name {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .character-class {
+            font-size: 0.8rem;
+            color: var(--accent-secondary);
+            font-weight: 600;
+        }
+
+        .character-level {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: var(--spacing-xs);
+        }
+
+        /* Оверлей для меню */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            .character-display {
+                width: 150px;
+                height: 150px;
+                bottom: var(--spacing-lg);
+                right: var(--spacing-lg);
+                padding: var(--spacing-md);
+            }
+
+            .character-avatar {
+                width: 60px;
+                height: 60px;
+            }
+
+            .side-menu {
+                width: 280px;
+                left: -280px;
+            }
+
+            .top-bar {
+                padding: var(--spacing-sm) var(--spacing-md);
+            }
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--border-radius-small);
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-strong);
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .notification-info {
+            background: var(--accent-tertiary);
+            color: white;
+        }
+
+        .notification-success {
+            background: var(--accent-secondary);
+            color: var(--bg-primary);
+        }
+
+        .notification-error {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        /* Анимации */
+        @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(10px);
             }
             to {
                 opacity: 1;
@@ -130,386 +414,296 @@
             }
         }
 
-        .hero-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-lg);
-            margin-bottom: var(--spacing-xl);
-            flex-wrap: wrap;
-        }
-
-        .hero-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--success-color);
-            box-shadow: var(--shadow-soft);
-            flex-shrink: 0;
-        }
-
-        .hero-info h1 {
-            font-size: 1.75rem;
-            font-weight: 800;
-            margin-bottom: var(--spacing-xs);
-            color: var(--text-primary);
-        }
-
-        .hero-class {
-            font-size: 1rem;
-            color: var(--success-color);
-            font-weight: 600;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .hero-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: var(--spacing-md);
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: var(--border-radius-small);
-            padding: var(--spacing-md);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-xs);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
-
-        .stat-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .stat-value.health {
-            color: var(--success-color);
-        }
-
-        .stat-value.mana {
-            color: var(--info-color);
-        }
-
-        .stat-value.gold {
-            color: var(--warning-color);
-        }
-
-        .game-menu {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: var(--spacing-lg);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .menu-item {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--border-radius);
-            padding: var(--spacing-xl);
-            text-decoration: none;
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-soft);
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .menu-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .menu-item:hover::before {
-            left: 100%;
-        }
-
-        .menu-item:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: var(--shadow-strong);
-        }
-
-        .menu-icon {
-            font-size: 3rem;
-            margin-bottom: var(--spacing-md);
-            display: block;
-        }
-
-        .menu-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: var(--spacing-sm);
-            color: var(--text-primary);
-        }
-
-        .menu-description {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        .coming-soon {
-            position: relative;
-        }
-
-        .coming-soon::after {
-            content: 'СКОРО';
-            position: absolute;
-            top: var(--spacing-sm);
-            right: var(--spacing-sm);
-            background: var(--warning-color);
-            color: white;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--border-radius-small);
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .coming-soon:hover {
-            transform: translateY(-2px);
-            opacity: 0.9;
-        }
-
-        .progress-section {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--border-radius);
-            padding: var(--spacing-xl);
-            margin-bottom: var(--spacing-xl);
-            box-shadow: var(--shadow-strong);
-            animation: slideInUp 0.8s ease-out 0.2s both;
-        }
-
-        .progress-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: var(--spacing-lg);
-            color: var(--text-primary);
-        }
-
-        .progress-bar {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            height: 8px;
-            margin-bottom: var(--spacing-sm);
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--gradient-secondary);
-            border-radius: 8px;
-            transition: width 0.8s ease;
-        }
-
-        .progress-text {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        /* Мобильная адаптация */
-        @media (max-width: 768px) {
-            .container {
-                padding: calc(var(--spacing-lg) + 80px) var(--spacing-md) var(--spacing-lg);
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
             }
-
-            .hero-section {
-                padding: var(--spacing-lg);
-            }
-
-            .hero-header {
-                flex-direction: column;
-                text-align: center;
-                gap: var(--spacing-md);
-            }
-
-            .hero-stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: var(--spacing-sm);
-            }
-
-            .game-menu {
-                grid-template-columns: 1fr;
-                gap: var(--spacing-md);
-            }
-
-            .menu-item {
-                padding: var(--spacing-lg);
+            to {
+                transform: translateX(0);
+                opacity: 1;
             }
         }
 
-        @media (max-width: 480px) {
-            .header {
-                padding: var(--spacing-sm);
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
             }
-
-            .container {
-                padding: calc(var(--spacing-md) + 70px) var(--spacing-sm) var(--spacing-md);
-            }
-
-            .hero-section {
-                padding: var(--spacing-md);
-            }
-
-            .hero-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .game-menu {
-                gap: var(--spacing-sm);
+            to {
+                transform: translateX(100%);
+                opacity: 0;
             }
         }
 
-        /* Анимации */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .container {
-            animation: fadeIn 1s ease-out;
+        .game-container {
+            animation: slideIn 0.5s ease-out;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1 class="game-title">{{ game_name }}</h1>
+    <div class="game-container">
+        <!-- Верхняя панель -->
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <div class="game-title">{{ game_name }}</div>
+            </div>
+            <div class="top-bar-right">
+                <div class="resource-display">
+                    <span class="resource-icon">💰</span>
+                    <span class="resource-value gold">{{ profile.gold }}</span>
+                </div>
+                <div class="resource-display">
+                    <span class="resource-icon">⭐</span>
+                    <span class="resource-value level">{{ character.level }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Боковое меню -->
+        <div class="side-menu" id="sideMenu">
+            <div class="menu-header">
+                <div class="menu-title">Меню игры</div>
+                <div class="menu-subtitle">{{ character.name }}</div>
+            </div>
+
+            <div class="menu-content">
+                <div class="menu-section">
+                    <div class="section-title">Основное</div>
+
+                    <div class="menu-item coming-soon">
+                        <div class="menu-item-icon">⚔️</div>
+                        <div class="menu-item-content">
+                            <h3>Битвы</h3>
+                            <p>Эпические сражения с монстрами</p>
+                        </div>
+                    </div>
+
+                    <div class="menu-item coming-soon">
+                        <div class="menu-item-icon">🗺️</div>
+                        <div class="menu-item-content">
+                            <h3>Приключения</h3>
+                            <p>Исследуйте мир и квесты</p>
+                        </div>
+                    </div>
+
+                    <div class="menu-item coming-soon">
+                        <div class="menu-item-icon">💼</div>
+                        <div class="menu-item-content">
+                            <h3>Инвентарь</h3>
+                            <p>Предметы и экипировка</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-title">Мастерство</div>
+
+                    <div class="menu-item coming-soon">
+                        <div class="menu-item-icon">⚒️</div>
+                        <div class="menu-item-content">
+                            <h3>Крафт</h3>
+                            <p>Создавайте предметы</p>
+                        </div>
+                    </div>
+
+                    <div class="menu-item coming-soon">
+                        <div class="menu-item-icon">🏪</div>
+                        <div class="menu-item-content">
+                            <h3>Магазин</h3>
+                            <p>Покупки и торговля</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-title">Сообщество</div>
+
+                    <div class="menu-item coming-soon">
+                        <div class="menu-item-icon">👥</div>
+                        <div class="menu-item-content">
+                            <h3>Гильдия</h3>
+                            <p>Играйте с друзьями</p>
+                        </div>
+                    </div>
+
+                    <div class="menu-item coming-soon">
+                        <div class="menu-item-icon">🏆</div>
+                        <div class="menu-item-content">
+                            <h3>Лидерборд</h3>
+                            <p>Рейтинг игроков</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-title">Прочее</div>
+
+                    <div class="menu-item coming-soon">
+                        <div class="menu-item-icon">⚙️</div>
+                        <div class="menu-item-content">
+                            <h3>Настройки</h3>
+                            <p>Параметры игры</p>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="menu-item-icon">📊</div>
+                        <div class="menu-item-content">
+                            <h3>Статистика</h3>
+                            <p>Ваша статистика</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Оверлей для меню -->
+        <div class="menu-overlay" id="menuOverlay"></div>
+
+        <!-- Основной контент -->
+        <div class="main-content" id="mainContent">
+            <!-- Карточка персонажа в углу -->
+            <div class="character-display">
+                <img src="/static/images/{{ character.character_class|lower }}.jpg" alt="{{ character.name }}" class="character-avatar">
+                <div class="character-name">{{ character.name }}</div>
+                <div class="character-class">{{ character.get_character_class_display }}</div>
+                <div class="character-level">Ур. {{ character.level }}</div>
+            </div>
+        </div>
     </div>
 
-    <div class="container">
-        <div class="hero-section">
-            <div class="hero-header">
-                <img src="/static/images/{{ character.character_class|lower }}.jpg" alt="{{ character.name }}" class="hero-avatar">
-                <div class="hero-info">
-                    <h1>{{ character.name }}</h1>
-                    <div class="hero-class">{{ character.get_character_class_display }}</div>
-                </div>
-            </div>
+    <script>
+        // Инициализация игры
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('TwGame initialized');
 
-            <div class="hero-stats">
-                <div class="stat-card">
-                    <div class="stat-label">Уровень</div>
-                    <div class="stat-value">{{ character.level }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Здоровье</div>
-                    <div class="stat-value health">{{ character.current_health }}/{{ character.max_health }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Мана</div>
-                    <div class="stat-value mana">{{ character.current_mana }}/{{ character.max_mana }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Атака</div>
-                    <div class="stat-value">{{ character.base_attack }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Защита</div>
-                    <div class="stat-value">{{ character.base_defense }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Скорость</div>
-                    <div class="stat-value">{{ character.base_speed }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Опыт</div>
-                    <div class="stat-value">{{ character.experience }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Золото</div>
-                    <div class="stat-value gold">{{ profile.gold }}</div>
-                </div>
-            </div>
-        </div>
+            // Элементы управления меню
+            const menuToggle = document.getElementById('menuToggle');
+            const sideMenu = document.getElementById('sideMenu');
+            const menuOverlay = document.getElementById('menuOverlay');
+            const mainContent = document.getElementById('mainContent');
 
-        <div class="progress-section">
-            <div class="progress-title">Прогресс до следующего уровня</div>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: {{ progress_percentage|floatformat:0 }}%"></div>
-            </div>
-            <div class="progress-text">
-                {{ character.experience }} / {{ next_level_exp }} XP ({{ progress_percentage|floatformat:0 }}%)
-            </div>
-        </div>
+            // Функция переключения меню
+            function toggleMenu() {
+                const isActive = sideMenu.classList.contains('active');
 
-        <div class="game-menu">
-            <div class="menu-item coming-soon">
-                <div class="menu-icon">⚔️</div>
-                <div class="menu-title">Битвы</div>
-                <div class="menu-description">Сражайтесь с монстрами и другими игроками в эпических боях</div>
-            </div>
+                if (isActive) {
+                    // Закрываем меню
+                    sideMenu.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                    mainContent.classList.remove('menu-open');
+                    menuToggle.classList.remove('active');
+                } else {
+                    // Открываем меню
+                    sideMenu.classList.add('active');
+                    menuOverlay.classList.add('active');
+                    mainContent.classList.add('menu-open');
+                    menuToggle.classList.add('active');
+                }
+            }
 
-            <div class="menu-item coming-soon">
-                <div class="menu-icon">🗺️</div>
-                <div class="menu-title">Приключения</div>
-                <div class="menu-description">Исследуйте огромный мир и выполняйте увлекательные квесты</div>
-            </div>
+            // Обработчики событий
+            menuToggle.addEventListener('click', toggleMenu);
+            menuOverlay.addEventListener('click', toggleMenu);
 
-            <div class="menu-item coming-soon">
-                <div class="menu-icon">💼</div>
-                <div class="menu-title">Инвентарь</div>
-                <div class="menu-description">Управляйте своими предметами и экипировкой</div>
-            </div>
+            // Закрытие меню по свайпу (для мобильных)
+            let startX = 0;
+            let startY = 0;
 
-            <div class="menu-item coming-soon">
-                <div class="menu-icon">⚒️</div>
-                <div class="menu-title">Крафт</div>
-                <div class="menu-description">Создавайте мощное снаряжение и предметы</div>
-            </div>
+            document.addEventListener('touchstart', function(e) {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            });
 
-            <div class="menu-item coming-soon">
-                <div class="menu-icon">🏪</div>
-                <div class="menu-title">Магазин</div>
-                <div class="menu-description">Покупайте редкие предметы и улучшения</div>
-            </div>
+            document.addEventListener('touchend', function(e) {
+                if (!sideMenu.classList.contains('active')) return;
 
-            <div class="menu-item coming-soon">
-                <div class="menu-icon">👥</div>
-                <div class="menu-title">Гильдия</div>
-                <div class="menu-description">Присоединяйтесь к другим героям и сражайтесь вместе</div>
-            </div>
+                const endX = e.changedTouches[0].clientX;
+                const endY = e.changedTouches[0].clientY;
+                const diffX = startX - endX;
+                const diffY = Math.abs(startY - endY);
 
-            <div class="menu-item coming-soon">
-                <div class="menu-icon">🏆</div>
-                <div class="menu-title">Лидерборд</div>
-                <div class="menu-description">Смотрите лучших игроков и свое место в рейтинге</div>
-            </div>
+                // Свайп влево для закрытия меню
+                if (diffX > 50 && diffY < 100) {
+                    toggleMenu();
+                }
+            });
 
-            <div class="menu-item coming-soon">
-                <div class="menu-icon">⚙️</div>
-                <div class="menu-title">Настройки</div>
-                <div class="menu-description">Настройте игру под себя</div>
-            </div>
-        </div>
-    </div>
+            // Предотвращаем закрытие меню при клике внутри него
+            sideMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // Обработка кликов по пунктам меню
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (this.classList.contains('coming-soon')) {
+                        e.preventDefault();
+                        // Показываем уведомление о том, что функция скоро будет
+                        showNotification('Эта функция скоро появится!', 'info');
+                        return;
+                    }
+
+                    // Закрываем меню после выбора пункта
+                    setTimeout(() => {
+                        if (!this.classList.contains('coming-soon')) {
+                            toggleMenu();
+                        }
+                    }, 300);
+                });
+            });
+
+            // Функция показа уведомлений
+            function showNotification(message, type = 'info') {
+                // Создаем элемент уведомления
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                notification.textContent = message;
+
+                // Добавляем стили для уведомления
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'info' ? 'var(--accent-tertiary)' : 'var(--accent-primary)'};
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    box-shadow: var(--shadow-strong);
+                    z-index: 1000;
+                    animation: slideInRight 0.3s ease-out;
+                    font-weight: 600;
+                `;
+
+                document.body.appendChild(notification);
+
+                // Автоматически удаляем через 3 секунды
+                setTimeout(() => {
+                    notification.style.animation = 'slideOutRight 0.3s ease-in';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+
+            // Добавляем стили для анимаций уведомлений
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInRight {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOutRight {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+
+            console.log('Game UI initialized successfully');
+        });
+    </script>
 </body>
 </html>
