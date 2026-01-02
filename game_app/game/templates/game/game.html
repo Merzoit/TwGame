@@ -347,6 +347,49 @@
             text-align: center;
         }
 
+        .player-twitch-info {
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .twitch-info-text {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .twitch-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .twitch-value {
+            font-size: 0.9rem;
+            color: var(--accent-secondary);
+            font-weight: bold;
+        }
+
+        .twitch-connect-small {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: linear-gradient(45deg, #6441a5, #9146ff);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-small);
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(100, 65, 165, 0.3);
+        }
+
+        .twitch-connect-small:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(100, 65, 165, 0.5);
+        }
+
         .character-summary {
             display: flex;
             gap: var(--spacing-lg);
@@ -378,8 +421,15 @@
 
         .character-stats-summary {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
             gap: var(--spacing-md);
+        }
+
+        .character-stats-summary.health-mana {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .character-stats-summary.stats-row {
+            grid-template-columns: repeat(4, 1fr);
         }
 
         .stat-summary {
@@ -492,8 +542,12 @@
                 text-align: center;
             }
 
-            .character-stats-summary {
-                grid-template-columns: repeat(3, 1fr);
+            .character-stats-summary.health-mana {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .character-stats-summary.stats-row {
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .character-display {
@@ -619,8 +673,8 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: var(--spacing-md);
+            grid-template-columns: 1fr;
+            gap: var(--spacing-sm);
         }
 
         .stats-grid .stat-item {
@@ -750,7 +804,7 @@
         /* Мобильная адаптация */
         @media (max-width: 768px) {
             .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                grid-template-columns: 1fr;
             }
 
             .stats-grid .stat-item {
@@ -768,10 +822,14 @@
 
         @media (max-width: 480px) {
             .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr;
             }
 
-            .character-stats-summary {
+            .character-stats-summary.health-mana {
+                grid-template-columns: 1fr;
+            }
+
+            .character-stats-summary.stats-row {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -913,6 +971,20 @@
                     </div>
                 </div>
 
+                <!-- Twitch информация -->
+                <div class="player-twitch-info">
+                    {% if player.twitch_connected %}
+                    <div class="twitch-info-text">
+                        <span class="twitch-label">Twitch:</span>
+                        <span class="twitch-value">{{ player.twitch_username }} / {{ player.twitch_id }}</span>
+                    </div>
+                    {% else %}
+                    <button class="twitch-connect-small" onclick="connectTwitch()">
+                        🔗 Подключить Twitch
+                    </button>
+                    {% endif %}
+                </div>
+
                 <div class="character-info-card">
                     <h3>Персонаж</h3>
                     <div class="character-summary">
@@ -921,15 +993,17 @@
                             <div class="character-class-large">{{ character.get_character_class_display }}</div>
                             <div class="character-level-large">Уровень {{ character.level }}</div>
                         </div>
-                        <div class="character-stats-summary">
+                        <div class="character-stats-summary health-mana">
                             <div class="stat-summary">
-                                <span class="stat-value">{{ character.current_health }}/{{ character.max_health }}</span>
+                                <span class="stat-value">{{ character.current_health }}</span>
                                 <span class="stat-label">Здоровье</span>
                             </div>
                             <div class="stat-summary">
-                                <span class="stat-value">{{ character.current_mana }}/{{ character.max_mana }}</span>
+                                <span class="stat-value">{{ character.current_mana }}</span>
                                 <span class="stat-label">Мана</span>
                             </div>
+                        </div>
+                        <div class="character-stats-summary stats-row">
                             <div class="stat-summary">
                                 <span class="stat-value">{{ character.attack_power|floatformat:0 }}</span>
                                 <span class="stat-label">Атака</span>
@@ -1010,15 +1084,6 @@
             </div>
             {% endif %}
 
-            <!-- Карточка персонажа в углу -->
-            <div class="character-display">
-                <img src="/static/images/{{ character.character_class|lower }}.jpg" alt="{{ character.name }}" class="character-avatar">
-                <div class="character-info">
-                    <div class="character-name">{{ character.name }}</div>
-                    <div class="character-class">{{ character.get_character_class_display }}</div>
-                    <div class="character-level">Ур. {{ character.level }}</div>
-                </div>
-            </div>
         </div>
     </div>
 
