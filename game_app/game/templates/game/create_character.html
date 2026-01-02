@@ -257,18 +257,18 @@
         }
 
         .class-image {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+            width: 100px;
+            height: 140px;
+            border-radius: var(--border-radius-small);
             object-fit: cover;
             margin: 0 auto var(--spacing-sm);
-            border: 3px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
         }
 
         .class-card.selected .class-image {
-            border-color: var(--text-primary);
-            transform: scale(1.1);
+            border-color: var(--accent-primary);
+            transform: scale(1.05);
         }
 
         .class-name {
@@ -457,7 +457,6 @@
                         <div class="class-emoji">{{ class_info.emoji }}</div>
                         <div class="class-name">{{ class_info.name }}</div>
                         <div class="class-description">{{ class_info.description }}</div>
-                        <div class="class-stats">{{ class_info.stats }}</div>
                     </div>
                     {% endfor %}
                 </div>
@@ -467,8 +466,7 @@
             </div>
 
             <button id="createButton" class="create-button" disabled>
-                <span>🎉</span>
-                Создать персонажа
+                СОЗДАТЬ ПЕРСОНАЖА
             </button>
 
             <div id="errorMessage" class="message error-message" style="display: none;"></div>

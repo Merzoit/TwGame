@@ -11,13 +11,11 @@ python manage.py migrate
 
 # Копирование статических файлов
 echo "Setting up static files..."
-mkdir -p static/images
+mkdir -p game_app/static/images
 echo "Copying images..."
-cp ../../images/*.jpg static/images/ 2>/dev/null || echo "Warning: Images not found in ../../images/"
+cp images/*.jpg game_app/static/images/ 2>/dev/null || echo "Warning: Images not found in images/"
 echo "Static files setup:"
-ls -la static/images/ || echo "Warning: Static images directory not accessible"
-echo "Project structure:"
-ls -la ../../images/ 2>/dev/null || echo "Warning: Source images directory not found"
+ls -la game_app/static/images/ || echo "Warning: Static images directory not accessible"
 
 # Сбор статических файлов
 python manage.py collectstatic --noinput --clear
