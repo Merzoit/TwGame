@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ game_name }} - Создание персонажа</title>
+    {% csrf_token %}
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -219,8 +220,14 @@ try {
     if (typeof telegramUser === 'string' && telegramUser.includes('%')) {
         telegramUser = JSON.parse(decodeURIComponent(telegramUser));
     }
+    // Fix null values that come from Python as None
+    if (telegramUser && telegramUser.last_name === null) {
+        telegramUser.last_name = undefined;
+    }
 } catch (e) {
     console.error('Error parsing telegram user data:', e);
+    // Fallback
+    telegramUser = {};
 }
         let selectedClass = null;
         let characterName = '';
@@ -269,7 +276,7 @@ try {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                        'X-CSRFToken': getCsrfToken()
                     },
                     body: JSON.stringify({
                         telegram_id: telegramUser.id,
@@ -277,6 +284,21 @@ try {
                         class_type: selectedClass
                     })
                 });
+
+                function getCsrfToken() {
+                    // Try to get CSRF token from various sources
+                    const tokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+                    if (tokenInput) return tokenInput.value;
+
+                    // Fallback: get from cookies
+                    const cookies = document.cookie.split(';');
+                    for (let cookie of cookies) {
+                        const [name, value] = cookie.trim().split('=');
+                        if (name === 'csrftoken') return value;
+                    }
+
+                    return '';
+                }
 
                 const data = await response.json();
 

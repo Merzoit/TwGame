@@ -9,8 +9,12 @@ cd game_app
 # Выполнение миграций
 python manage.py migrate
 
+# Копирование статических файлов
+mkdir -p static/images
+cp ../../images/*.jpg static/images/ 2>/dev/null || echo "Images not found, skipping"
+
 # Сбор статических файлов
-python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput --clear
 
 # Возврат в корневую директорию
 cd ..

@@ -7,7 +7,7 @@ Telegram Bot for TwGame
 import logging
 import os
 import sys
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # Инициализация Django
@@ -109,7 +109,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     user = query.from_user
 
     if query.data == 'play_game':
-        # Отправляем ссылку на веб-интерфейс игры с данными пользователя
+        # Открываем игру как Telegram WebApp
         await query.answer()
 
         # Кодируем данные пользователя для передачи на сайт
@@ -126,15 +126,14 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
         game_url = f"https://twgame-production.up.railway.app/?user={encoded_user}"
 
-        await query.edit_message_text(
-            text="🎯 Открываем TwGame!\n\n"
-                 "Перенаправляем вас в игру...",
-        )
+        # Создаем WebApp кнопку
+        web_app = WebAppInfo(url=game_url)
+        keyboard = [[InlineKeyboardButton("🎮 Играть в TwGame", web_app=web_app)]]
 
-        # Отправляем ссылку с данными пользователя
-        await query.message.reply_text(
-            f"🔗 [Открыть игру]({game_url})",
-            parse_mode='Markdown'
+        await query.edit_message_text(
+            text="🎯 TwGame готова к игре!\n\n"
+                 "Нажмите кнопку ниже, чтобы открыть игру:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
         )
 
     elif query.data == 'show_profile':
