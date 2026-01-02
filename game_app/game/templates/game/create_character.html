@@ -206,7 +206,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .class-card::before {
@@ -415,26 +415,32 @@
             }
         }
 
-        /* Шторка с подробным описанием класса */
+        /* Окно с подробным описанием класса */
         .class-detail-panel {
-            position: fixed;
-            top: 0;
+            position: absolute;
+            top: 100%;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgb(10, 10, 15);
-            z-index: 10000;
+            right: 0;
+            width: 100%;
+            max-width: 320px;
+            background: var(--bg-overlay);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-strong);
+            z-index: 1000;
             opacity: 0;
             visibility: hidden;
+            transform: translateY(-10px);
             transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
             pointer-events: auto;
+            margin-top: var(--spacing-sm);
         }
 
         .class-detail-panel.active {
             opacity: 1;
             visibility: visible;
+            transform: translateY(0);
         }
 
         /* Затемнение основного контента при активной шторке */
@@ -454,110 +460,95 @@
         }
 
         .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--spacing-lg);
+            padding: var(--spacing-md);
             border-bottom: 1px solid var(--border-color);
+            text-align: center;
         }
 
         .panel-header h3 {
             margin: 0;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 700;
-        }
-
-        .close-panel {
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: var(--spacing-sm);
-            border-radius: var(--border-radius-small);
-            transition: background 0.3s ease;
-        }
-
-        .close-panel:hover {
-            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent-primary);
         }
 
         .panel-content {
-            flex: 1;
-            padding: var(--spacing-xl);
+            padding: var(--spacing-lg);
             display: flex;
-            gap: var(--spacing-xl);
-            align-items: flex-start;
+            flex-direction: column;
+            gap: var(--spacing-md);
         }
 
         .detail-image {
-            flex-shrink: 0;
+            text-align: center;
         }
 
         .detail-image img {
-            width: 200px;
-            height: 280px;
-            border-radius: var(--border-radius);
+            width: 120px;
+            height: 160px;
+            border-radius: var(--border-radius-small);
             object-fit: cover;
             object-position: top center;
             border: 2px solid var(--border-color);
         }
 
         .detail-info {
-            flex: 1;
+            text-align: center;
         }
 
         .detail-description {
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: var(--spacing-xl);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: var(--spacing-md);
             color: var(--text-secondary);
         }
 
         .detail-stats {
-            background: var(--bg-tertiary);
-            border-radius: var(--border-radius-small);
-            padding: var(--spacing-lg);
-            border: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-sm);
         }
 
         .stat-row {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .stat-row:last-child {
-            margin-bottom: 0;
+            padding: var(--spacing-xs);
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-small);
+            border: 1px solid var(--border-color);
         }
 
         .stat-label {
+            font-size: 0.8rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .stat-value {
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--accent-secondary);
+            margin-top: var(--spacing-xs);
         }
 
-        /* Мобильная адаптация для шторки */
+        /* Мобильная адаптация для всплывающих панелей */
         @media (max-width: 768px) {
-            .panel-content {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                padding: var(--spacing-lg);
-            }
-
-            .detail-image img {
-                width: 150px;
-                height: 210px;
+            .class-detail-panel {
+                max-width: 280px;
+                left: 50%;
+                transform: translateX(-50%) translateY(-10px);
             }
 
             .detail-stats {
-                width: 100%;
+                grid-template-columns: 1fr;
+            }
+
+            .detail-image img {
+                width: 100px;
+                height: 140px;
             }
         }
 
@@ -595,48 +586,47 @@
                         <img src="/static/images/{{ class_info.image }}" alt="{{ class_info.name }}" class="class-image" onerror="this.style.display='none'">
                         <div class="class-emoji">{{ class_info.emoji }}</div>
                         <div class="class-name">{{ class_info.name }}</div>
+
+                        <!-- Всплывающее окно с описанием -->
+                        <div class="class-detail-panel" data-class-panel="{{ class_info.type }}">
+                            <div class="panel-header">
+                                <h3>{{ class_info.emoji }} {{ class_info.name }}</h3>
+                            </div>
+                            <div class="panel-content">
+                                <div class="detail-image">
+                                    <img src="/static/images/{{ class_info.image }}" alt="{{ class_info.name }}">
+                                </div>
+                                <div class="detail-info">
+                                    <div class="detail-description">
+                                        {{ class_info.description }}
+                                    </div>
+                                    <div class="detail-stats">
+                                        <div class="stat-row">
+                                            <span class="stat-label">Здоровье:</span>
+                                            <span class="stat-value">{{ class_info.health_base }}</span>
+                                        </div>
+                                        <div class="stat-row">
+                                            <span class="stat-label">Мана:</span>
+                                            <span class="stat-value">{{ class_info.mana_base }}</span>
+                                        </div>
+                                        <div class="stat-row">
+                                            <span class="stat-label">Атака:</span>
+                                            <span class="stat-value">{{ class_info.attack_base }}</span>
+                                        </div>
+                                        <div class="stat-row">
+                                            <span class="stat-label">Защита:</span>
+                                            <span class="stat-value">{{ class_info.defense_base }}</span>
+                                        </div>
+                                        <div class="stat-row">
+                                            <span class="stat-label">Скорость:</span>
+                                            <span class="stat-value">{{ class_info.speed_base }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     {% endfor %}
-                </div>
-
-                <!-- Шторка с подробным описанием класса -->
-                <div class="class-detail-panel" id="classDetailPanel">
-                    <div class="panel-header">
-                        <h3 id="detailTitle">Выберите класс</h3>
-                        <button class="close-panel" id="closePanel">✕</button>
-                    </div>
-                    <div class="panel-content">
-                        <div class="detail-image">
-                            <img id="detailImage" src="" alt="" style="display: none;">
-                        </div>
-                        <div class="detail-info">
-                            <div class="detail-description" id="detailDescription">
-                                Выберите класс персонажа, чтобы увидеть подробное описание его способностей и характеристик.
-                            </div>
-                            <div class="detail-stats" id="detailStats">
-                                <div class="stat-row">
-                                    <span class="stat-label">Здоровье:</span>
-                                    <span class="stat-value" id="healthStat">-</span>
-                                </div>
-                                <div class="stat-row">
-                                    <span class="stat-label">Мана:</span>
-                                    <span class="stat-value" id="manaStat">-</span>
-                                </div>
-                                <div class="stat-row">
-                                    <span class="stat-label">Атака:</span>
-                                    <span class="stat-value" id="attackStat">-</span>
-                                </div>
-                                <div class="stat-row">
-                                    <span class="stat-label">Защита:</span>
-                                    <span class="stat-value" id="defenseStat">-</span>
-                                </div>
-                                <div class="stat-row">
-                                    <span class="stat-label">Скорость:</span>
-                                    <span class="stat-value" id="speedStat">-</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -669,109 +659,46 @@ console.log('Telegram user data loaded:', telegramUser);
                 event.preventDefault();
                 event.stopPropagation();
 
+                const classType = this.dataset.class;
+                const panel = this.querySelector('.class-detail-panel');
+
+                // Close all other panels
+                document.querySelectorAll('.class-detail-panel').forEach(p => {
+                    if (p !== panel) {
+                        p.classList.remove('active');
+                    }
+                });
+
                 // Remove selected class from all cards
                 document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
 
-                // Add selected class to clicked card
-                this.classList.add('selected');
-                selectedClass = this.dataset.class;
+                // Toggle panel
+                if (panel.classList.contains('active')) {
+                    panel.classList.remove('active');
+                    this.classList.remove('selected');
+                    selectedClass = null;
+                } else {
+                    panel.classList.add('active');
+                    this.classList.add('selected');
+                    selectedClass = classType;
+                }
 
                 console.log('Selected class:', selectedClass);
-
-                // Show detail panel
-                showClassDetail(selectedClass);
-
                 updateCreateButton();
             });
         });
 
-        // Class detail data
-        const classDetails = {
-            'warrior': {
-                title: 'Воин ⚔️',
-                description: 'Могучий боец ближнего боя, специализирующийся на защите и выживании. Воины обладают высокой силой и защитой, что делает их идеальными танками в команде. Они могут выдерживать большое количество урона и защищать союзников.',
-                image: '/static/images/warrior.jpg',
-                stats: {
-                    health: '120',
-                    mana: '60',
-                    attack: '15',
-                    defense: '12',
-                    speed: '8'
-                }
-            },
-            'mage': {
-                title: 'Маг 🔮',
-                description: 'Повелитель магии и заклинаний, обладающий огромной магической силой. Маги могут наносить массовый урон и контролировать поле боя с помощью мощных заклинаний. Они уязвимы в ближнем бою, но их магия компенсирует эту слабость.',
-                image: '/static/images/mage.jpg',
-                stats: {
-                    health: '80',
-                    mana: '120',
-                    attack: '12',
-                    defense: '6',
-                    speed: '10'
-                }
-            },
-            'assassin': {
-                title: 'Разбойник 🗡️',
-                description: 'Ловкий убийца и мастер скрытности, специализирующийся на быстрых и точных ударах. Разбойники могут наносить критический урон и уклоняться от атак. Они идеальны для тактики "бей и беги" и неожиданных нападений.',
-                image: '/static/images/assassin.jpg',
-                stats: {
-                    health: '90',
-                    mana: '70',
-                    attack: '14',
-                    defense: '7',
-                    speed: '14'
-                }
-            }
-        };
-
-        // Show class detail panel
-        function showClassDetail(classType) {
-            const panel = document.getElementById('classDetailPanel');
-            const container = document.querySelector('.character-creation');
-            const header = document.querySelector('.header');
-            const createButton = document.querySelector('.create-button');
-            const detail = classDetails[classType];
-
-            if (detail) {
-                document.getElementById('detailTitle').textContent = detail.title;
-                document.getElementById('detailImage').src = detail.image;
-                document.getElementById('detailImage').style.display = 'block';
-                document.getElementById('detailDescription').textContent = detail.description;
-
-                // Update stats
-                document.getElementById('healthStat').textContent = detail.stats.health;
-                document.getElementById('manaStat').textContent = detail.stats.mana;
-                document.getElementById('attackStat').textContent = detail.stats.attack;
-                document.getElementById('defenseStat').textContent = detail.stats.defense;
-                document.getElementById('speedStat').textContent = detail.stats.speed;
-
-                panel.classList.add('active');
-                container.classList.add('has-panel-active');
-                header.classList.add('has-panel-active');
-                createButton.classList.add('has-panel-active');
-            }
-        }
-
-        // Close panel
-        function closePanel() {
-            const panel = document.getElementById('classDetailPanel');
-            const container = document.querySelector('.character-creation');
-            const header = document.querySelector('.header');
-            const createButton = document.querySelector('.create-button');
-
-            panel.classList.remove('active');
-            container.classList.remove('has-panel-active');
-            header.classList.remove('has-panel-active');
-            createButton.classList.remove('has-panel-active');
-        }
-
-        document.getElementById('closePanel').addEventListener('click', closePanel);
-
-        // Close panel when clicking outside
-        document.getElementById('classDetailPanel').addEventListener('click', function(event) {
-            if (event.target === this) {
-                closePanel();
+        // Close panels when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.class-card')) {
+                document.querySelectorAll('.class-detail-panel').forEach(panel => {
+                    panel.classList.remove('active');
+                });
+                document.querySelectorAll('.class-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                selectedClass = null;
+                updateCreateButton();
             }
         });
 
