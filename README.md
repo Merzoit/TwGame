@@ -5,7 +5,7 @@
 ## 🚀 Демо
 
 - **Telegram бот**: [@MerzoitCodeBot](https://t.me/MerzoitCodeBot)
-- **Веб-приложение**: [Railway App](https://twgame-production.up.railway.app/) (скоро будет доступно)
+- **Веб-приложение**: [Railway App](https://twgame-production.up.railway.app/)
 
 ## Описание проекта
 

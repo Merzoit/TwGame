@@ -1,7 +1,7 @@
 # Django settings
 DEBUG=False
 SECRET_KEY=your-secret-key-here
-ALLOWED_HOSTS=your-railway-app-url.com,localhost,127.0.0.1
+ALLOWED_HOSTS=twgame-production.up.railway.app,localhost,127.0.0.1
 
 # Database settings (Railway will provide these automatically)
 DATABASE_ENGINE=django.db.backends.postgresql

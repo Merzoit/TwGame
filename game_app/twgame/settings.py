@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-lay-$2dym6u-rssyu#5b(=(dz4v&qwrqul2l)_*7xfoj9nfy&y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0,twgame-production.up.railway.app').split(',')
 
 
 # Application definition
@@ -148,6 +148,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "https://web.telegram.org",
     "https://t.me",
+    "https://twgame-production.up.railway.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True

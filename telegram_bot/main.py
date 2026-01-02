@@ -37,10 +37,29 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     await query.answer()
 
     if query.data == 'play_game':
-        # Пока просто показываем сообщение, позже здесь будет ссылка на веб-интерфейс
+        # Отправляем ссылку на веб-интерфейс игры
+        keyboard = [
+            [InlineKeyboardButton("🎮 Открыть игру", url="https://twgame-production.up.railway.app/")],
+            [InlineKeyboardButton("⬅️ Назад", callback_data='back_to_menu')]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
         await query.edit_message_text(
-            text="🎯 Игра запускается...\n\n"
-                 "В ближайшее время здесь появится ссылка на игровой интерфейс!"
+            text="🎯 TwGame готова к игре!\n\n"
+                 "Нажмите кнопку ниже, чтобы открыть игровой интерфейс:",
+            reply_markup=reply_markup
+        )
+
+    elif query.data == 'back_to_menu':
+        keyboard = [
+            [InlineKeyboardButton("🎮 Играть", callback_data='play_game')]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        await query.edit_message_text(
+            text="Добро пожаловать в TwGame! 🚀\n\n"
+                 "Нажмите кнопку ниже, чтобы начать игру:",
+            reply_markup=reply_markup
         )
 
 def main() -> None:
