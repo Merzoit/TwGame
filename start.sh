@@ -12,5 +12,8 @@ python manage.py migrate
 # Сбор статических файлов
 python manage.py collectstatic --noinput
 
-# Запуск сервера с Gunicorn
-gunicorn twgame.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --threads 2
+# Возврат в корневую директорию
+cd ..
+
+# Запуск supervisor для управления процессами
+exec supervisord -c supervisord.conf
