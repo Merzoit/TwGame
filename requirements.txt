@@ -6,7 +6,7 @@ channels==4.1.0
 channels-redis==4.2.0
 
 # Telegram bot
-python-telegram-bot==20.7
+python-telegram-bot==22.5
 
 # Production dependencies
 gunicorn==21.2.0
