@@ -343,7 +343,7 @@
         .character-info-card h3 {
             margin: 0 0 var(--spacing-md) 0;
             font-size: 1.1rem;
-            color: var(--accent-primary);
+            color: var(--text-primary);
             text-align: center;
         }
 
@@ -388,6 +388,51 @@
         .twitch-connect-small:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(100, 65, 165, 0.5);
+        }
+
+        .player-twitch-connect {
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .twitch-connect-bottom {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: linear-gradient(45deg, #6441a5, #9146ff);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-small);
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(100, 65, 165, 0.3);
+        }
+
+        .twitch-connect-bottom:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(100, 65, 165, 0.5);
+        }
+
+        .character-image-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .character-portrait {
+            width: 120px;
+            height: 160px;
+            object-fit: cover;
+            object-position: top center;
+            border-radius: var(--border-radius-small);
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .character-stats-summary.stats-row-3 {
+            grid-template-columns: repeat(3, 1fr);
         }
 
         .character-summary {
@@ -550,12 +595,21 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
+            .character-stats-summary.stats-row-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
             .character-display {
                 width: 160px;
                 height: 80px;
                 bottom: var(--spacing-lg);
                 right: var(--spacing-lg);
                 padding: var(--spacing-sm);
+            }
+
+            .character-portrait {
+                width: 100px;
+                height: 140px;
             }
 
             .character-avatar {
@@ -653,7 +707,7 @@
         .stats-info-card h3 {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.4rem;
-            color: var(--accent-tertiary);
+            color: var(--text-primary);
             margin-bottom: var(--spacing-xl);
             text-align: center;
             position: relative;
@@ -832,6 +886,15 @@
             .character-stats-summary.stats-row {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .character-stats-summary.stats-row-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .character-portrait {
+                width: 80px;
+                height: 110px;
+            }
         }
     </style>
 </head>
@@ -971,19 +1034,14 @@
                     </div>
                 </div>
 
-                <!-- Twitch информация -->
-                <div class="player-twitch-info">
-                    {% if player.twitch_connected %}
-                    <div class="twitch-info-text">
-                        <span class="twitch-label">Twitch:</span>
-                        <span class="twitch-value">{{ player.twitch_username }} / {{ player.twitch_id }}</span>
-                    </div>
-                    {% else %}
-                    <button class="twitch-connect-small" onclick="connectTwitch()">
+                {% if not player.twitch_connected %}
+                <!-- Кнопка подключения Twitch внизу блока -->
+                <div class="player-twitch-connect">
+                    <button class="twitch-connect-bottom" onclick="connectTwitch()">
                         🔗 Подключить Twitch
                     </button>
-                    {% endif %}
                 </div>
+                {% endif %}
 
                 <div class="character-info-card">
                     <h3>Персонаж</h3>
@@ -993,7 +1051,12 @@
                             <div class="character-class-large">{{ character.get_character_class_display }}</div>
                             <div class="character-level-large">Уровень {{ character.level }}</div>
                         </div>
-                        <div class="character-stats-summary health-mana">
+                        <!-- Картинка персонажа -->
+                        <div class="character-image-container">
+                            <img src="/static/images/{{ character.class_type|lower }}.jpg" alt="{{ character.name }}" class="character-portrait">
+                        </div>
+                        <!-- Характеристики по 3 в строчку -->
+                        <div class="character-stats-summary stats-row-3">
                             <div class="stat-summary">
                                 <span class="stat-value">{{ character.current_health }}</span>
                                 <span class="stat-label">Здоровье</span>
@@ -1002,8 +1065,12 @@
                                 <span class="stat-value">{{ character.current_mana }}</span>
                                 <span class="stat-label">Мана</span>
                             </div>
+                            <div class="stat-summary">
+                                <span class="stat-value">{{ character.experience }}</span>
+                                <span class="stat-label">Опыт</span>
+                            </div>
                         </div>
-                        <div class="character-stats-summary stats-row">
+                        <div class="character-stats-summary stats-row-3">
                             <div class="stat-summary">
                                 <span class="stat-value">{{ character.attack_power|floatformat:0 }}</span>
                                 <span class="stat-label">Атака</span>
@@ -1015,10 +1082,6 @@
                             <div class="stat-summary">
                                 <span class="stat-value">{{ character.speed|floatformat:0 }}</span>
                                 <span class="stat-label">Скорость</span>
-                            </div>
-                            <div class="stat-summary">
-                                <span class="stat-value">{{ character.experience }}</span>
-                                <span class="stat-label">Опыт</span>
                             </div>
                         </div>
                     </div>
@@ -1056,32 +1119,6 @@
                 </div>
             </div>
 
-            <!-- Twitch интеграция -->
-            <div class="twitch-info-card">
-                <h3>🎮 Twitch</h3>
-                {% if player.twitch_connected %}
-                <div class="twitch-connected">
-                    <div class="twitch-status">
-                        <span class="twitch-checkmark">✅</span>
-                        <span class="twitch-text">Подключен</span>
-                    </div>
-                    <div class="twitch-details">
-                        <div class="twitch-username">{{ player.twitch_username }}</div>
-                        <div class="twitch-id">ID: {{ player.twitch_id }}</div>
-                    </div>
-                </div>
-                {% else %}
-                <div class="twitch-not-connected">
-                    <div class="twitch-status">
-                        <span class="twitch-warning">⚠️</span>
-                        <span class="twitch-text">Не подключен</span>
-                    </div>
-                    <button class="twitch-connect-button" onclick="connectTwitch()">
-                        🔗 Подключить Twitch
-                    </button>
-                </div>
-                {% endif %}
-            </div>
             {% endif %}
 
         </div>
