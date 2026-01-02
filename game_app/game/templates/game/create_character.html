@@ -215,23 +215,9 @@
     <script>
         console.log('Character creation script loaded');
 
-        // Telegram WebApp data - URL decode if needed
-        let telegramUser = {{ telegram_user|safe }};
-        try {
-            // If data is URL-encoded, decode it
-            if (typeof telegramUser === 'string' && telegramUser.includes('%')) {
-                telegramUser = JSON.parse(decodeURIComponent(telegramUser));
-            }
-            // Fix null values that come from Python as None
-            if (telegramUser && telegramUser.last_name === null) {
-                telegramUser.last_name = undefined;
-            }
-            console.log('Telegram user data parsed:', telegramUser);
-        } catch (e) {
-            console.error('Error parsing telegram user data:', e);
-            // Fallback
-            telegramUser = {};
-        }
+// Telegram WebApp data - already JSON-encoded from Django
+let telegramUser = {{ telegram_user_json|safe }};
+console.log('Telegram user data loaded:', telegramUser);
 
         let selectedClass = null;
         let characterName = '';

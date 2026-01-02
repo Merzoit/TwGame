@@ -19,7 +19,7 @@ def home(request):
             'version': '0.1.0',
         })
 
-    # Парсим данные пользователя из Telegram (URL-decoded)
+                # Парсим данные пользователя из Telegram (URL-decoded)
     try:
         import json
         import urllib.parse
@@ -45,11 +45,15 @@ def home(request):
             else:
                 # Персонажа нет - показываем страницу создания персонажа
                 character_classes = PlayerService.get_character_classes()
+
+                # Конвертируем user_data в JSON для безопасной передачи в JavaScript
+                telegram_user_json = json.dumps(user_data, ensure_ascii=False)
+
                 return render(request, 'game/create_character.html', {
                     'game_name': 'TwGame',
                     'version': '0.1.0',
                     'character_classes': character_classes,
-                    'telegram_user': user_data,
+                    'telegram_user_json': telegram_user_json,
                 })
         else:
             return render(request, 'game/error.html', {
