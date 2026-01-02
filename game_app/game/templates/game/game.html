@@ -1192,18 +1192,17 @@
                     <div class="player-details">
                         <h2>{{ player.first_name }}{% if player.last_name %} {{ player.last_name }}{% endif %}</h2>
                         <p>@{{ player.username }}{% if player.username %} • {% endif %}ID: {{ player.telegram_id }}</p>
+                        {% if player.twitch_connected %}
+                            <p>Twitch / {{ player.twitch_username }} / {{ player.twitch_id }}</p>
+                        {% else %}
+                        <button class="twitch-connect-simple" onclick="connectTwitch()">
+                            🔗 Подключить Twitch
+                        </button>
+                        {% endif %}
                     </div>
                 </div>
 
-                {% if player.twitch_connected %}
-                <div class="player-twitch-simple">
-                    Twitch / {{ player.twitch_username }} / {{ player.twitch_id }}
-                </div>
-                {% else %}
-                <button class="twitch-connect-simple" onclick="connectTwitch()">
-                    🔗 Подключить Twitch
-                </button>
-                {% endif %}
+
 
                 <div class="character-info-card">
                     <h3>⚔️ Персонаж</h3>
