@@ -212,8 +212,16 @@
     </div>
 
     <script>
-        // Telegram WebApp data
-        const telegramUser = {{ telegram_user|safe }};
+// Telegram WebApp data - URL decode if needed
+let telegramUser = {{ telegram_user|safe }};
+try {
+    // If data is URL-encoded, decode it
+    if (typeof telegramUser === 'string' && telegramUser.includes('%')) {
+        telegramUser = JSON.parse(decodeURIComponent(telegramUser));
+    }
+} catch (e) {
+    console.error('Error parsing telegram user data:', e);
+}
         let selectedClass = null;
         let characterName = '';
 

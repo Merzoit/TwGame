@@ -18,10 +18,12 @@ def home(request):
             'version': '0.1.0',
         })
 
-    # Парсим данные пользователя из Telegram
+    # Парсим данные пользователя из Telegram (URL-decoded)
     try:
         import json
-        user_data = json.loads(telegram_user)
+        import urllib.parse
+        decoded_user = urllib.parse.unquote(telegram_user)
+        user_data = json.loads(decoded_user)
         telegram_id = user_data.get('id')
 
         if telegram_id:

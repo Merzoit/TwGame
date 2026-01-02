@@ -109,17 +109,31 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     user = query.from_user
 
     if query.data == 'play_game':
-        # Отправляем ссылку на веб-интерфейс игры
-        # Сайт сам определит - нужно ли создать персонажа или показать игру
+        # Отправляем ссылку на веб-интерфейс игры с данными пользователя
         await query.answer()
+
+        # Кодируем данные пользователя для передачи на сайт
+        import json
+        user_data = {
+            'id': user.id,
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name
+        }
+        user_json = json.dumps(user_data)
+        import urllib.parse
+        encoded_user = urllib.parse.quote(user_json)
+
+        game_url = f"https://twgame-production.up.railway.app/?user={encoded_user}"
+
         await query.edit_message_text(
             text="🎯 Открываем TwGame!\n\n"
                  "Перенаправляем вас в игру...",
         )
 
-        # Отправляем ссылку в отдельном сообщении
+        # Отправляем ссылку с данными пользователя
         await query.message.reply_text(
-            "🔗 [Открыть игру](https://twgame-production.up.railway.app/)",
+            f"🔗 [Открыть игру]({game_url})",
             parse_mode='Markdown'
         )
 
