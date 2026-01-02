@@ -36,11 +36,17 @@ def home(request):
                 character = PlayerService.get_character(telegram_id)
                 profile = PlayerService.get_player_profile(telegram_id)
 
+                # Вычисляем прогресс до следующего уровня
+                next_level_exp = character.level * 100
+                progress_percentage = (character.experience / next_level_exp * 100) if next_level_exp > 0 else 0
+
                 return render(request, 'game/game.html', {
                     'game_name': 'TwGame',
                     'version': '0.1.0',
                     'character': character,
                     'profile': profile,
+                    'next_level_exp': next_level_exp,
+                    'progress_percentage': progress_percentage,
                 })
             else:
                 # Персонажа нет - показываем страницу создания персонажа

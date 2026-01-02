@@ -453,16 +453,12 @@
 
         <div class="progress-section">
             <div class="progress-title">Прогресс до следующего уровня</div>
-            {% with next_level_exp=character.level|mul:100 %}
-            {% with progress_percentage=character.experience|div:next_level_exp|mul:100 %}
             <div class="progress-bar">
                 <div class="progress-fill" style="width: {{ progress_percentage|floatformat:0 }}%"></div>
             </div>
             <div class="progress-text">
                 {{ character.experience }} / {{ next_level_exp }} XP ({{ progress_percentage|floatformat:0 }}%)
             </div>
-            {% endwith %}
-            {% endwith %}
         </div>
 
         <div class="game-menu">
