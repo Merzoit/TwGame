@@ -348,19 +348,17 @@
             font-weight: bold;
         }
 
-        .character-content {
+        .character-header {
             display: flex;
-            gap: var(--spacing-xl);
-            align-items: flex-start;
-        }
-
-        .character-left {
-            flex: 0 0 auto;
-            text-align: center;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
         }
 
         .character-portrait-container {
-            margin-bottom: var(--spacing-md);
+            display: flex;
+            justify-content: center;
         }
 
         .character-portrait {
@@ -397,10 +395,9 @@
             font-weight: 500;
         }
 
-        .character-right {
-            flex: 1;
+        .character-stats-container {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             gap: var(--spacing-lg);
         }
 
@@ -721,17 +718,12 @@
                 height: 140px;
             }
 
-            .character-content {
-                flex-direction: column;
-                gap: var(--spacing-lg);
+            .character-header {
+                gap: var(--spacing-md);
+                margin-bottom: var(--spacing-lg);
             }
 
-            .character-left {
-                order: -1;
-            }
-
-            .character-right {
-                flex-direction: column;
+            .character-stats-container {
                 gap: var(--spacing-md);
             }
 
@@ -1023,12 +1015,12 @@
                 height: 110px;
             }
 
-            .character-content {
-                gap: var(--spacing-md);
+            .character-header {
+                gap: var(--spacing-sm);
+                margin-bottom: var(--spacing-md);
             }
 
-            .character-right {
-                flex-direction: column;
+            .character-stats-container {
                 gap: var(--spacing-sm);
             }
 
@@ -1201,57 +1193,56 @@
 
                 <div class="character-info-card">
                     <h3>⚔️ Персонаж</h3>
-                    <div class="character-content">
-                        <!-- Левая часть - портрет и базовая информация -->
-                        <div class="character-left">
-                            <div class="character-portrait-container">
-                                <img src="/static/images/{{ character.class_type|lower }}.jpg" alt="{{ character.name }}" class="character-portrait">
+
+                    <!-- Центральная часть - портрет и информация -->
+                    <div class="character-header">
+                        <div class="character-portrait-container">
+                            <img src="/static/images/{{ character.class_type|lower }}.jpg" alt="{{ character.name }}" class="character-portrait">
+                        </div>
+                        <div class="character-info-basic">
+                            <div class="character-name">{{ character.name }}</div>
+                            <div class="character-class">{{ character.get_character_class_display }}</div>
+                            <div class="character-level">Уровень {{ character.level }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Блоки характеристик -->
+                    <div class="character-stats-container">
+                        <div class="character-stats-section">
+                            <h4 class="stats-section-title">Основные</h4>
+                            <div class="character-stat">
+                                <span class="stat-icon">❤️</span>
+                                <span class="stat-label">Здоровье:</span>
+                                <span class="stat-value">{{ character.current_health }}</span>
                             </div>
-                            <div class="character-info-basic">
-                                <div class="character-name">{{ character.name }}</div>
-                                <div class="character-class">{{ character.get_character_class_display }}</div>
-                                <div class="character-level">Уровень {{ character.level }}</div>
+                            <div class="character-stat">
+                                <span class="stat-icon">🔵</span>
+                                <span class="stat-label">Мана:</span>
+                                <span class="stat-value">{{ character.current_mana }}</span>
+                            </div>
+                            <div class="character-stat">
+                                <span class="stat-icon">⭐</span>
+                                <span class="stat-label">Опыт:</span>
+                                <span class="stat-value">{{ character.experience }}</span>
                             </div>
                         </div>
 
-                        <!-- Правая часть - характеристики -->
-                        <div class="character-right">
-                            <div class="character-stats-section">
-                                <h4 class="stats-section-title">Основные</h4>
-                                <div class="character-stat">
-                                    <span class="stat-icon">❤️</span>
-                                    <span class="stat-label">Здоровье:</span>
-                                    <span class="stat-value">{{ character.current_health }}</span>
-                                </div>
-                                <div class="character-stat">
-                                    <span class="stat-icon">🔵</span>
-                                    <span class="stat-label">Мана:</span>
-                                    <span class="stat-value">{{ character.current_mana }}</span>
-                                </div>
-                                <div class="character-stat">
-                                    <span class="stat-icon">⭐</span>
-                                    <span class="stat-label">Опыт:</span>
-                                    <span class="stat-value">{{ character.experience }}</span>
-                                </div>
+                        <div class="character-stats-section">
+                            <h4 class="stats-section-title">Боевые</h4>
+                            <div class="character-stat">
+                                <span class="stat-icon">⚔️</span>
+                                <span class="stat-label">Атака:</span>
+                                <span class="stat-value">{{ character.attack_power|floatformat:0 }}</span>
                             </div>
-
-                            <div class="character-stats-section">
-                                <h4 class="stats-section-title">Боевые</h4>
-                                <div class="character-stat">
-                                    <span class="stat-icon">⚔️</span>
-                                    <span class="stat-label">Атака:</span>
-                                    <span class="stat-value">{{ character.attack_power|floatformat:0 }}</span>
-                                </div>
-                                <div class="character-stat">
-                                    <span class="stat-icon">🛡️</span>
-                                    <span class="stat-label">Защита:</span>
-                                    <span class="stat-value">{{ character.defense|floatformat:0 }}</span>
-                                </div>
-                                <div class="character-stat">
-                                    <span class="stat-icon">💨</span>
-                                    <span class="stat-label">Скорость:</span>
-                                    <span class="stat-value">{{ character.speed|floatformat:0 }}</span>
-                                </div>
+                            <div class="character-stat">
+                                <span class="stat-icon">🛡️</span>
+                                <span class="stat-label">Защита:</span>
+                                <span class="stat-value">{{ character.defense|floatformat:0 }}</span>
+                            </div>
+                            <div class="character-stat">
+                                <span class="stat-icon">💨</span>
+                                <span class="stat-label">Скорость:</span>
+                                <span class="stat-value">{{ character.speed|floatformat:0 }}</span>
                             </div>
                         </div>
                     </div>
