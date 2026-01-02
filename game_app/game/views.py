@@ -45,6 +45,7 @@ def home(request):
                     'version': '0.1.0',
                     'character': character,
                     'profile': profile,
+                    'player': player,
                     'next_level_exp': next_level_exp,
                     'progress_percentage': progress_percentage,
                 })
@@ -85,6 +86,11 @@ def create_character(request):
 
         if not all([telegram_id, character_name, class_type]):
             return JsonResponse({'success': False, 'error': 'Недостаточно данных'})
+
+        # Проверяем, существует ли уже персонаж с таким именем
+        from .models import Character
+        if Character.objects.filter(name__iexact=character_name).exists():
+            return JsonResponse({'success': False, 'error': f'Персонаж с именем "{character_name}" уже существует. Выберите другое имя.'})
 
         # Создаем персонажа
         character = PlayerService.create_character(

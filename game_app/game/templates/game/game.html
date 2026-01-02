@@ -277,10 +277,129 @@
             position: relative;
             z-index: 10;
             transition: filter 0.3s ease;
+            padding: var(--spacing-xl);
         }
 
         .main-content.menu-open {
             filter: blur(2px);
+        }
+
+        /* Секция информации об игроке */
+        .player-info-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-lg);
+            background: var(--bg-overlay);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .player-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--accent-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--bg-primary);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .player-details h2 {
+            margin: 0 0 var(--spacing-xs) 0;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .player-details p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .character-info-card {
+            background: var(--bg-overlay);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .character-info-card h3 {
+            margin: 0 0 var(--spacing-md) 0;
+            font-size: 1.1rem;
+            color: var(--accent-primary);
+            text-align: center;
+        }
+
+        .character-summary {
+            display: flex;
+            gap: var(--spacing-lg);
+            align-items: center;
+        }
+
+        .character-basic {
+            flex: 1;
+        }
+
+        .character-name-large {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .character-class-large {
+            font-size: 1rem;
+            color: var(--accent-secondary);
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .character-level-large {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .character-stats-summary {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .stat-summary {
+            text-align: center;
+            padding: var(--spacing-sm);
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-small);
+            border: 1px solid var(--border-color);
+            min-width: 80px;
+        }
+
+        .stat-summary .stat-value {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-summary .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .character-display {
@@ -353,6 +472,26 @@
 
         /* Мобильная адаптация */
         @media (max-width: 768px) {
+            .main-content {
+                padding: var(--spacing-lg);
+            }
+
+            .player-info {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--spacing-md);
+            }
+
+            .character-summary {
+                flex-direction: column;
+                gap: var(--spacing-md);
+                text-align: center;
+            }
+
+            .character-stats-summary {
+                justify-content: center;
+            }
+
             .character-display {
                 width: 160px;
                 height: 80px;
@@ -567,9 +706,47 @@
 
         <!-- Основной контент -->
         <div class="main-content" id="mainContent">
+            <!-- Информация об игроке -->
+            <div class="player-info-section">
+                <div class="player-info">
+                    <div class="player-avatar">
+                        {{ player.first_name|first|upper }}
+                    </div>
+                    <div class="player-details">
+                        <h2>{{ player.first_name }}{% if player.last_name %} {{ player.last_name }}{% endif %}</h2>
+                        <p>@{{ player.username }}{% if player.username %} • {% endif %}ID: {{ player.telegram_id }}</p>
+                    </div>
+                </div>
+
+                <div class="character-info-card">
+                    <h3>Персонаж</h3>
+                    <div class="character-summary">
+                        <div class="character-basic">
+                            <div class="character-name-large">{{ character.name }}</div>
+                            <div class="character-class-large">{{ character.get_character_class_display }}</div>
+                            <div class="character-level-large">Уровень {{ character.level }}</div>
+                        </div>
+                        <div class="character-stats-summary">
+                            <div class="stat-summary">
+                                <span class="stat-value">{{ character.current_health }}/{{ character.max_health }}</span>
+                                <span class="stat-label">Здоровье</span>
+                            </div>
+                            <div class="stat-summary">
+                                <span class="stat-value">{{ character.current_mana }}/{{ character.max_mana }}</span>
+                                <span class="stat-label">Мана</span>
+                            </div>
+                            <div class="stat-summary">
+                                <span class="stat-value">{{ profile.gold }}</span>
+                                <span class="stat-label">Золото</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Карточка персонажа в углу -->
             <div class="character-display">
-                <img src="/static/images/logo_profile.png" alt="Profile" class="character-avatar">
+                <img src="/static/images/{{ character.character_class|lower }}.jpg" alt="{{ character.name }}" class="character-avatar">
                 <div class="character-info">
                     <div class="character-name">{{ character.name }}</div>
                     <div class="character-class">{{ character.get_character_class_display }}</div>
