@@ -1,0 +1,15 @@
+# Django settings
+DEBUG=False
+SECRET_KEY=your-secret-key-here
+ALLOWED_HOSTS=your-railway-app-url.com,localhost,127.0.0.1
+
+# Database settings (Railway will provide these automatically)
+DATABASE_ENGINE=django.db.backends.postgresql
+DATABASE_NAME=
+DATABASE_USER=
+DATABASE_PASSWORD=
+DATABASE_HOST=
+DATABASE_PORT=
+
+# Telegram Bot Token
+TELEGRAM_BOT_TOKEN=8567389465:AAGf6VKykyl6REaiDz-Vqu2QTacQbvURS7k
