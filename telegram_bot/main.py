@@ -17,6 +17,14 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'twgame.settings')
 import django
 django.setup()
 
+# Проверяем подключение к базе данных
+try:
+    from django.db import connection
+    cursor = connection.cursor()
+    logger.info("Database connection successful")
+except Exception as e:
+    logger.error(f"Database connection failed: {e}")
+
 from django.utils import asyncio as django_asyncio
 from asgiref.sync import sync_to_async
 from game.services import PlayerService
