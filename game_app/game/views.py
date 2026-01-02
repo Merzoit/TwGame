@@ -28,6 +28,14 @@ def home(request):
         telegram_id = user_data.get('id')
 
         if telegram_id:
+            # Получаем или создаем игрока
+            player, created = PlayerService.get_or_create_player(
+                telegram_id=telegram_id,
+                username=user_data.get('username'),
+                first_name=user_data.get('first_name'),
+                last_name=user_data.get('last_name')
+            )
+
             # Проверяем, есть ли у пользователя персонаж
             has_character = PlayerService.has_character(telegram_id)
 
