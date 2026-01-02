@@ -284,12 +284,6 @@
             margin-bottom: var(--spacing-sm);
         }
 
-        .class-description {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            line-height: 1.4;
-        }
-
         .class-stats {
             font-size: 0.8rem;
             color: var(--text-muted);
@@ -430,8 +424,8 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: var(--bg-overlay);
-            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(25px);
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
@@ -443,6 +437,13 @@
         .class-detail-panel.active {
             opacity: 1;
             visibility: visible;
+        }
+
+        /* Затемнение основного контента при активной шторке */
+        .character-creation.has-panel-active {
+            pointer-events: none;
+            opacity: 0.3;
+            filter: blur(2px);
         }
 
         .panel-header {
@@ -587,7 +588,6 @@
                         <img src="/static/images/{{ class_info.image }}" alt="{{ class_info.name }}" class="class-image" onerror="this.style.display='none'">
                         <div class="class-emoji">{{ class_info.emoji }}</div>
                         <div class="class-name">{{ class_info.name }}</div>
-                        <div class="class-description">{{ class_info.description }}</div>
                     </div>
                     {% endfor %}
                 </div>
@@ -721,6 +721,7 @@ console.log('Telegram user data loaded:', telegramUser);
         // Show class detail panel
         function showClassDetail(classType) {
             const panel = document.getElementById('classDetailPanel');
+            const container = document.querySelector('.character-creation');
             const detail = classDetails[classType];
 
             if (detail) {
@@ -737,18 +738,25 @@ console.log('Telegram user data loaded:', telegramUser);
                 document.getElementById('speedStat').textContent = detail.stats.speed;
 
                 panel.classList.add('active');
+                container.classList.add('has-panel-active');
             }
         }
 
         // Close panel
-        document.getElementById('closePanel').addEventListener('click', function() {
-            document.getElementById('classDetailPanel').classList.remove('active');
-        });
+        function closePanel() {
+            const panel = document.getElementById('classDetailPanel');
+            const container = document.querySelector('.character-creation');
+
+            panel.classList.remove('active');
+            container.classList.remove('has-panel-active');
+        }
+
+        document.getElementById('closePanel').addEventListener('click', closePanel);
 
         // Close panel when clicking outside
         document.getElementById('classDetailPanel').addEventListener('click', function(event) {
             if (event.target === this) {
-                this.classList.remove('active');
+                closePanel();
             }
         });
 
