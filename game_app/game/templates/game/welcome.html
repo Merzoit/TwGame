@@ -2,84 +2,305 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>{{ game_name }} - Добро пожаловать</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
+        :root {
+            --primary-color: #1a1a2e;
+            --secondary-color: #16213e;
+            --accent-color: #0f3460;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --success-color: #00d4aa;
+            --warning-color: #ff6b6b;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --border-radius: 16px;
+            --border-radius-small: 12px;
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gradient-primary);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Анимированный фон */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-10px) rotate(120deg); }
+            66% { transform: translateY(10px) rotate(240deg); }
+        }
+
+        .welcome-container {
+            position: relative;
+            z-index: 10;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: var(--spacing-lg);
+            text-align: center;
         }
 
-        .welcome-container {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            max-width: 600px;
+        .logo-section {
+            margin-bottom: var(--spacing-xl);
+            animation: slideInUp 1s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .game-title {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 900;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--spacing-sm);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: -0.02em;
         }
 
         .game-subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            opacity: 0.9;
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xl);
+            font-weight: 300;
         }
 
-        .welcome-text {
-            font-size: 1.1rem;
-            margin-bottom: 30px;
+        .hero-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-strong);
+            max-width: 500px;
+            width: 100%;
+            animation: slideInUp 1s ease-out 0.3s both;
+        }
+
+        .hero-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+            display: block;
+        }
+
+        .hero-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            color: var(--success-color);
+        }
+
+        .hero-description {
+            font-size: 1rem;
             line-height: 1.6;
+            margin-bottom: var(--spacing-xl);
+            color: var(--text-secondary);
         }
 
-        .telegram-button {
-            background: #0088cc;
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: var(--gradient-secondary);
             color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 1.1rem;
             text-decoration: none;
-            display: inline-block;
-            transition: background 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--border-radius-small);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-soft);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
-        .telegram-button:hover {
-            background: #006699;
-            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .cta-button:active {
+            transform: translateY(0);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+            animation: slideInUp 1s ease-out 0.6s both;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-small);
+            padding: var(--spacing-lg);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-sm);
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .feature-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            .welcome-container {
+                padding: var(--spacing-md);
+            }
+
+            .hero-card {
+                padding: var(--spacing-lg);
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+
+            .cta-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Анимации появления */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .welcome-container {
+            animation: fadeIn 1s ease-out;
         }
     </style>
 </head>
 <body>
     <div class="welcome-container">
-        <h1 class="game-title">{{ game_name }}</h1>
-        <p class="game-subtitle">Версия {{ version }}</p>
-
-        <div class="welcome-text">
-            <p>🎮 Добро пожаловать в увлекательный мир TwGame!</p>
-            <p>Чтобы начать игру, вам нужно авторизоваться через Telegram и создать своего персонажа.</p>
-            <p>Перейдите в наш Telegram бот для начала приключения!</p>
+        <div class="logo-section">
+            <h1 class="game-title">{{ game_name }}</h1>
+            <p class="game-subtitle">Версия {{ version }}</p>
         </div>
 
-        <a href="https://t.me/MerzoitCodeBot" class="telegram-button">
-            🚀 Открыть Telegram бот
-        </a>
+        <div class="hero-card">
+            <div class="hero-icon">🎮</div>
+            <h2 class="hero-title">Добро пожаловать в TwGame!</h2>
+            <p class="hero-description">
+                Погрузитесь в захватывающий мир ролевой игры. Создайте своего уникального персонажа,
+                сражайтесь с монстрами, выполняйте квесты и становитесь легендой!
+            </p>
+            <a href="https://t.me/MerzoitCodeBot" class="cta-button">
+                <span>🚀</span>
+                Начать приключение
+            </a>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">⚔️</div>
+                <div class="feature-title">Эпические битвы</div>
+                <div class="feature-description">Сражайтесь с мощными противниками в динамичных боях</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🗺️</div>
+                <div class="feature-title">Исследование мира</div>
+                <div class="feature-description">Откройте для себя огромный мир полный секретов и сокровищ</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <div class="feature-title">Квесты и задания</div>
+                <div class="feature-description">Выполняйте увлекательные задания и получайте награды</div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

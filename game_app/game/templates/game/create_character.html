@@ -6,153 +6,332 @@
     <title>{{ game_name }} - Создание персонажа</title>
     {% csrf_token %}
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
+        :root {
+            --primary-color: #1a1a2e;
+            --secondary-color: #16213e;
+            --accent-color: #0f3460;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #888888;
+            --success-color: #00d4aa;
+            --warning-color: #ff6b6b;
+            --error-color: #ff4757;
+            --warrior-color: #ff6b35;
+            --mage-color: #4ecdc4;
+            --assassin-color: #6c5ce7;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-warrior: linear-gradient(135deg, #ff6b35, #ff8e53);
+            --gradient-mage: linear-gradient(135deg, #4ecdc4, #44a08d);
+            --gradient-assassin: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 20px rgba(0, 212, 170, 0.3);
+            --border-radius: 16px;
+            --border-radius-small: 12px;
+            --spacing-xs: 8px;
+            --spacing-sm: 12px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gradient-primary);
+            background-attachment: fixed;
+            color: var(--text-primary);
             min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Анимированный фон */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-10px) rotate(120deg); }
+            66% { transform: translateY(10px) rotate(240deg); }
         }
 
         .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--spacing-md);
             text-align: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-soft);
         }
 
         .game-title {
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .container {
-            max-width: 1200px;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            padding: calc(var(--spacing-xl) + 80px) var(--spacing-lg) var(--spacing-xl);
+            max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
         }
 
         .character-creation {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-strong);
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .step-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
+            font-weight: 700;
             text-align: center;
-            margin-bottom: 30px;
-            color: #ffd700;
+            margin-bottom: var(--spacing-xl);
+            color: var(--success-color);
+            position: relative;
         }
 
-        .name-input-section {
-            text-align: center;
-            margin-bottom: 40px;
+        .step-title::before {
+            content: '🏗️';
+            position: absolute;
+            left: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
         }
 
-        .name-input {
-            padding: 15px;
-            font-size: 1.1rem;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
+        .form-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: var(--spacing-md);
             background: rgba(255, 255, 255, 0.1);
-            color: white;
-            width: 300px;
-            max-width: 80%;
-            margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius-small);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
         }
 
-        .name-input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .name-input:focus {
+        .input-field:focus {
             outline: none;
-            border-color: #ffd700;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            border-color: var(--success-color);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.2);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-secondary);
         }
 
         .classes-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
         }
 
         .class-card {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
+            position: relative;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius-small);
+            padding: var(--spacing-md);
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid transparent;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .class-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-warrior);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .class-card.warrior.selected::before {
+            opacity: 1;
+        }
+
+        .class-card.mage::before {
+            background: var(--gradient-mage);
+        }
+
+        .class-card.mage.selected::before {
+            opacity: 1;
+        }
+
+        .class-card.assassin::before {
+            background: var(--gradient-assassin);
+        }
+
+        .class-card.assassin.selected::before {
+            opacity: 1;
         }
 
         .class-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            border-color: #ffd700;
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: var(--shadow-soft);
         }
 
         .class-card.selected {
-            border-color: #ffd700;
-            background: rgba(255, 215, 0, 0.1);
+            border-color: var(--success-color);
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-5px);
         }
 
         .class-image {
-            width: 120px;
-            height: 120px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
             object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            margin: 0 auto var(--spacing-sm);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .class-card.selected .class-image {
+            border-color: var(--text-primary);
+            transform: scale(1.1);
         }
 
         .class-name {
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+            color: var(--text-primary);
         }
 
         .class-emoji {
             font-size: 1.5rem;
-            margin-bottom: 10px;
+            margin-bottom: var(--spacing-sm);
         }
 
         .class-description {
-            font-size: 1rem;
-            opacity: 0.9;
-            margin-bottom: 15px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
         }
 
         .class-stats {
-            font-size: 0.9rem;
-            opacity: 0.8;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: var(--spacing-xs);
         }
 
         .create-button {
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
-            color: #333;
+            width: 100%;
+            padding: var(--spacing-lg) var(--spacing-xl);
+            background: var(--gradient-secondary);
+            color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
+            border-radius: var(--border-radius-small);
             font-size: 1.1rem;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-            display: block;
-            margin: 0 auto;
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+
+        .create-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .create-button:hover::before {
+            left: 100%;
         }
 
         .create-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .create-button:active {
+            transform: translateY(0);
         }
 
         .create-button:disabled {
@@ -161,54 +340,130 @@
             transform: none;
         }
 
-        .error-message {
-            color: #ff6b6b;
+        .create-button:disabled:hover {
+            transform: none;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .message {
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-small);
+            margin-bottom: var(--spacing-lg);
+            font-weight: 500;
             text-align: center;
-            margin-top: 20px;
-            font-weight: bold;
+        }
+
+        .error-message {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
         }
 
         .success-message {
-            color: #51cf66;
-            text-align: center;
-            margin-top: 20px;
-            font-weight: bold;
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            .container {
+                padding: calc(var(--spacing-lg) + 80px) var(--spacing-md) var(--spacing-lg);
+            }
+
+            .character-creation {
+                padding: var(--spacing-lg);
+            }
+
+            .classes-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+
+            .class-card {
+                display: flex;
+                align-items: center;
+                text-align: left;
+                padding: var(--spacing-md);
+            }
+
+            .class-image {
+                width: 60px;
+                height: 60px;
+                margin: 0 var(--spacing-md) 0 0;
+                flex-shrink: 0;
+            }
+
+            .step-title::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: var(--spacing-sm);
+            }
+
+            .container {
+                padding: calc(var(--spacing-md) + 70px) var(--spacing-sm) var(--spacing-md);
+            }
+
+            .character-creation {
+                padding: var(--spacing-md);
+            }
+        }
+
+        /* Анимации загрузки */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1 class="game-title">{{ game_name }}</h1>
-        <p>Создание персонажа</p>
     </div>
 
     <div class="container">
         <div class="character-creation">
-            <h2 class="step-title">🏗️ Создайте своего героя</h2>
+            <h2 class="step-title">Создайте своего героя</h2>
 
-            <div class="name-input-section">
-                <h3>1. Введите имя персонажа</h3>
-                <input type="text" id="characterName" class="name-input" placeholder="Имя героя" maxlength="20">
-            </div>
+            <div class="form-section">
+                <div class="form-group">
+                    <label class="form-label" for="characterName">🏷️ Имя персонажа</label>
+                    <input type="text" id="characterName" class="input-field" placeholder="Введите имя героя" maxlength="20">
+                </div>
 
-            <div class="classes-section">
-                <h3>2. Выберите класс</h3>
-                <div class="classes-grid" id="classesGrid">
+                <div class="form-group">
+                    <label class="form-label">⚔️ Выберите класс</label>
+                    <div class="classes-grid" id="classesGrid">
                     {% for class_info in character_classes %}
-                    <div class="class-card" data-class="{{ class_info.type }}">
-                        <img src="/static/images/{{ class_info.image }}" alt="{{ class_info.name }}" class="class-image">
+                    <div class="class-card {{ class_info.type|lower }}" data-class="{{ class_info.type }}">
+                        <img src="/static/images/{{ class_info.image }}" alt="{{ class_info.name }}" class="class-image" onerror="this.style.display='none'">
                         <div class="class-emoji">{{ class_info.emoji }}</div>
                         <div class="class-name">{{ class_info.name }}</div>
                         <div class="class-description">{{ class_info.description }}</div>
+                        <div class="class-stats">{{ class_info.stats }}</div>
                     </div>
                     {% endfor %}
                 </div>
             </div>
 
-            <button id="createButton" class="create-button" disabled>🎉 Создать персонажа</button>
+                </div>
+            </div>
 
-            <div id="errorMessage" class="error-message" style="display: none;"></div>
-            <div id="successMessage" class="success-message" style="display: none;"></div>
+            <button id="createButton" class="create-button" disabled>
+                <span>🎉</span>
+                Создать персонажа
+            </button>
+
+            <div id="errorMessage" class="message error-message" style="display: none;"></div>
+            <div id="successMessage" class="message success-message" style="display: none;"></div>
         </div>
     </div>
 
