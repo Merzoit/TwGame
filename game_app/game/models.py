@@ -10,6 +10,11 @@ class Player(models.Model):
     first_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Имя")
     last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Фамилия")
 
+    # Twitch интеграция
+    twitch_username = models.CharField(max_length=255, blank=True, null=True, verbose_name="Twitch username")
+    twitch_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="Twitch ID")
+    twitch_connected = models.BooleanField(default=False, verbose_name="Twitch подключен")
+
     # Системные поля
     created_at = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
@@ -77,7 +82,7 @@ class Character(models.Model):
         ('assassin', 'Ассасин'),
     ]
 
-    player = models.OneToOneField(Player, on_delete=models.CASCADE, related_name='character', verbose_name="Игрок")
+    player = models.OneToOneField(Player, on_delete=models.CASCADE, related_name='character', verbose_name="Игрок", null=True, blank=True)
     name = models.CharField(max_length=50, verbose_name="Имя персонажа")
     class_type = models.CharField(max_length=20, choices=CLASS_CHOICES, verbose_name="Класс")
 

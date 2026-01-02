@@ -32,6 +32,9 @@
             --spacing-lg: 16px;
             --spacing-xl: 20px;
             --spacing-2xl: 24px;
+
+            --success-color: #00d4aa;
+            --warning-color: #ffa500;
         }
 
         * {
@@ -581,6 +584,192 @@
         .game-container {
             animation: slideIn 0.5s ease-out;
         }
+
+        /* Расширенная статистика */
+        .stats-info-card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-2xl);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-color);
+        }
+
+        .stats-info-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            color: var(--accent-tertiary);
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+            position: relative;
+        }
+
+        .stats-info-card h3::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -8px;
+            width: 40px;
+            height: 2px;
+            background: var(--accent-tertiary);
+            border-radius: 1px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .stats-grid .stat-item {
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-small);
+            padding: var(--spacing-md);
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease;
+        }
+
+        .stats-grid .stat-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-grid .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stats-grid .stat-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent-secondary);
+        }
+
+        /* Twitch интеграция */
+        .twitch-info-card {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-2xl);
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-color);
+        }
+
+        .twitch-info-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            color: var(--accent-primary);
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+            position: relative;
+        }
+
+        .twitch-info-card h3::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -8px;
+            width: 40px;
+            height: 2px;
+            background: var(--accent-primary);
+            border-radius: 1px;
+        }
+
+        .twitch-connected {
+            text-align: center;
+        }
+
+        .twitch-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .twitch-checkmark {
+            font-size: 1.5rem;
+            margin-right: var(--spacing-sm);
+        }
+
+        .twitch-text {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--accent-secondary);
+        }
+
+        .twitch-details {
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-small);
+            padding: var(--spacing-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .twitch-username {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent-secondary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .twitch-id {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .twitch-not-connected {
+            text-align: center;
+        }
+
+        .twitch-warning {
+            font-size: 1.5rem;
+            margin-right: var(--spacing-sm);
+        }
+
+        .twitch-connect-button {
+            background: linear-gradient(45deg, #6441a5, #9146ff);
+            color: white;
+            border: none;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--border-radius-small);
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(100, 65, 165, 0.4);
+        }
+
+        .twitch-connect-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(100, 65, 165, 0.6);
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+
+            .stats-grid .stat-item {
+                padding: var(--spacing-sm);
+            }
+
+            .stats-grid .stat-label {
+                font-size: 0.7rem;
+            }
+
+            .stats-grid .stat-value {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
@@ -744,6 +933,64 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Расширенная статистика -->
+            <div class="stats-info-card">
+                <h3>📊 Статистика</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Опыт</div>
+                        <div class="stat-value">{{ character.experience }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Всего боев</div>
+                        <div class="stat-value">{{ profile.total_games }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Побед</div>
+                        <div class="stat-value">{{ profile.wins }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Поражений</div>
+                        <div class="stat-value">{{ profile.losses }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Процент побед</div>
+                        <div class="stat-value">{{ profile.win_rate }}%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Последний вход</div>
+                        <div class="stat-value">{{ profile.last_login|date:"d.m.Y H:i" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Twitch интеграция -->
+            <div class="twitch-info-card">
+                <h3>🎮 Twitch</h3>
+                {% if player.twitch_connected %}
+                <div class="twitch-connected">
+                    <div class="twitch-status">
+                        <span class="twitch-checkmark">✅</span>
+                        <span class="twitch-text">Подключен</span>
+                    </div>
+                    <div class="twitch-details">
+                        <div class="twitch-username">{{ player.twitch_username }}</div>
+                        <div class="twitch-id">ID: {{ player.twitch_id }}</div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="twitch-not-connected">
+                    <div class="twitch-status">
+                        <span class="twitch-warning">⚠️</span>
+                        <span class="twitch-text">Не подключен</span>
+                    </div>
+                    <button class="twitch-connect-button" onclick="connectTwitch()">
+                        🔗 Подключить Twitch
+                    </button>
+                </div>
+                {% endif %}
+            </div>
             {% endif %}
 
             <!-- Карточка персонажа в углу -->
@@ -888,6 +1135,18 @@
 
             console.log('Game UI initialized successfully');
         });
+
+        // Функция подключения Twitch
+        function connectTwitch() {
+            // Показываем сообщение о том, что функция в разработке
+            alert('🔗 Функция подключения Twitch находится в разработке!\n\nСкоро вы сможете связать свой Twitch аккаунт с игрой.');
+
+            // В будущем здесь будет:
+            // 1. Открытие окна авторизации Twitch
+            // 2. Обработка callback с токенами
+            // 3. Сохранение данных в базу данных
+            // 4. Обновление интерфейса
+        }
     </script>
 </body>
 </html>
