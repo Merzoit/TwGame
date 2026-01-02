@@ -198,15 +198,100 @@
         }
 
         .class-card {
-            position: relative;
             background: var(--bg-tertiary);
             border: 2px solid var(--border-color);
             border-radius: var(--border-radius-small);
-            padding: var(--spacing-md);
             cursor: pointer;
             transition: all 0.3s ease;
-            text-align: center;
-            overflow: visible;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .class-image {
+            width: 60px;
+            height: 80px;
+            border-radius: var(--border-radius-small);
+            object-fit: cover;
+            object-position: top center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .class-info {
+            flex: 1;
+            text-align: left;
+        }
+
+        .class-emoji {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+
+        .class-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .class-card.expanded .card-content {
+            max-height: 500px;
+        }
+
+        .class-description {
+            padding: var(--spacing-md);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .class-stats {
+            padding: var(--spacing-md);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--spacing-sm);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-sm);
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-small);
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
         }
 
         .class-card::before {
@@ -243,7 +328,6 @@
         }
 
         .class-card:hover {
-            transform: translateY(-3px);
             border-color: var(--border-hover);
             box-shadow: var(--shadow-soft);
         }
@@ -251,7 +335,11 @@
         .class-card.selected {
             border-color: var(--accent-primary);
             box-shadow: var(--shadow-glow);
-            transform: translateY(-3px);
+        }
+
+        .class-card.expanded {
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-glow);
         }
 
         .class-image {
@@ -415,33 +503,6 @@
             }
         }
 
-        /* Окно с подробным описанием класса */
-        .class-detail-panel {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            width: 100%;
-            max-width: 320px;
-            background: var(--bg-overlay);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-strong);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            pointer-events: auto;
-            margin-top: var(--spacing-sm);
-        }
-
-        .class-detail-panel.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
 
         /* Затемнение основного контента при активной шторке */
         .character-creation.has-panel-active {
@@ -459,96 +520,25 @@
             opacity: 0.3;
         }
 
-        .panel-header {
-            padding: var(--spacing-md);
-            border-bottom: 1px solid var(--border-color);
-            text-align: center;
-        }
 
-        .panel-header h3 {
-            margin: 0;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-        }
-
-        .panel-content {
-            padding: var(--spacing-lg);
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-md);
-        }
-
-        .detail-image {
-            text-align: center;
-        }
-
-        .detail-image img {
-            width: 120px;
-            height: 160px;
-            border-radius: var(--border-radius-small);
-            object-fit: cover;
-            object-position: top center;
-            border: 2px solid var(--border-color);
-        }
-
-        .detail-info {
-            text-align: center;
-        }
-
-        .detail-description {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: var(--spacing-md);
-            color: var(--text-secondary);
-        }
-
-        .detail-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--spacing-sm);
-        }
-
-        .stat-row {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: var(--spacing-xs);
-            background: var(--bg-tertiary);
-            border-radius: var(--border-radius-small);
-            border: 1px solid var(--border-color);
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent-secondary);
-            margin-top: var(--spacing-xs);
-        }
-
-        /* Мобильная адаптация для всплывающих панелей */
+        /* Мобильная адаптация для аккордеона */
         @media (max-width: 768px) {
-            .class-detail-panel {
-                max-width: 280px;
-                left: 50%;
-                transform: translateX(-50%) translateY(-10px);
+            .card-header {
+                padding: var(--spacing-sm);
             }
 
-            .detail-stats {
+            .class-image {
+                width: 50px;
+                height: 70px;
+            }
+
+            .stat-grid {
                 grid-template-columns: 1fr;
+                gap: var(--spacing-xs);
             }
 
-            .detail-image img {
-                width: 100px;
-                height: 140px;
+            .stat-item {
+                padding: var(--spacing-xs);
             }
         }
 
@@ -583,44 +573,40 @@
                     <div class="classes-grid" id="classesGrid">
                     {% for class_info in character_classes %}
                     <div class="class-card {{ class_info.type|lower }}" data-class="{{ class_info.type }}">
-                        <img src="/static/images/{{ class_info.image }}" alt="{{ class_info.name }}" class="class-image" onerror="this.style.display='none'">
-                        <div class="class-emoji">{{ class_info.emoji }}</div>
-                        <div class="class-name">{{ class_info.name }}</div>
-
-                        <!-- Всплывающее окно с описанием -->
-                        <div class="class-detail-panel" data-class-panel="{{ class_info.type }}">
-                            <div class="panel-header">
-                                <h3>{{ class_info.emoji }} {{ class_info.name }}</h3>
+                        <div class="card-header">
+                            <img src="/static/images/{{ class_info.image }}" alt="{{ class_info.name }}" class="class-image" onerror="this.style.display='none'">
+                            <div class="class-info">
+                                <div class="class-emoji">{{ class_info.emoji }}</div>
+                                <div class="class-name">{{ class_info.name }}</div>
                             </div>
-                            <div class="panel-content">
-                                <div class="detail-image">
-                                    <img src="/static/images/{{ class_info.image }}" alt="{{ class_info.name }}">
-                                </div>
-                                <div class="detail-info">
-                                    <div class="detail-description">
-                                        {{ class_info.description }}
+                        </div>
+
+                        <!-- Аккордеон с описанием -->
+                        <div class="card-content">
+                            <div class="class-description">
+                                {{ class_info.description }}
+                            </div>
+                            <div class="class-stats">
+                                <div class="stat-grid">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Здоровье</span>
+                                        <span class="stat-value">{{ class_info.health_base }}</span>
                                     </div>
-                                    <div class="detail-stats">
-                                        <div class="stat-row">
-                                            <span class="stat-label">Здоровье:</span>
-                                            <span class="stat-value">{{ class_info.health_base }}</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-label">Мана:</span>
-                                            <span class="stat-value">{{ class_info.mana_base }}</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-label">Атака:</span>
-                                            <span class="stat-value">{{ class_info.attack_base }}</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-label">Защита:</span>
-                                            <span class="stat-value">{{ class_info.defense_base }}</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-label">Скорость:</span>
-                                            <span class="stat-value">{{ class_info.speed_base }}</span>
-                                        </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Мана</span>
+                                        <span class="stat-value">{{ class_info.mana_base }}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Атака</span>
+                                        <span class="stat-value">{{ class_info.attack_base }}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Защита</span>
+                                        <span class="stat-value">{{ class_info.defense_base }}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Скорость</span>
+                                        <span class="stat-value">{{ class_info.speed_base }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -653,53 +639,32 @@ console.log('Telegram user data loaded:', telegramUser);
         let characterName = '';
         console.log('Initial state - selectedClass:', selectedClass, 'characterName:', characterName);
 
-        // Class selection
+        // Class selection - аккордеон
         document.querySelectorAll('.class-card').forEach(card => {
             card.addEventListener('click', function(event) {
                 event.preventDefault();
                 event.stopPropagation();
 
                 const classType = this.dataset.class;
-                const panel = this.querySelector('.class-detail-panel');
+                const isExpanded = this.classList.contains('expanded');
 
-                // Close all other panels
-                document.querySelectorAll('.class-detail-panel').forEach(p => {
-                    if (p !== panel) {
-                        p.classList.remove('active');
-                    }
+                // Close all other cards
+                document.querySelectorAll('.class-card').forEach(c => {
+                    c.classList.remove('expanded', 'selected');
                 });
 
-                // Remove selected class from all cards
-                document.querySelectorAll('.class-card').forEach(c => c.classList.remove('selected'));
-
-                // Toggle panel
-                if (panel.classList.contains('active')) {
-                    panel.classList.remove('active');
-                    this.classList.remove('selected');
+                // Toggle current card
+                if (isExpanded) {
+                    this.classList.remove('expanded', 'selected');
                     selectedClass = null;
                 } else {
-                    panel.classList.add('active');
-                    this.classList.add('selected');
+                    this.classList.add('expanded', 'selected');
                     selectedClass = classType;
                 }
 
                 console.log('Selected class:', selectedClass);
                 updateCreateButton();
             });
-        });
-
-        // Close panels when clicking outside
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('.class-card')) {
-                document.querySelectorAll('.class-detail-panel').forEach(panel => {
-                    panel.classList.remove('active');
-                });
-                document.querySelectorAll('.class-card').forEach(card => {
-                    card.classList.remove('selected');
-                });
-                selectedClass = null;
-                updateCreateButton();
-            }
         });
 
         // Name input
