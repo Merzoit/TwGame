@@ -61,7 +61,7 @@ python main.py
 - **Backend**: Django 5.1, Django REST Framework
 - **Frontend**: JavaScript, HTML5, CSS3 (Glass-morphism дизайн)
 - **Bot**: Python, python-telegram-bot
-- **Database**: PostgreSQL (Railway) / SQLite (development)
+- **Database**: PostgreSQL (production) / SQLite (development)
 - **Deployment**: Railway, Gunicorn, WhiteNoise
 
 ## 🚀 Деплой на Railway
@@ -71,6 +71,7 @@ python main.py
 ### Что запускается на сервере:
 - ✅ **Django веб-приложение** (порт $PORT)
 - ✅ **Telegram бот** (работает параллельно)
+- ✅ **PostgreSQL база данных** (Railway)
 
 ### Настройка переменных окружения в Railway:
 

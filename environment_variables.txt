@@ -3,13 +3,16 @@ DEBUG=False
 SECRET_KEY=your-secret-key-here
 ALLOWED_HOSTS=twgame-production.up.railway.app,localhost,127.0.0.1
 
-# Database settings (Railway will provide these automatically)
+# Database settings (Railway provides DATABASE_URL automatically)
+DATABASE_URL=postgresql://postgres:rSBvSGgxdQEmIFUKnVPVUJyEeQBcAaCB@crossover.proxy.rlwy.net:27043/railway
+
+# Alternative individual settings (if DATABASE_URL not available)
 DATABASE_ENGINE=django.db.backends.postgresql
-DATABASE_NAME=
-DATABASE_USER=
-DATABASE_PASSWORD=
-DATABASE_HOST=
-DATABASE_PORT=
+DATABASE_NAME=railway
+DATABASE_USER=postgres
+DATABASE_PASSWORD=rSBvSGgxdQEmIFUKnVPVUJyEeQBcAaCB
+DATABASE_HOST=crossover.proxy.rlwy.net
+DATABASE_PORT=27043
 
 # Telegram Bot Token
 TELEGRAM_BOT_TOKEN=8567389465:AAGf6VKykyl6REaiDz-Vqu2QTacQbvURS7k
