@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ game_name }}</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .game-title {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .game-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .menu-item {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-icon {
+            font-size: 2rem;
+        }
+
+        .menu-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .menu-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .coming-soon {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="game-title">{{ game_name }}</h1>
+        <p class="game-subtitle">Версия {{ version }} - В разработке</p>
+
+        <div class="game-menu">
+            <a href="#" class="menu-item coming-soon">
+                <div class="menu-icon">🏪</div>
+                <div class="menu-title">Магазин</div>
+                <div class="menu-description">Скоро будет доступно</div>
+            </a>
+
+            <a href="#" class="menu-item coming-soon">
+                <div class="menu-icon">🎒</div>
+                <div class="menu-title">Инвентарь</div>
+                <div class="menu-description">Скоро будет доступно</div>
+            </a>
+
+            <a href="#" class="menu-item coming-soon">
+                <div class="menu-icon">👤</div>
+                <div class="menu-title">Профиль</div>
+                <div class="menu-description">Скоро будет доступно</div>
+            </a>
+
+            <a href="#" class="menu-item coming-soon">
+                <div class="menu-icon">📜</div>
+                <div class="menu-title">Квесты</div>
+                <div class="menu-description">Скоро будет доступно</div>
+            </a>
+
+            <a href="#" class="menu-item coming-soon">
+                <div class="menu-icon">⚒️</div>
+                <div class="menu-title">Крафт</div>
+                <div class="menu-description">Скоро будет доступно</div>
+            </a>
+
+            <a href="#" class="menu-item coming-soon">
+                <div class="menu-icon">⚔️</div>
+                <div class="menu-title">Битвы</div>
+                <div class="menu-description">Скоро будет доступно</div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Базовый JavaScript для будущего функционала
+        console.log('TwGame loaded successfully!');
+
+        // Проверяем API статус при загрузке
+        fetch('/api/status/')
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Status:', data);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
+    </script>
+</body>
+</html>
