@@ -68,6 +68,10 @@ python main.py
 
 Проект автоматически развертывается на Railway при пуше в main ветку.
 
+### Что запускается на сервере:
+- ✅ **Django веб-приложение** (порт $PORT)
+- ✅ **Telegram бот** (работает параллельно)
+
 ### Настройка переменных окружения в Railway:
 
 В панели управления Railway добавьте следующие переменные:
@@ -75,10 +79,15 @@ python main.py
 ```bash
 DEBUG=False
 SECRET_KEY=ваш-секретный-ключ-django
-ALLOWED_HOSTS=your-railway-app-url.up.railway.app
+ALLOWED_HOSTS=twgame-production.up.railway.app,localhost,127.0.0.1
 DATABASE_URL=postgresql://... (Railway предоставит автоматически)
 TELEGRAM_BOT_TOKEN=8567389465:AAGf6VKykyl6REaiDz-Vqu2QTacQbvURS7k
 ```
+
+### Архитектура деплоя:
+- **Supervisor** управляет процессами
+- **Django** обслуживает веб-интерфейс игры
+- **Telegram Bot** обрабатывает команды пользователей
 
 ### Локальная разработка
 
