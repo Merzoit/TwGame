@@ -48,7 +48,7 @@
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
-            overflow: hidden;
+            overflow-y: auto;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -377,7 +377,8 @@
         }
 
         .character-stats-summary {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
             gap: var(--spacing-md);
         }
 
@@ -492,7 +493,7 @@
             }
 
             .character-stats-summary {
-                justify-content: center;
+                grid-template-columns: repeat(3, 1fr);
             }
 
             .character-display {
@@ -769,6 +770,10 @@
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .character-stats-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
@@ -926,8 +931,20 @@
                                 <span class="stat-label">Мана</span>
                             </div>
                             <div class="stat-summary">
-                                <span class="stat-value">{{ profile.gold }}</span>
-                                <span class="stat-label">Золото</span>
+                                <span class="stat-value">{{ character.attack_power|floatformat:0 }}</span>
+                                <span class="stat-label">Атака</span>
+                            </div>
+                            <div class="stat-summary">
+                                <span class="stat-value">{{ character.defense|floatformat:0 }}</span>
+                                <span class="stat-label">Защита</span>
+                            </div>
+                            <div class="stat-summary">
+                                <span class="stat-value">{{ character.speed|floatformat:0 }}</span>
+                                <span class="stat-label">Скорость</span>
+                            </div>
+                            <div class="stat-summary">
+                                <span class="stat-value">{{ character.experience }}</span>
+                                <span class="stat-label">Опыт</span>
                             </div>
                         </div>
                     </div>
@@ -938,10 +955,6 @@
             <div class="stats-info-card">
                 <h3>📊 Статистика</h3>
                 <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-label">Опыт</div>
-                        <div class="stat-value">{{ character.experience }}</div>
-                    </div>
                     <div class="stat-item">
                         <div class="stat-label">Всего боев</div>
                         <div class="stat-value">{{ profile.total_games }}</div>
@@ -957,6 +970,10 @@
                     <div class="stat-item">
                         <div class="stat-label">Процент побед</div>
                         <div class="stat-value">{{ profile.win_rate }}%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Уровень</div>
+                        <div class="stat-value">{{ profile.level }}</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Последний вход</div>
