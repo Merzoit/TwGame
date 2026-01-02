@@ -17,6 +17,17 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'twgame.settings')
 import django
 django.setup()
 
+from django.utils import asyncio as django_asyncio
+from asgiref.sync import sync_to_async
+from game.services import PlayerService
+
+# Настройки логирования
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
+
 # Логируем доступные переменные окружения (для диагностики)
 import os
 db_vars = {k: v for k, v in os.environ.items() if 'database' in k.lower() or 'db' in k.lower() or 'railway' in k.lower()}
@@ -49,17 +60,6 @@ elif postgres_url:
     os.environ['DATABASE_URL'] = postgres_url
 else:
     logger.warning("No database URL variables found")
-
-from django.utils import asyncio as django_asyncio
-from asgiref.sync import sync_to_async
-from game.services import PlayerService
-
-# Настройки логирования
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
-logger = logging.getLogger(__name__)
 
 # Токен бота
 TOKEN = '8567389465:AAGf6VKykyl6REaiDz-Vqu2QTacQbvURS7k'
