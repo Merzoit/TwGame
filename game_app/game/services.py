@@ -1,5 +1,5 @@
 import logging
-from .models import Player, PlayerProfile
+from .models import Player, PlayerProfile, Character
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
@@ -114,3 +114,90 @@ class PlayerService:
 
         profile.save()
         return True
+
+    @staticmethod
+    def has_character(telegram_id):
+        """Проверяет, есть ли у игрока персонаж"""
+        try:
+            player = PlayerService.get_player_by_telegram_id(telegram_id)
+            if player:
+                return hasattr(player, 'character') and player.character is not None
+            return False
+        except Exception as e:
+            logger.error(f"Error checking character for player {telegram_id}: {e}")
+            return False
+
+    @staticmethod
+    def get_character(telegram_id):
+        """Получает персонажа игрока по Telegram ID"""
+        try:
+            player = PlayerService.get_player_by_telegram_id(telegram_id)
+            if player and hasattr(player, 'character'):
+                character = player.character
+                logger.info(f"Found character {character} for player {telegram_id}")
+                return character
+            logger.info(f"No character found for player {telegram_id}")
+            return None
+        except Exception as e:
+            logger.error(f"Error getting character for player {telegram_id}: {e}")
+            return None
+
+    @staticmethod
+    def create_character(telegram_id, name, class_type):
+        """Создает персонажа для игрока"""
+        try:
+            player = PlayerService.get_player_by_telegram_id(telegram_id)
+            if not player:
+                logger.error(f"Player {telegram_id} not found")
+                return None
+
+            if hasattr(player, 'character') and player.character is not None:
+                logger.warning(f"Player {telegram_id} already has character")
+                return player.character
+
+            # Проверяем допустимые классы
+            valid_classes = ['warrior', 'mage', 'assassin']
+            if class_type not in valid_classes:
+                logger.error(f"Invalid class type: {class_type}")
+                return None
+
+            # Создаем персонажа
+            character = Character.objects.create(
+                player=player,
+                name=name.strip(),
+                class_type=class_type
+            )
+
+            logger.info(f"Character {character} created for player {telegram_id}")
+            return character
+
+        except Exception as e:
+            logger.error(f"Error creating character for player {telegram_id}: {e}")
+            return None
+
+    @staticmethod
+    def get_character_classes():
+        """Возвращает доступные классы персонажей"""
+        return [
+            {
+                'type': 'warrior',
+                'name': 'Воин',
+                'emoji': '⚔️',
+                'description': 'Сильный и выносливый боец ближнего боя',
+                'image': 'warrior.jpg'
+            },
+            {
+                'type': 'mage',
+                'name': 'Маг',
+                'emoji': '🔮',
+                'description': 'Могучий волшебник с мощными заклинаниями',
+                'image': 'mage.jpg'
+            },
+            {
+                'type': 'assassin',
+                'name': 'Ассасин',
+                'emoji': '🗡️',
+                'description': 'Быстрый и скрытный убийца',
+                'image': 'assassin.jpg'
+            }
+        ]

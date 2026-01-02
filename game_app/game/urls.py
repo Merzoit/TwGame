@@ -7,4 +7,5 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('api/status/', views.api_status, name='api_status'),
     path('api/telegram/webhook/', views.telegram_webhook, name='telegram_webhook'),
+    path('api/create-character/', views.create_character, name='create_character'),
 ]

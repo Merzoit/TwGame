@@ -78,28 +78,50 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             last_name=user.last_name
         )
 
-        if created:
+        # Проверяем, есть ли у игрока персонаж
+        has_character = await sync_to_async(PlayerService.has_character)(user.id)
+
+        if not has_character:
+            # Персонаж не создан - перенаправляем на сайт для создания
             welcome_message = (
                 f"🎉 Добро пожаловать в TwGame, {user.first_name or 'игрок'}!\n\n"
-                "Вы успешно зарегистрированы в игре!\n"
-                "Ваш профиль создан, и вы готовы начать приключение.\n\n"
+                "Вы успешно зарегистрированы в игре!\n\n"
+                "🏗️ Теперь вам нужно создать персонажа, чтобы начать приключение.\n\n"
+                "Перейдите на сайт для создания персонажа:"
             )
+
+            keyboard = [
+                [InlineKeyboardButton("🏗️ Создать персонажа", url="https://twgame-production.up.railway.app/")]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+
         else:
+            # Персонаж есть - показываем обычное меню
+            character = await sync_to_async(PlayerService.get_character)(user.id)
             profile = player.profile
-            welcome_message = (
-                f"🎮 С возвращением в TwGame, {user.first_name or 'игрок'}!\n\n"
-                f"📊 Ваш уровень: {profile.level}\n"
-                f"💰 Золото: {profile.gold}\n"
-                f"🏆 Побед: {profile.wins}/{profile.total_games}\n\n"
-            )
 
-        keyboard = [
-            [InlineKeyboardButton("🎮 Играть", callback_data='play_game')],
-            [InlineKeyboardButton("👤 Профиль", callback_data='show_profile')]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
+            if created:
+                welcome_message = (
+                    f"🎉 Добро пожаловать в TwGame, {user.first_name or 'игрок'}!\n\n"
+                    f"🏆 Ваш персонаж: {character.name} ({character.class_display_name})\n"
+                    f"📊 Уровень: {profile.level}\n"
+                    f"💰 Золото: {profile.gold}\n\n"
+                    "Вы готовы к приключениям!"
+                )
+            else:
+                welcome_message = (
+                    f"🎮 С возвращением в TwGame, {user.first_name or 'игрок'}!\n\n"
+                    f"🏆 Персонаж: {character.name} ({character.class_display_name})\n"
+                    f"📊 Уровень: {profile.level}\n"
+                    f"💰 Золото: {profile.gold}\n\n"
+                )
 
-        welcome_message += "Выберите действие:"
+            keyboard = [
+                [InlineKeyboardButton("🎮 Играть", callback_data='play_game')],
+                [InlineKeyboardButton("👤 Профиль", callback_data='show_profile')]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            welcome_message += "Выберите действие:"
 
         await update.message.reply_text(
             welcome_message,

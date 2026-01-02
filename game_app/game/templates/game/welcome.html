@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ game_name }} - Добро пожаловать</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .welcome-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 600px;
+        }
+
+        .game-title {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .welcome-text {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .telegram-button {
+            background: #0088cc;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+        }
+
+        .telegram-button:hover {
+            background: #006699;
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <h1 class="game-title">{{ game_name }}</h1>
+        <p class="game-subtitle">Версия {{ version }}</p>
+
+        <div class="welcome-text">
+            <p>🎮 Добро пожаловать в увлекательный мир TwGame!</p>
+            <p>Чтобы начать игру, вам нужно авторизоваться через Telegram и создать своего персонажа.</p>
+            <p>Перейдите в наш Telegram бот для начала приключения!</p>
+        </div>
+
+        <a href="https://t.me/MerzoitCodeBot" class="telegram-button">
+            🚀 Открыть Telegram бот
+        </a>
+    </div>
+</body>
+</html>

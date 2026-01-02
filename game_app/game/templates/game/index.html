@@ -40,11 +40,18 @@
             opacity: 0.9;
         }
 
+        .welcome-text {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
         .game-menu {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
@@ -89,44 +96,50 @@
 <body>
     <div class="game-container">
         <h1 class="game-title">{{ game_name }}</h1>
-        <p class="game-subtitle">Версия {{ version }} - В разработке</p>
+        <p class="game-subtitle">Версия {{ version }}</p>
+
+        <div class="welcome-text">
+            <p>🎮 Добро пожаловать в увлекательный мир TwGame!</p>
+            <p>Чтобы начать игру, вам нужно авторизоваться через Telegram и создать своего персонажа.</p>
+            <p>Перейдите в наш Telegram бот для начала приключения!</p>
+        </div>
 
         <div class="game-menu">
-            <a href="#" class="menu-item coming-soon">
+            <a href="https://t.me/MerzoitCodeBot" class="menu-item">
+                <div class="menu-icon">🚀</div>
+                <div class="menu-title">Начать игру</div>
+                <div class="menu-description">Авторизуйтесь через Telegram бот</div>
+            </a>
+
+            <div class="menu-item coming-soon">
                 <div class="menu-icon">🏪</div>
                 <div class="menu-title">Магазин</div>
                 <div class="menu-description">Скоро будет доступно</div>
-            </a>
+            </div>
 
-            <a href="#" class="menu-item coming-soon">
+            <div class="menu-item coming-soon">
                 <div class="menu-icon">🎒</div>
                 <div class="menu-title">Инвентарь</div>
                 <div class="menu-description">Скоро будет доступно</div>
-            </a>
+            </div>
 
-            <a href="#" class="menu-item coming-soon">
-                <div class="menu-icon">👤</div>
-                <div class="menu-title">Профиль</div>
-                <div class="menu-description">Скоро будет доступно</div>
-            </a>
-
-            <a href="#" class="menu-item coming-soon">
+            <div class="menu-item coming-soon">
                 <div class="menu-icon">📜</div>
                 <div class="menu-title">Квесты</div>
                 <div class="menu-description">Скоро будет доступно</div>
-            </a>
+            </div>
 
-            <a href="#" class="menu-item coming-soon">
+            <div class="menu-item coming-soon">
                 <div class="menu-icon">⚒️</div>
                 <div class="menu-title">Крафт</div>
                 <div class="menu-description">Скоро будет доступно</div>
-            </a>
+            </div>
 
-            <a href="#" class="menu-item coming-soon">
+            <div class="menu-item coming-soon">
                 <div class="menu-icon">⚔️</div>
                 <div class="menu-title">Битвы</div>
                 <div class="menu-description">Скоро будет доступно</div>
-            </a>
+            </div>
         </div>
     </div>
 

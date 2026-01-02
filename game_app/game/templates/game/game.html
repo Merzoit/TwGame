@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ game_name }} - Игра</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .character-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 4px 15px rgba(31, 38, 135, 0.2);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .character-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .character-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .game-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .menu-item {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(31, 38, 135, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(31, 38, 135, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .menu-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .menu-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .menu-description {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .coming-soon {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .coming-soon:hover {
+            transform: none;
+            box-shadow: 0 4px 15px rgba(31, 38, 135, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="game-title">{{ game_name }}</h1>
+        <p>Версия {{ version }}</p>
+    </div>
+
+    <div class="character-info">
+        <div class="character-name">
+            {{ character.name }} <span style="color: #ffd700;">({{ character.class_display_name }})</span>
+        </div>
+
+        <div class="character-details">
+            <div class="stat-item">
+                <div class="stat-label">Уровень</div>
+                <div class="stat-value">{{ character.level }}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Здоровье</div>
+                <div class="stat-value">{{ character.current_health }}/{{ character.max_health }}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Мана</div>
+                <div class="stat-value">{{ character.current_mana }}/{{ character.max_mana }}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Атака</div>
+                <div class="stat-value">{{ character.attack_power|floatformat:0 }}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Защита</div>
+                <div class="stat-value">{{ character.defense|floatformat:0 }}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Скорость</div>
+                <div class="stat-value">{{ character.speed|floatformat:0 }}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Опыт</div>
+                <div class="stat-value">{{ character.experience }}</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Золото</div>
+                <div class="stat-value">{{ profile.gold }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-menu">
+        <div class="menu-item coming-soon">
+            <div class="menu-icon">⚔️</div>
+            <div class="menu-title">Битва</div>
+            <div class="menu-description">Сразитесь с монстрами и другими игроками</div>
+        </div>
+
+        <div class="menu-item coming-soon">
+            <div class="menu-icon">🗺️</div>
+            <div class="menu-title">Приключения</div>
+            <div class="menu-description">Исследуйте мир и выполняйте квесты</div>
+        </div>
+
+        <div class="menu-item coming-soon">
+            <div class="menu-icon">💼</div>
+            <div class="menu-title">Инвентарь</div>
+            <div class="menu-description">Управляйте своими предметами</div>
+        </div>
+
+        <div class="menu-item coming-soon">
+            <div class="menu-icon">⚒️</div>
+            <div class="menu-title">Крафт</div>
+            <div class="menu-description">Создавайте новые предметы</div>
+        </div>
+
+        <div class="menu-item coming-soon">
+            <div class="menu-icon">🏪</div>
+            <div class="menu-title">Магазин</div>
+            <div class="menu-description">Покупайте снаряжение и зелья</div>
+        </div>
+
+        <div class="menu-item coming-soon">
+            <div class="menu-icon">👥</div>
+            <div class="menu-title">Гильдия</div>
+            <div class="menu-description">Присоединяйтесь к другим игрокам</div>
+        </div>
+    </div>
+</body>
+</html>
