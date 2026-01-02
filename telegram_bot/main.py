@@ -17,6 +17,14 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'twgame.settings')
 import django
 django.setup()
 
+# Логируем доступные переменные окружения (для диагностики)
+import os
+db_vars = {k: v for k, v in os.environ.items() if 'database' in k.lower() or 'db' in k.lower() or 'railway' in k.lower()}
+if db_vars:
+    logger.info(f"Database-related environment variables: {db_vars}")
+else:
+    logger.info("No database-related environment variables found")
+
 # Проверяем подключение к базе данных
 try:
     from django.db import connection
@@ -24,6 +32,23 @@ try:
     logger.info("Database connection successful")
 except Exception as e:
     logger.error(f"Database connection failed: {e}")
+
+# Логируем DATABASE_URL и другие возможные варианты
+database_url = os.environ.get('DATABASE_URL')
+railway_db_url = os.environ.get('RAILWAY_DATABASE_URL')
+postgres_url = os.environ.get('POSTGRES_URL')
+
+if database_url:
+    logger.info(f"DATABASE_URL is set (length: {len(database_url)})")
+elif railway_db_url:
+    logger.info(f"RAILWAY_DATABASE_URL is set (length: {len(railway_db_url)})")
+    # Устанавливаем DATABASE_URL для Django
+    os.environ['DATABASE_URL'] = railway_db_url
+elif postgres_url:
+    logger.info(f"POSTGRES_URL is set (length: {len(postgres_url)})")
+    os.environ['DATABASE_URL'] = postgres_url
+else:
+    logger.warning("No database URL variables found")
 
 from django.utils import asyncio as django_asyncio
 from asgiref.sync import sync_to_async
