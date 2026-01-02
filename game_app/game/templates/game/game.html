@@ -509,10 +509,52 @@
             box-shadow: 0 4px 12px rgba(100, 65, 165, 0.5);
         }
 
-        .player-twitch-connect {
+        .player-twitch-info {
             margin-top: var(--spacing-lg);
             padding-top: var(--spacing-md);
             border-top: 1px solid var(--border-color);
+        }
+
+        .twitch-connected-display {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .twitch-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .twitch-checkmark {
+            font-size: 1.2rem;
+        }
+
+        .twitch-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .twitch-details {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+            margin-left: var(--spacing-lg);
+        }
+
+        .twitch-info-text {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .twitch-value {
+            font-size: 0.9rem;
+            color: var(--accent-secondary);
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
         }
 
         .twitch-connect-bottom {
@@ -1195,14 +1237,31 @@
                     </div>
                 </div>
 
-                {% if not player.twitch_connected %}
-                <!-- Кнопка подключения Twitch внизу блока -->
-                <div class="player-twitch-connect">
+                <!-- Twitch информация -->
+                <div class="player-twitch-info">
+                    {% if player.twitch_connected %}
+                    <div class="twitch-connected-display">
+                        <div class="twitch-status">
+                            <span class="twitch-checkmark">✅</span>
+                            <span class="twitch-label">Twitch подключен</span>
+                        </div>
+                        <div class="twitch-details">
+                            <div class="twitch-info-text">
+                                <span class="twitch-label">Логин:</span>
+                                <span class="twitch-value">{{ player.twitch_username }}</span>
+                            </div>
+                            <div class="twitch-info-text">
+                                <span class="twitch-label">ID:</span>
+                                <span class="twitch-value">{{ player.twitch_id }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
                     <button class="twitch-connect-bottom" onclick="connectTwitch()">
                         🔗 Подключить Twitch
                     </button>
+                    {% endif %}
                 </div>
-                {% endif %}
 
                 <div class="character-info-card">
                     <h3>⚔️ Персонаж</h3>
