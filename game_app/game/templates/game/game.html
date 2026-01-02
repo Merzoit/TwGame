@@ -341,11 +341,24 @@
         }
 
         .character-info-card h3 {
-            margin: 0 0 var(--spacing-lg) 0;
-            font-size: 1.2rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
             color: var(--text-primary);
+            margin-bottom: var(--spacing-xl);
             text-align: center;
-            font-weight: bold;
+            position: relative;
+        }
+
+        .character-info-card h3::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -8px;
+            width: 40px;
+            height: 2px;
+            background: var(--accent-primary);
+            border-radius: 1px;
         }
 
         .character-header {
