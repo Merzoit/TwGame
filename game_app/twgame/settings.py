@@ -19,6 +19,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Load environment variables
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-lay-$2dym6u-rssyu#5b(=(dz4v&qwrqul2l)_*7xfoj9nfy&y')
 
+# Database configuration
+import dj_database_url
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -87,16 +90,28 @@ WSGI_APPLICATION = 'twgame.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': os.environ.get('DATABASE_ENGINE', 'django.db.backends.sqlite3'),
-        'NAME': os.environ.get('DATABASE_NAME', BASE_DIR / 'db.sqlite3'),
-        'USER': os.environ.get('DATABASE_USER', ''),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
-        'HOST': os.environ.get('DATABASE_HOST', ''),
-        'PORT': os.environ.get('DATABASE_PORT', ''),
+# Используем DATABASE_URL от Railway, если доступен
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True
+        )
     }
-}
+else:
+    # Fallback на отдельные переменные окружения
+    DATABASES = {
+        'default': {
+            'ENGINE': os.environ.get('DATABASE_ENGINE', 'django.db.backends.sqlite3'),
+            'NAME': os.environ.get('DATABASE_NAME', BASE_DIR / 'db.sqlite3'),
+            'USER': os.environ.get('DATABASE_USER', ''),
+            'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
+            'HOST': os.environ.get('DATABASE_HOST', ''),
+            'PORT': os.environ.get('DATABASE_PORT', ''),
+        }
+    }
 
 
 # Password validation
