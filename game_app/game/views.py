@@ -48,6 +48,18 @@ def home(request):
                 next_level_exp = character.level * 100
                 progress_percentage = (character.experience / next_level_exp * 100) if next_level_exp > 0 else 0
 
+                # Автоматически создаем слоты экипировки для персонажа, если их нет
+                from game.models import Equipment
+                if not character.equipment.exists():
+                    Equipment.objects.create(character=character, slot='weapon')
+                    Equipment.objects.create(character=character, slot='torso')
+
+                # Получаем инвентарь игрока
+                inventory = player.inventory.all().select_related('item') if hasattr(player, 'inventory') else []
+
+                # Получаем экипировку персонажа
+                equipment = character.equipment.all().select_related('item') if hasattr(character, 'equipment') else []
+
                 return render(request, 'game/game.html', {
                     'game_name': 'TwGame',
                     'version': '0.1.0',
@@ -56,6 +68,8 @@ def home(request):
                     'player': player,
                     'next_level_exp': next_level_exp,
                     'progress_percentage': progress_percentage,
+                    'inventory': inventory,
+                    'equipment': equipment,
                 })
             else:
                 # Персонажа нет - показываем страницу создания персонажа

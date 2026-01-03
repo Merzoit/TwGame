@@ -35,6 +35,8 @@
 
             --success-color: #00d4aa;
             --warning-color: #ffa500;
+            --danger: #ff4444;
+            --danger-hover: #cc3333;
         }
 
         * {
@@ -1057,6 +1059,250 @@
                 font-size: 0.9rem;
             }
         }
+
+/* Стили для инвентаря */
+.inventory-info-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.inventory-info-card h3 {
+    color: var(--text-primary);
+    font-family: 'Orbitron', sans-serif;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.inventory-item {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 15px;
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.inventory-item:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.item-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--accent-primary);
+    color: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.item-quantity {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.item-rarity {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.item-rarity.common { background: #8B8B8B; color: white; }
+.item-rarity.uncommon { background: #4CAF50; color: white; }
+.item-rarity.rare { background: #2196F3; color: white; }
+.item-rarity.epic { background: #9C27B0; color: white; }
+.item-rarity.legendary { background: #FF9800; color: white; }
+
+.equip-btn {
+    background: var(--accent-secondary);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s ease;
+}
+
+.equip-btn:hover {
+    background: var(--accent-secondary-hover);
+}
+
+.empty-inventory {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 40px 20px;
+}
+
+.empty-inventory p:first-child {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+/* Стили для экипировки */
+.equipment-info-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.equipment-info-card h3 {
+    color: var(--text-primary);
+    font-family: 'Orbitron', sans-serif;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.equipment-slots {
+    display: grid;
+    gap: 20px;
+}
+
+.equipment-slot {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 15px;
+    border: 1px solid var(--border);
+}
+
+.slot-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.slot-content {
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+}
+
+.equipped-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.equipped-item .item-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--accent-primary);
+    color: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+.equipped-item .item-info {
+    flex: 1;
+}
+
+.equipped-item .item-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.item-stats {
+    display: flex;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--accent-secondary);
+}
+
+.item-stats span {
+    background: rgba(76, 175, 80, 0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.unequip-btn {
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s ease;
+}
+
+.unequip-btn:hover {
+    background: var(--danger-hover);
+}
+
+.empty-slot {
+    color: var(--text-secondary);
+    font-style: italic;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .inventory-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .equipment-slots {
+        gap: 15px;
+    }
+
+    .inventory-item,
+    .equipment-slot {
+        padding: 12px;
+    }
+
+    .item-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    .equipped-item .item-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+}
     </style>
 </head>
 <body>
@@ -1171,6 +1417,22 @@
                         <div class="menu-item-content">
                             <h3>Статистика</h3>
                             <p>Ваша статистика</p>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="menu-item-icon">🎒</div>
+                        <div class="menu-item-content">
+                            <h3>Инвентарь</h3>
+                            <p>Ваши предметы</p>
+                        </div>
+                    </div>
+
+                    <div class="menu-item">
+                        <div class="menu-item-icon">⚔️</div>
+                        <div class="menu-item-content">
+                            <h3>Экипировка</h3>
+                            <p>Оружие и броня</p>
                         </div>
                     </div>
                 </div>
@@ -1307,6 +1569,104 @@
                     <div class="stat-item">
                         <div class="stat-label">Последний вход</div>
                         <div class="stat-value">{{ profile.last_login|date:"d.m.Y H:i" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Инвентарь -->
+            <div class="inventory-info-card">
+                <h3>🎒 Инвентарь</h3>
+                <div class="inventory-content">
+                    {% if inventory %}
+                        <div class="inventory-grid">
+                            {% for item_entry in inventory %}
+                            <div class="inventory-item" data-item-id="{{ item_entry.item.id }}">
+                                <div class="item-icon">{{ item_entry.item.name|slice:":1"|upper }}</div>
+                                <div class="item-info">
+                                    <div class="item-name">{{ item_entry.item.name }}</div>
+                                    <div class="item-quantity">x{{ item_entry.quantity }}</div>
+                                    <div class="item-rarity {{ item_entry.item.rarity }}">{{ item_entry.item.get_rarity_display }}</div>
+                                </div>
+                                {% if item_entry.item.is_equippable %}
+                                <button class="equip-btn" data-item-id="{{ item_entry.item.id }}">Экипировать</button>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-inventory">
+                            <p>Ваш инвентарь пуст</p>
+                            <p>Предметы появятся здесь после игры</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Экипировка -->
+            <div class="equipment-info-card">
+                <h3>⚔️ Экипировка</h3>
+                <div class="equipment-content">
+                    <div class="equipment-slots">
+                        <!-- Слот оружия -->
+                        <div class="equipment-slot" data-slot="weapon">
+                            <div class="slot-label">Оружие</div>
+                            <div class="slot-content">
+                                {% for equip in equipment %}
+                                    {% if equip.slot == 'weapon' %}
+                                        {% if equip.item %}
+                                            <div class="equipped-item">
+                                                <div class="item-icon">{{ equip.item.name|slice:":1"|upper }}</div>
+                                                <div class="item-info">
+                                                    <div class="item-name">{{ equip.item.name }}</div>
+                                                    <div class="item-stats">
+                                                        {% if equip.item.attack_bonus > 0 %}
+                                                            <span>+{{ equip.item.attack_bonus }} атаки</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <button class="unequip-btn" data-slot="weapon">Снять</button>
+                                            </div>
+                                        {% else %}
+                                            <div class="empty-slot">Пусто</div>
+                                        {% endif %}
+                                    {% endif %}
+                                {% empty %}
+                                    <div class="empty-slot">Пусто</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Слот торса -->
+                        <div class="equipment-slot" data-slot="torso">
+                            <div class="slot-label">Торс</div>
+                            <div class="slot-content">
+                                {% for equip in equipment %}
+                                    {% if equip.slot == 'torso' %}
+                                        {% if equip.item %}
+                                            <div class="equipped-item">
+                                                <div class="item-icon">{{ equip.item.name|slice:":1"|upper }}</div>
+                                                <div class="item-info">
+                                                    <div class="item-name">{{ equip.item.name }}</div>
+                                                    <div class="item-stats">
+                                                        {% if equip.item.defense_bonus > 0 %}
+                                                            <span>+{{ equip.item.defense_bonus }} защиты</span>
+                                                        {% endif %}
+                                                        {% if equip.item.health_bonus > 0 %}
+                                                            <span>+{{ equip.item.health_bonus }} здоровья</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <button class="unequip-btn" data-slot="torso">Снять</button>
+                                            </div>
+                                        {% else %}
+                                            <div class="empty-slot">Пусто</div>
+                                        {% endif %}
+                                    {% endif %}
+                                {% empty %}
+                                    <div class="empty-slot">Пусто</div>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
