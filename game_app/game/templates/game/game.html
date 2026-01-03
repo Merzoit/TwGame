@@ -1829,6 +1829,15 @@
                 });
             });
 
+            // Обработка клика по заголовку игры для возврата к персонажу
+            const gameTitle = document.querySelector('.game-title');
+            if (gameTitle) {
+                gameTitle.addEventListener('click', function() {
+                    switchToSection('character-section');
+                });
+                gameTitle.style.cursor = 'pointer';
+            }
+
             // Функция показа уведомлений
             function showNotification(message, type = 'info') {
                 // Создаем элемент уведомления
