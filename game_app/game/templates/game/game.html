@@ -1060,8 +1060,8 @@
             }
         }
 
-/* Стили для инвентаря */
-.inventory-info-card {
+/* Стили для объединенного инвентаря и экипировки */
+.inventory-equipment-card {
     background: var(--card-bg);
     border-radius: 12px;
     padding: 20px;
@@ -1070,11 +1070,52 @@
     border: 1px solid var(--border);
 }
 
-.inventory-info-card h3 {
+.inventory-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 10px 15px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.tab-btn:hover {
+    background: var(--bg-tertiary);
     color: var(--text-primary);
-    font-family: 'Orbitron', sans-serif;
-    margin-bottom: 15px;
-    font-size: 1.2rem;
+}
+
+.tab-btn.active {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+
+.tab-icon {
+    font-size: 1rem;
+}
+
+.tab-content {
+    min-height: 300px;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
 }
 
 .inventory-grid {
@@ -1169,22 +1210,6 @@
     margin-bottom: 8px;
 }
 
-/* Стили для экипировки */
-.equipment-info-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 12px var(--shadow);
-    border: 1px solid var(--border);
-}
-
-.equipment-info-card h3 {
-    color: var(--text-primary);
-    font-family: 'Orbitron', sans-serif;
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-}
 
 .equipment-slots {
     display: grid;
@@ -1352,8 +1377,8 @@
                         </div>
                     </div>
 
-                    <div class="menu-item coming-soon">
-                        <div class="menu-item-icon">💼</div>
+                    <div class="menu-item">
+                        <div class="menu-item-icon">🎒</div>
                         <div class="menu-item-content">
                             <h3>Инвентарь</h3>
                             <p>Предметы и экипировка</p>
@@ -1420,21 +1445,6 @@
                         </div>
                     </div>
 
-                    <div class="menu-item">
-                        <div class="menu-item-icon">🎒</div>
-                        <div class="menu-item-content">
-                            <h3>Инвентарь</h3>
-                            <p>Ваши предметы</p>
-                        </div>
-                    </div>
-
-                    <div class="menu-item">
-                        <div class="menu-item-icon">⚔️</div>
-                        <div class="menu-item-content">
-                            <h3>Экипировка</h3>
-                            <p>Оружие и броня</p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1573,98 +1583,112 @@
                 </div>
             </div>
 
-            <!-- Инвентарь -->
-            <div class="inventory-info-card">
-                <h3>🎒 Инвентарь</h3>
-                <div class="inventory-content">
-                    {% if inventory %}
-                        <div class="inventory-grid">
-                            {% for item_entry in inventory %}
-                            <div class="inventory-item" data-item-id="{{ item_entry.item.id }}">
-                                <div class="item-icon">{{ item_entry.item.name|slice:":1"|upper }}</div>
-                                <div class="item-info">
-                                    <div class="item-name">{{ item_entry.item.name }}</div>
-                                    <div class="item-quantity">x{{ item_entry.quantity }}</div>
-                                    <div class="item-rarity {{ item_entry.item.rarity }}">{{ item_entry.item.get_rarity_display }}</div>
-                                </div>
-                                {% if item_entry.item.is_equippable %}
-                                <button class="equip-btn" data-item-id="{{ item_entry.item.id }}">Экипировать</button>
-                                {% endif %}
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="empty-inventory">
-                            <p>Ваш инвентарь пуст</p>
-                            <p>Предметы появятся здесь после игры</p>
-                        </div>
-                    {% endif %}
+            <!-- Инвентарь и Экипировка -->
+            <div class="inventory-equipment-card">
+                <div class="inventory-tabs">
+                    <button class="tab-btn active" data-tab="inventory">
+                        <span class="tab-icon">🎒</span>
+                        Инвентарь
+                    </button>
+                    <button class="tab-btn" data-tab="equipment">
+                        <span class="tab-icon">⚔️</span>
+                        Экипировка
+                    </button>
                 </div>
-            </div>
 
-            <!-- Экипировка -->
-            <div class="equipment-info-card">
-                <h3>⚔️ Экипировка</h3>
-                <div class="equipment-content">
-                    <div class="equipment-slots">
-                        <!-- Слот оружия -->
-                        <div class="equipment-slot" data-slot="weapon">
-                            <div class="slot-label">Оружие</div>
-                            <div class="slot-content">
-                                {% for equip in equipment %}
-                                    {% if equip.slot == 'weapon' %}
-                                        {% if equip.item %}
-                                            <div class="equipped-item">
-                                                <div class="item-icon">{{ equip.item.name|slice:":1"|upper }}</div>
-                                                <div class="item-info">
-                                                    <div class="item-name">{{ equip.item.name }}</div>
-                                                    <div class="item-stats">
-                                                        {% if equip.item.attack_bonus > 0 %}
-                                                            <span>+{{ equip.item.attack_bonus }} атаки</span>
-                                                        {% endif %}
-                                                    </div>
-                                                </div>
-                                                <button class="unequip-btn" data-slot="weapon">Снять</button>
-                                            </div>
-                                        {% else %}
-                                            <div class="empty-slot">Пусто</div>
+                <div class="tab-content">
+                    <!-- Вкладка Инвентарь -->
+                    <div class="tab-pane active" id="inventory-tab">
+                        <div class="inventory-content">
+                            {% if inventory %}
+                                <div class="inventory-grid">
+                                    {% for item_entry in inventory %}
+                                    <div class="inventory-item" data-item-id="{{ item_entry.item.id }}">
+                                        <div class="item-icon">{{ item_entry.item.name|slice:":1"|upper }}</div>
+                                        <div class="item-info">
+                                            <div class="item-name">{{ item_entry.item.name }}</div>
+                                            <div class="item-quantity">x{{ item_entry.quantity }}</div>
+                                            <div class="item-rarity {{ item_entry.item.rarity }}">{{ item_entry.item.get_rarity_display }}</div>
+                                        </div>
+                                        {% if item_entry.item.is_equippable %}
+                                        <button class="equip-btn" data-item-id="{{ item_entry.item.id }}">Экипировать</button>
                                         {% endif %}
-                                    {% endif %}
-                                {% empty %}
-                                    <div class="empty-slot">Пусто</div>
-                                {% endfor %}
-                            </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="empty-inventory">
+                                    <p>Ваш инвентарь пуст</p>
+                                    <p>Предметы появятся здесь после игры</p>
+                                </div>
+                            {% endif %}
                         </div>
+                    </div>
 
-                        <!-- Слот торса -->
-                        <div class="equipment-slot" data-slot="torso">
-                            <div class="slot-label">Торс</div>
-                            <div class="slot-content">
-                                {% for equip in equipment %}
-                                    {% if equip.slot == 'torso' %}
-                                        {% if equip.item %}
-                                            <div class="equipped-item">
-                                                <div class="item-icon">{{ equip.item.name|slice:":1"|upper }}</div>
-                                                <div class="item-info">
-                                                    <div class="item-name">{{ equip.item.name }}</div>
-                                                    <div class="item-stats">
-                                                        {% if equip.item.defense_bonus > 0 %}
-                                                            <span>+{{ equip.item.defense_bonus }} защиты</span>
-                                                        {% endif %}
-                                                        {% if equip.item.health_bonus > 0 %}
-                                                            <span>+{{ equip.item.health_bonus }} здоровья</span>
-                                                        {% endif %}
+                    <!-- Вкладка Экипировка -->
+                    <div class="tab-pane" id="equipment-tab">
+                        <div class="equipment-content">
+                            <div class="equipment-slots">
+                                <!-- Слот оружия -->
+                                <div class="equipment-slot" data-slot="weapon">
+                                    <div class="slot-label">Оружие</div>
+                                    <div class="slot-content">
+                                        {% for equip in equipment %}
+                                            {% if equip.slot == 'weapon' %}
+                                                {% if equip.item %}
+                                                    <div class="equipped-item">
+                                                        <div class="item-icon">{{ equip.item.name|slice:":1"|upper }}</div>
+                                                        <div class="item-info">
+                                                            <div class="item-name">{{ equip.item.name }}</div>
+                                                            <div class="item-stats">
+                                                                {% if equip.item.attack_bonus > 0 %}
+                                                                    <span>+{{ equip.item.attack_bonus }} атаки</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <button class="unequip-btn" data-slot="weapon">Снять</button>
                                                     </div>
-                                                </div>
-                                                <button class="unequip-btn" data-slot="torso">Снять</button>
-                                            </div>
-                                        {% else %}
+                                                {% else %}
+                                                    <div class="empty-slot">Пусто</div>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% empty %}
                                             <div class="empty-slot">Пусто</div>
-                                        {% endif %}
-                                    {% endif %}
-                                {% empty %}
-                                    <div class="empty-slot">Пусто</div>
-                                {% endfor %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <!-- Слот торса -->
+                                <div class="equipment-slot" data-slot="torso">
+                                    <div class="slot-label">Торс</div>
+                                    <div class="slot-content">
+                                        {% for equip in equipment %}
+                                            {% if equip.slot == 'torso' %}
+                                                {% if equip.item %}
+                                                    <div class="equipped-item">
+                                                        <div class="item-icon">{{ equip.item.name|slice:":1"|upper }}</div>
+                                                        <div class="item-info">
+                                                            <div class="item-name">{{ equip.item.name }}</div>
+                                                            <div class="item-stats">
+                                                                {% if equip.item.defense_bonus > 0 %}
+                                                                    <span>+{{ equip.item.defense_bonus }} защиты</span>
+                                                                {% endif %}
+                                                                {% if equip.item.health_bonus > 0 %}
+                                                                    <span>+{{ equip.item.health_bonus }} здоровья</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        <button class="unequip-btn" data-slot="torso">Снять</button>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="empty-slot">Пусто</div>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% empty %}
+                                            <div class="empty-slot">Пусто</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1822,6 +1846,28 @@
             const authUrl = `/auth/twitch/?user=${encodeURIComponent(userParam)}`;
             window.location.href = authUrl;
         }
+
+        // Переключение вкладок инвентаря и экипировки
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+
+                    // Убираем активный класс у всех кнопок
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    // Добавляем активный класс текущей кнопке
+                    this.classList.add('active');
+
+                    // Скрываем все вкладки
+                    tabPanes.forEach(pane => pane.classList.remove('active'));
+                    // Показываем выбранную вкладку
+                    document.getElementById(tabName + '-tab').classList.add('active');
+                });
+            });
+        });
     </script>
 </body>
 </html>
