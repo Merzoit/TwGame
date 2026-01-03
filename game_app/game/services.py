@@ -155,9 +155,9 @@ class PlayerService:
                 logger.warning(f"Player {telegram_id} already has character")
                 return player.character
 
-            # Проверяем, что сумма навыков не превышает допустимое значение
+            # Проверяем, что сумма навыков равна 20 (15 базовых + 5 свободных)
             total_skill_points = strength + agility + vitality
-            if total_skill_points != 15:  # 5 + 5 + 5 базовых
+            if total_skill_points != 20:  # 15 базовых + 5 свободных очков
                 logger.error(f"Invalid skill points total: {total_skill_points}")
                 return None
 
