@@ -840,20 +840,12 @@
                             <span id="previewHealth" class="stat-preview-value">100</span>
                         </div>
                         <div class="stat-preview-item">
-                            <span class="stat-preview-label">Мана:</span>
-                            <span id="previewMana" class="stat-preview-value">50</span>
-                        </div>
-                        <div class="stat-preview-item">
                             <span class="stat-preview-label">Атака:</span>
                             <span id="previewAttack" class="stat-preview-value">10-15</span>
                         </div>
                         <div class="stat-preview-item">
                             <span class="stat-preview-label">Защита:</span>
                             <span id="previewDefense" class="stat-preview-value">5</span>
-                        </div>
-                        <div class="stat-preview-item">
-                            <span class="stat-preview-label">Скорость:</span>
-                            <span id="previewSpeed" class="stat-preview-value">10</span>
                         </div>
                         <div class="stat-preview-item">
                             <span class="stat-preview-label">Крит. шанс:</span>
@@ -905,11 +897,9 @@
 
             return {
                 health: baseHealth + (skills.vitality - 5) * 15,
-                mana: baseMana + (skills.agility - 5) * 5,
                 minAttack: baseMinAttack + (skills.agility - 5) * 2,
                 maxAttack: baseMaxAttack + (skills.strength - 5) * 3,
                 defense: baseDefense + (skills.vitality - 5) * 2,
-                speed: baseSpeed + (skills.agility - 5) * 1,
                 critChance: 5.0 + (skills.strength - 5) * 1.5,
                 dodgeChance: 5.0 + (skills.agility - 5) * 1.0
             };
@@ -943,10 +933,8 @@
             const stats = calculateStats();
 
             document.getElementById('previewHealth').textContent = stats.health;
-            document.getElementById('previewMana').textContent = stats.mana;
             document.getElementById('previewAttack').textContent = `${stats.minAttack}-${stats.maxAttack}`;
             document.getElementById('previewDefense').textContent = stats.defense;
-            document.getElementById('previewSpeed').textContent = stats.speed;
             document.getElementById('previewCrit').textContent = `${stats.critChance.toFixed(1)}%`;
             document.getElementById('previewDodge').textContent = `${stats.dodgeChance.toFixed(1)}%`;
         }
@@ -1001,7 +989,7 @@
         // Обновление кнопки создания
         function updateCreateButton() {
             const button = document.getElementById('createButton');
-            const isDisabled = !characterName || freeSkillPoints > 0;
+            const isDisabled = !characterName || freeSkillPoints !== 0;
             button.disabled = isDisabled;
             console.log('Button disabled:', isDisabled, 'name:', characterName, 'free points:', freeSkillPoints);
         }
@@ -1012,7 +1000,7 @@
             console.log('Create button clicked');
             console.log('Skills:', skills, 'characterName:', characterName);
 
-            if (!characterName || freeSkillPoints > 0) {
+            if (!characterName || freeSkillPoints !== 0) {
                 console.log('Validation failed - missing name or unspent points');
                 return;
             }

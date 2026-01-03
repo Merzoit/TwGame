@@ -96,14 +96,11 @@ class Character(models.Model):
     # Здоровье и мана
     max_health = models.IntegerField(default=100, verbose_name="Максимальное здоровье")
     current_health = models.IntegerField(default=100, verbose_name="Текущее здоровье")
-    max_mana = models.IntegerField(default=50, verbose_name="Максимальная мана")
-    current_mana = models.IntegerField(default=50, verbose_name="Текущая мана")
 
     # Бойевые характеристики (базовые значения зависят от класса)
     min_attack = models.IntegerField(default=10, verbose_name="Минимальная атака")
     max_attack = models.IntegerField(default=15, verbose_name="Максимальная атака")
     defense = models.IntegerField(default=5, verbose_name="Защита")
-    speed = models.IntegerField(default=10, verbose_name="Скорость")
     crit_chance = models.FloatField(default=5.0, verbose_name="Шанс крита (%)")
     dodge_chance = models.FloatField(default=5.0, verbose_name="Шанс уворота (%)")
 
@@ -122,28 +119,23 @@ class Character(models.Model):
         """Расчет характеристик на основе навыков"""
         # Базовые значения
         base_health = 100
-        base_mana = 50
         base_min_attack = 10
         base_max_attack = 15
         base_defense = 5
-        base_speed = 10
 
         # Модификаторы от навыков
         self.max_health = base_health + (self.vitality - 5) * 15  # +15 HP за каждый уровень живучести выше 5
-        self.max_mana = base_mana + (self.agility - 5) * 5       # +5 маны за каждый уровень ловкости выше 5
 
         self.min_attack = base_min_attack + (self.agility - 5) * 2  # +2 к мин атаке за ловкость
         self.max_attack = base_max_attack + (self.strength - 5) * 3  # +3 к макс атаке за силу
 
         self.defense = base_defense + (self.vitality - 5) * 2      # +2 к защите за живучесть
-        self.speed = base_speed + (self.agility - 5) * 1           # +1 к скорости за ловкость
 
         self.crit_chance = 5.0 + (self.strength - 5) * 1.5         # +1.5% крита за силу
         self.dodge_chance = 5.0 + (self.agility - 5) * 1.0         # +1% уворота за ловкость
 
         # Устанавливаем текущие значения равными максимальным
         self.current_health = self.max_health
-        self.current_mana = self.max_mana
 
     def save(self, *args, **kwargs):
         """Переопределяем save для расчета характеристик"""

@@ -107,8 +107,8 @@ def create_character(request):
             return JsonResponse({'success': False, 'error': 'Каждый навык должен быть не меньше 5'})
 
         total_points = strength + agility + vitality
-        if total_points > 15:
-            return JsonResponse({'success': False, 'error': 'Превышено максимальное количество очков навыков'})
+        if total_points != 20:  # 15 базовых + 5 свободных очков
+            return JsonResponse({'success': False, 'error': f'Общее количество очков навыков должно быть 20 (текущее: {total_points})'})
 
         # Создаем персонажа
         character = PlayerService.create_character(
@@ -127,11 +127,9 @@ def create_character(request):
                     'name': character.name,
                     'level': character.level,
                     'max_health': character.max_health,
-                    'max_mana': character.max_mana,
                     'min_attack': character.min_attack,
                     'max_attack': character.max_attack,
                     'defense': character.defense,
-                    'speed': character.speed,
                     'strength': character.strength,
                     'agility': character.agility,
                     'vitality': character.vitality,
