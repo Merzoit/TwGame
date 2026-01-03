@@ -1060,6 +1060,20 @@
             }
         }
 
+/* Стили для разделов контента */
+.content-section {
+    display: none;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.content-section.active {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+}
+
 /* Стили для объединенного инвентаря и экипировки */
 .inventory-equipment-card {
     background: var(--card-bg);
@@ -1456,7 +1470,7 @@
         <div class="main-content" id="mainContent">
             <!-- Информация об игроке -->
             {% if player %}
-            <div class="player-info-section">
+            <div class="content-section player-info-section active" id="character-section">
                 <div class="player-info">
                     <div class="player-avatar">
                         {{ player.first_name|first|upper }}
@@ -1553,7 +1567,7 @@
             </div>
 
             <!-- Расширенная статистика -->
-            <div class="stats-info-card">
+            <div class="content-section stats-info-card" id="stats-section">
                 <h3>📊 Статистика</h3>
                 <div class="stats-grid">
                     <div class="stat-item">
@@ -1584,7 +1598,7 @@
             </div>
 
             <!-- Инвентарь и Экипировка -->
-            <div class="inventory-equipment-card">
+            <div class="content-section inventory-equipment-card" id="inventory-section">
                 <div class="inventory-tabs">
                     <button class="tab-btn active" data-tab="inventory">
                         <span class="tab-icon">🎒</span>
@@ -1701,9 +1715,26 @@
     </div>
 
     <script>
+        // Функция переключения разделов контента
+        function switchToSection(sectionId) {
+            // Скрываем все разделы
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Показываем выбранный раздел
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+        }
+
         // Инициализация игры
         document.addEventListener('DOMContentLoaded', function() {
             console.log('TwGame initialized');
+
+            // Показываем раздел персонажа по умолчанию
+            switchToSection('character-section');
 
             // Элементы управления меню
             const menuToggle = document.getElementById('menuToggle');
@@ -1770,6 +1801,23 @@
                         // Показываем уведомление о том, что функция скоро будет
                         showNotification('Эта функция скоро появится!', 'info');
                         return;
+                    }
+
+                    // Определяем, какой раздел нужно показать
+                    let targetSection = 'character-section'; // По умолчанию персонаж
+
+                    // Ищем соответствующий раздел по тексту заголовка
+                    const menuText = this.querySelector('h3').textContent.trim();
+
+                    if (menuText === 'Инвентарь') {
+                        targetSection = 'inventory-section';
+                    } else if (menuText === 'Статистика') {
+                        targetSection = 'stats-section';
+                    }
+
+                    // Переключаемся на раздел
+                    if (targetSection) {
+                        switchToSection(targetSection);
                     }
 
                     // Закрываем меню после выбора пункта
