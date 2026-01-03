@@ -143,8 +143,8 @@ class PlayerService:
             return None
 
     @staticmethod
-    def create_character(telegram_id, name, class_type):
-        """Создает персонажа для игрока"""
+    def create_character(telegram_id, name, strength=5, agility=5, vitality=5):
+        """Создает персонажа для игрока с заданными навыками"""
         try:
             player = PlayerService.get_player_by_telegram_id(telegram_id)
             if not player:
@@ -155,17 +155,25 @@ class PlayerService:
                 logger.warning(f"Player {telegram_id} already has character")
                 return player.character
 
-            # Проверяем допустимые классы
-            valid_classes = ['warrior', 'mage', 'assassin']
-            if class_type not in valid_classes:
-                logger.error(f"Invalid class type: {class_type}")
+            # Проверяем, что сумма навыков не превышает допустимое значение
+            total_skill_points = strength + agility + vitality
+            if total_skill_points != 15:  # 5 + 5 + 5 базовых
+                logger.error(f"Invalid skill points total: {total_skill_points}")
+                return None
+
+            # Проверяем, что каждый навык >= 5
+            if strength < 5 or agility < 5 or vitality < 5:
+                logger.error(f"Skill points too low: strength={strength}, agility={agility}, vitality={vitality}")
                 return None
 
             # Создаем персонажа
             character = Character.objects.create(
                 player=player,
                 name=name.strip(),
-                class_type=class_type
+                strength=strength,
+                agility=agility,
+                vitality=vitality,
+                free_skill_points=0  # Все очки распределены при создании
             )
 
             logger.info(f"Character {character} created for player {telegram_id}")
@@ -176,43 +184,36 @@ class PlayerService:
             return None
 
     @staticmethod
-    def get_character_classes():
-        """Возвращает доступные классы персонажей"""
-        return [
-            {
-                'type': 'warrior',
-                'name': 'Воин',
-                'emoji': '⚔️',
-                'description': 'Могучий боец ближнего боя, специализирующийся на защите и выживании. Воины обладают высокой силой и защитой, что делает их идеальными танками в команде.',
-                'image': 'warrior.jpg',
-                'health_base': '120',
-                'mana_base': '60',
-                'attack_base': '15',
-                'defense_base': '12',
-                'speed_base': '8'
+    def get_skill_info():
+        """Возвращает информацию о навыках персонажа"""
+        return {
+            'strength': {
+                'name': 'Сила',
+                'emoji': '💪',
+                'description': 'Увеличивает максимальную атаку и шанс критического удара',
+                'effects': [
+                    'Максимальная атака: +3 за уровень',
+                    'Шанс крита: +1.5% за уровень'
+                ]
             },
-            {
-                'type': 'mage',
-                'name': 'Маг',
-                'emoji': '🔮',
-                'description': 'Повелитель магии и заклинаний, обладающий огромной магической силой. Маги могут наносить массовый урон и контролировать поле боя с помощью мощных заклинаний.',
-                'image': 'mage.jpg',
-                'health_base': '80',
-                'mana_base': '120',
-                'attack_base': '12',
-                'defense_base': '6',
-                'speed_base': '10'
+            'agility': {
+                'name': 'Ловкость',
+                'emoji': '🏃',
+                'description': 'Увеличивает минимальную атаку, скорость и шанс уворота',
+                'effects': [
+                    'Минимальная атака: +2 за уровень',
+                    'Скорость: +1 за уровень',
+                    'Шанс уворота: +1% за уровень',
+                    'Мана: +5 за уровень'
+                ]
             },
-            {
-                'type': 'assassin',
-                'name': 'Ассасин',
-                'emoji': '🗡️',
-                'description': 'Ловкий убийца и мастер скрытности, специализирующийся на быстрых и точных ударах. Разбойники могут наносить критический урон и уклоняться от атак.',
-                'image': 'assassin.jpg',
-                'health_base': '90',
-                'mana_base': '70',
-                'attack_base': '14',
-                'defense_base': '7',
-                'speed_base': '14'
+            'vitality': {
+                'name': 'Живучесть',
+                'emoji': '❤️',
+                'description': 'Увеличивает здоровье и защиту',
+                'effects': [
+                    'Здоровье: +15 за уровень',
+                    'Защита: +2 за уровень'
+                ]
             }
-        ]
+        }

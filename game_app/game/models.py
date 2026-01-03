@@ -78,15 +78,16 @@ class PlayerProfile(models.Model):
 
 class Character(models.Model):
     """Модель персонажа игрока"""
-    CLASS_CHOICES = [
-        ('warrior', 'Воин'),
-        ('mage', 'Маг'),
-        ('assassin', 'Ассасин'),
-    ]
-
     player = models.OneToOneField(Player, on_delete=models.CASCADE, related_name='character', verbose_name="Игрок", null=True, blank=True)
     name = models.CharField(max_length=50, verbose_name="Имя персонажа")
-    class_type = models.CharField(max_length=20, choices=CLASS_CHOICES, verbose_name="Класс")
+
+    # Навыки персонажа (влияют на характеристики)
+    strength = models.IntegerField(default=5, verbose_name="Сила")  # Максимальная атака, сила крита
+    agility = models.IntegerField(default=5, verbose_name="Ловкость")  # Минимальная атака, уворот
+    vitality = models.IntegerField(default=5, verbose_name="Живучесть")  # HP, защита
+
+    # Свободные очки навыков
+    free_skill_points = models.IntegerField(default=5, verbose_name="Свободные очки навыков")
 
     # Базовые характеристики
     level = models.IntegerField(default=1, verbose_name="Уровень")
@@ -99,9 +100,12 @@ class Character(models.Model):
     current_mana = models.IntegerField(default=50, verbose_name="Текущая мана")
 
     # Бойевые характеристики (базовые значения зависят от класса)
-    base_attack = models.IntegerField(default=10, verbose_name="Базовая атака")
-    base_defense = models.IntegerField(default=5, verbose_name="Базовая защита")
-    base_speed = models.IntegerField(default=10, verbose_name="Базовая скорость")
+    min_attack = models.IntegerField(default=10, verbose_name="Минимальная атака")
+    max_attack = models.IntegerField(default=15, verbose_name="Максимальная атака")
+    defense = models.IntegerField(default=5, verbose_name="Защита")
+    speed = models.IntegerField(default=10, verbose_name="Скорость")
+    crit_chance = models.FloatField(default=5.0, verbose_name="Шанс крита (%)")
+    dodge_chance = models.FloatField(default=5.0, verbose_name="Шанс уворота (%)")
 
     # Дата создания и обновления
     created_at = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
@@ -112,69 +116,37 @@ class Character(models.Model):
         verbose_name_plural = "Персонажи"
 
     def __str__(self):
-        return f"{self.name} ({self.get_class_type_display()}) - {self.player}"
+        return f"{self.name} - {self.player}"
 
-    @property
-    def class_display_name(self):
-        """Отображаемое имя класса с эмодзи"""
-        class_emojis = {
-            'warrior': '⚔️ Воин',
-            'mage': '🔮 Маг',
-            'assassin': '🗡️ Ассасин'
-        }
-        return class_emojis.get(self.class_type, self.get_class_type_display())
+    def calculate_stats(self):
+        """Расчет характеристик на основе навыков"""
+        # Базовые значения
+        base_health = 100
+        base_mana = 50
+        base_min_attack = 10
+        base_max_attack = 15
+        base_defense = 5
+        base_speed = 10
 
-    @property
-    def attack_power(self):
-        """Общая сила атаки (базовая + модификаторы)"""
-        return self.base_attack * (1 + (self.level - 1) * 0.1)
+        # Модификаторы от навыков
+        self.max_health = base_health + (self.vitality - 5) * 15  # +15 HP за каждый уровень живучести выше 5
+        self.max_mana = base_mana + (self.agility - 5) * 5       # +5 маны за каждый уровень ловкости выше 5
 
-    @property
-    def defense(self):
-        """Общая защита (базовая + модификаторы)"""
-        return self.base_defense * (1 + (self.level - 1) * 0.1)
+        self.min_attack = base_min_attack + (self.agility - 5) * 2  # +2 к мин атаке за ловкость
+        self.max_attack = base_max_attack + (self.strength - 5) * 3  # +3 к макс атаке за силу
 
-    @property
-    def speed(self):
-        """Общая скорость (базовая + модификаторы)"""
-        return self.base_speed * (1 + (self.level - 1) * 0.05)
+        self.defense = base_defense + (self.vitality - 5) * 2      # +2 к защите за живучесть
+        self.speed = base_speed + (self.agility - 5) * 1           # +1 к скорости за ловкость
 
-    def save(self, *args, **kwargs):
-        """Переопределяем save для установки базовых характеристик при создании"""
-        if not self.pk:  # Если объект только создается
-            self.set_base_stats()
-        super().save(*args, **kwargs)
+        self.crit_chance = 5.0 + (self.strength - 5) * 1.5         # +1.5% крита за силу
+        self.dodge_chance = 5.0 + (self.agility - 5) * 1.0         # +1% уворота за ловкость
 
-    def set_base_stats(self):
-        """Устанавливаем базовые характеристики в зависимости от класса"""
-        class_stats = {
-            'warrior': {
-                'max_health': 150,
-                'max_mana': 30,
-                'base_attack': 15,
-                'base_defense': 12,
-                'base_speed': 8
-            },
-            'mage': {
-                'max_health': 80,
-                'max_mana': 120,
-                'base_attack': 20,
-                'base_defense': 3,
-                'base_speed': 10
-            },
-            'assassin': {
-                'max_health': 100,
-                'max_mana': 60,
-                'base_attack': 18,
-                'base_defense': 5,
-                'base_speed': 15
-            }
-        }
-
-        stats = class_stats.get(self.class_type, class_stats['warrior'])
-        for attr, value in stats.items():
-            setattr(self, attr, value)
-
-        # Устанавливаем текущее здоровье и ману равными максимальным
+        # Устанавливаем текущие значения равными максимальным
         self.current_health = self.max_health
         self.current_mana = self.max_mana
+
+    def save(self, *args, **kwargs):
+        """Переопределяем save для расчета характеристик"""
+        # Всегда пересчитываем характеристики при сохранении
+        self.calculate_stats()
+        super().save(*args, **kwargs)

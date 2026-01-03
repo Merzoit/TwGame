@@ -1210,11 +1210,10 @@
                     <!-- Центральная часть - портрет и информация -->
                     <div class="character-header">
                         <div class="character-portrait-container">
-                            <img src="/static/images/{{ character.class_type|lower }}.jpg" alt="{{ character.name }}" class="character-portrait">
+                            <img src="/static/images/logo_profile.png" alt="{{ character.name }}" class="character-portrait">
                         </div>
                         <div class="character-info-basic">
                             <div class="character-name">{{ character.name }}</div>
-                            <div class="character-class">{{ character.get_character_class_display }}</div>
                             <div class="character-level">Уровень {{ character.level }}</div>
                         </div>
                     </div>
@@ -1245,7 +1244,7 @@
                             <div class="character-stat">
                                 <span class="stat-icon">⚔️</span>
                                 <span class="stat-label">Атака:</span>
-                                <span class="stat-value">{{ character.attack_power|floatformat:0 }}</span>
+                                <span class="stat-value">{{ character.min_attack }}-{{ character.max_attack }}</span>
                             </div>
                             <div class="character-stat">
                                 <span class="stat-icon">🛡️</span>
@@ -1256,6 +1255,35 @@
                                 <span class="stat-icon">💨</span>
                                 <span class="stat-label">Скорость:</span>
                                 <span class="stat-value">{{ character.speed|floatformat:0 }}</span>
+                            </div>
+                            <div class="character-stat">
+                                <span class="stat-icon">💥</span>
+                                <span class="stat-label">Крит. шанс:</span>
+                                <span class="stat-value">{{ character.crit_chance|floatformat:1 }}%</span>
+                            </div>
+                            <div class="character-stat">
+                                <span class="stat-icon">🌀</span>
+                                <span class="stat-label">Уворот:</span>
+                                <span class="stat-value">{{ character.dodge_chance|floatformat:1 }}%</span>
+                            </div>
+                        </div>
+
+                        <div class="character-stats-section">
+                            <h4 class="stats-section-title">Навыки</h4>
+                            <div class="character-stat">
+                                <span class="stat-icon">💪</span>
+                                <span class="stat-label">Сила:</span>
+                                <span class="stat-value">{{ character.strength }}</span>
+                            </div>
+                            <div class="character-stat">
+                                <span class="stat-icon">🏃</span>
+                                <span class="stat-label">Ловкость:</span>
+                                <span class="stat-value">{{ character.agility }}</span>
+                            </div>
+                            <div class="character-stat">
+                                <span class="stat-icon">❤️</span>
+                                <span class="stat-label">Живучесть:</span>
+                                <span class="stat-value">{{ character.vitality }}</span>
                             </div>
                         </div>
                     </div>

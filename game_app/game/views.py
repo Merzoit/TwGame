@@ -59,7 +59,7 @@ def home(request):
                 })
             else:
                 # Персонажа нет - показываем страницу создания персонажа
-                character_classes = PlayerService.get_character_classes()
+                skill_info = PlayerService.get_skill_info()
 
                 # Конвертируем user_data в JSON для безопасной передачи в JavaScript
                 telegram_user_json = json.dumps(user_data, ensure_ascii=False)
@@ -67,7 +67,7 @@ def home(request):
                 return render(request, 'game/create_character.html', {
                     'game_name': 'TwGame',
                     'version': '0.1.0',
-                    'character_classes': character_classes,
+                    'skill_info': skill_info,
                     'telegram_user_json': telegram_user_json,
                 })
         else:
@@ -90,9 +90,11 @@ def create_character(request):
 
         telegram_id = data.get('telegram_id')
         character_name = data.get('name')
-        class_type = data.get('class_type')
+        strength = int(data.get('strength', 5))
+        agility = int(data.get('agility', 5))
+        vitality = int(data.get('vitality', 5))
 
-        if not all([telegram_id, character_name, class_type]):
+        if not all([telegram_id, character_name]):
             return JsonResponse({'success': False, 'error': 'Недостаточно данных'})
 
         # Проверяем, существует ли уже персонаж с таким именем
@@ -100,11 +102,21 @@ def create_character(request):
         if Character.objects.filter(name__iexact=character_name).exists():
             return JsonResponse({'success': False, 'error': f'Персонаж с именем "{character_name}" уже существует. Выберите другое имя.'})
 
+        # Проверяем валидность навыков
+        if strength < 5 or agility < 5 or vitality < 5:
+            return JsonResponse({'success': False, 'error': 'Каждый навык должен быть не меньше 5'})
+
+        total_points = strength + agility + vitality
+        if total_points > 15:
+            return JsonResponse({'success': False, 'error': 'Превышено максимальное количество очков навыков'})
+
         # Создаем персонажа
         character = PlayerService.create_character(
             telegram_id=telegram_id,
             name=character_name,
-            class_type=class_type
+            strength=strength,
+            agility=agility,
+            vitality=vitality
         )
 
         if character:
@@ -113,11 +125,16 @@ def create_character(request):
                 'character': {
                     'id': character.id,
                     'name': character.name,
-                    'class_display_name': character.class_display_name,
                     'level': character.level,
                     'max_health': character.max_health,
-                    'attack_power': character.attack_power,
+                    'max_mana': character.max_mana,
+                    'min_attack': character.min_attack,
+                    'max_attack': character.max_attack,
                     'defense': character.defense,
+                    'speed': character.speed,
+                    'strength': character.strength,
+                    'agility': character.agility,
+                    'vitality': character.vitality,
                 }
             })
         else:

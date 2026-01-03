@@ -521,24 +521,250 @@
         }
 
 
-        /* Мобильная адаптация для аккордеона */
+        /* Стили для системы навыков */
+        .skill-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+            text-align: center;
+        }
+
+        .skill-points-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-md);
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .points-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .points-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .skill-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-card:hover {
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+        }
+
+        .skill-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .skill-card:hover::before {
+            opacity: 1;
+        }
+
+        .skill-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .skill-emoji {
+            font-size: 2rem;
+            margin-right: var(--spacing-md);
+        }
+
+        .skill-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex-grow: 1;
+        }
+
+        .skill-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
+            min-width: 40px;
+            text-align: center;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-small);
+            border: 1px solid var(--border-color);
+        }
+
+        .skill-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+            padding: var(--spacing-sm);
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-small);
+        }
+
+        .skill-button {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .skill-button:hover {
+            background: var(--accent-secondary);
+            transform: scale(1.1);
+        }
+
+        .skill-button:active {
+            transform: scale(0.95);
+        }
+
+        .skill-button:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .skill-current {
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .skill-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.4;
+        }
+
+        .skill-effects {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .skill-effect {
+            margin-bottom: var(--spacing-xs);
+            line-height: 1.3;
+        }
+
+        .character-preview {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .character-preview h3 {
+            color: var(--accent-primary);
+            margin-bottom: var(--spacing-lg);
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .stats-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-sm);
+        }
+
+        .stat-preview-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-sm);
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius-small);
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-preview-label {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .stat-preview-value {
+            font-weight: 700;
+            color: var(--accent-secondary);
+        }
+
+        /* Мобильная адаптация для навыков */
         @media (max-width: 768px) {
-            .card-header {
-                padding: var(--spacing-sm);
+            .skills-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
             }
 
-            .class-image {
-                width: 50px;
-                height: 70px;
+            .skill-card {
+                padding: var(--spacing-md);
             }
 
-            .stat-grid {
+            .skill-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-sm);
+            }
+
+            .skill-emoji {
+                font-size: 1.5rem;
+                margin-right: 0;
+            }
+
+            .skill-controls {
+                padding: var(--spacing-xs);
+            }
+
+            .skill-button {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .stats-preview {
                 grid-template-columns: 1fr;
                 gap: var(--spacing-xs);
-            }
-
-            .stat-item {
-                padding: var(--spacing-xs);
             }
         }
 
@@ -569,53 +795,75 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">⚔️ Выберите класс</label>
-                    <div class="classes-grid" id="classesGrid">
-                    {% for class_info in character_classes %}
-                    <div class="class-card {{ class_info.type|lower }}" data-class="{{ class_info.type }}">
-                        <div class="card-header">
-                            <img src="/static/images/{{ class_info.image }}" alt="{{ class_info.name }}" class="class-image" onerror="this.style.display='none'">
-                            <div class="class-info">
-                                <div class="class-emoji">{{ class_info.emoji }}</div>
-                                <div class="class-name">{{ class_info.name }}</div>
-                            </div>
+                    <label class="form-label">🎯 Распределите очки навыков</label>
+                    <p class="skill-description">У вас есть 5 свободных очков для распределения между навыками. Каждый навык начинается с 5 очков.</p>
+
+                    <div class="skill-points-display">
+                        <span class="points-label">Свободные очки:</span>
+                        <span id="freePoints" class="points-value">5</span>
+                    </div>
+
+                    <div class="skills-grid" id="skillsGrid">
+                    {% for skill_key, skill_info in skill_info.items %}
+                    <div class="skill-card" data-skill="{{ skill_key }}">
+                        <div class="skill-header">
+                            <div class="skill-emoji">{{ skill_info.emoji }}</div>
+                            <div class="skill-name">{{ skill_info.name }}</div>
+                            <div class="skill-value" id="{{ skill_key }}Value">5</div>
                         </div>
 
-                        <!-- Аккордеон с описанием -->
-                        <div class="card-content">
-                            <div class="class-description">
-                                {{ class_info.description }}
-                            </div>
-                            <div class="class-stats">
-                                <div class="stat-grid">
-                                    <div class="stat-item">
-                                        <span class="stat-label">Здоровье</span>
-                                        <span class="stat-value">{{ class_info.health_base }}</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Мана</span>
-                                        <span class="stat-value">{{ class_info.mana_base }}</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Атака</span>
-                                        <span class="stat-value">{{ class_info.attack_base }}</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Защита</span>
-                                        <span class="stat-value">{{ class_info.defense_base }}</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Скорость</span>
-                                        <span class="stat-value">{{ class_info.speed_base }}</span>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="skill-controls">
+                            <button class="skill-button minus" data-skill="{{ skill_key }}" data-action="minus">-</button>
+                            <div class="skill-current">{{ skill_info.name }}</div>
+                            <button class="skill-button plus" data-skill="{{ skill_key }}" data-action="plus">+</button>
+                        </div>
+
+                        <div class="skill-description">
+                            {{ skill_info.description }}
+                        </div>
+
+                        <div class="skill-effects">
+                            {% for effect in skill_info.effects %}
+                            <div class="skill-effect">• {{ effect }}</div>
+                            {% endfor %}
                         </div>
                     </div>
                     {% endfor %}
                 </div>
             </div>
 
+                <div class="character-preview">
+                    <h3>📊 Характеристики персонажа</h3>
+                    <div class="stats-preview">
+                        <div class="stat-preview-item">
+                            <span class="stat-preview-label">Здоровье:</span>
+                            <span id="previewHealth" class="stat-preview-value">100</span>
+                        </div>
+                        <div class="stat-preview-item">
+                            <span class="stat-preview-label">Мана:</span>
+                            <span id="previewMana" class="stat-preview-value">50</span>
+                        </div>
+                        <div class="stat-preview-item">
+                            <span class="stat-preview-label">Атака:</span>
+                            <span id="previewAttack" class="stat-preview-value">10-15</span>
+                        </div>
+                        <div class="stat-preview-item">
+                            <span class="stat-preview-label">Защита:</span>
+                            <span id="previewDefense" class="stat-preview-value">5</span>
+                        </div>
+                        <div class="stat-preview-item">
+                            <span class="stat-preview-label">Скорость:</span>
+                            <span id="previewSpeed" class="stat-preview-value">10</span>
+                        </div>
+                        <div class="stat-preview-item">
+                            <span class="stat-preview-label">Крит. шанс:</span>
+                            <span id="previewCrit" class="stat-preview-value">5%</span>
+                        </div>
+                        <div class="stat-preview-item">
+                            <span class="stat-preview-label">Уворот:</span>
+                            <span id="previewDodge" class="stat-preview-value">5%</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -631,64 +879,141 @@
     <script>
         console.log('Character creation script loaded');
 
-// Telegram WebApp data - already JSON-encoded from Django
-let telegramUser = {{ telegram_user_json|safe }};
-console.log('Telegram user data loaded:', telegramUser);
+        // Telegram WebApp data - already JSON-encoded from Django
+        let telegramUser = {{ telegram_user_json|safe }};
+        console.log('Telegram user data loaded:', telegramUser);
 
-        let selectedClass = null;
+        // Состояние навыков
+        let skills = {
+            strength: 5,
+            agility: 5,
+            vitality: 5
+        };
+        let freeSkillPoints = 5;
         let characterName = '';
-        console.log('Initial state - selectedClass:', selectedClass, 'characterName:', characterName);
 
-        // Class selection - аккордеон
-        document.querySelectorAll('.class-card').forEach(card => {
-            card.addEventListener('click', function(event) {
+        console.log('Initial skills state:', skills, 'free points:', freeSkillPoints);
+
+        // Функции расчета характеристик
+        function calculateStats() {
+            const baseHealth = 100;
+            const baseMana = 50;
+            const baseMinAttack = 10;
+            const baseMaxAttack = 15;
+            const baseDefense = 5;
+            const baseSpeed = 10;
+
+            return {
+                health: baseHealth + (skills.vitality - 5) * 15,
+                mana: baseMana + (skills.agility - 5) * 5,
+                minAttack: baseMinAttack + (skills.agility - 5) * 2,
+                maxAttack: baseMaxAttack + (skills.strength - 5) * 3,
+                defense: baseDefense + (skills.vitality - 5) * 2,
+                speed: baseSpeed + (skills.agility - 5) * 1,
+                critChance: 5.0 + (skills.strength - 5) * 1.5,
+                dodgeChance: 5.0 + (skills.agility - 5) * 1.0
+            };
+        }
+
+        // Обновление отображения навыков
+        function updateSkillDisplay(skillName) {
+            const valueElement = document.getElementById(skillName + 'Value');
+            if (valueElement) {
+                valueElement.textContent = skills[skillName];
+            }
+        }
+
+        // Обновление свободных очков
+        function updateFreePoints() {
+            const freePointsElement = document.getElementById('freePoints');
+            freePointsElement.textContent = freeSkillPoints;
+
+            // Изменяем цвет в зависимости от количества очков
+            if (freeSkillPoints === 0) {
+                freePointsElement.style.color = 'var(--success-color)';
+            } else if (freeSkillPoints > 0) {
+                freePointsElement.style.color = 'var(--accent-primary)';
+            } else {
+                freePointsElement.style.color = 'var(--error-color)';
+            }
+        }
+
+        // Обновление превью характеристик
+        function updateStatsPreview() {
+            const stats = calculateStats();
+
+            document.getElementById('previewHealth').textContent = stats.health;
+            document.getElementById('previewMana').textContent = stats.mana;
+            document.getElementById('previewAttack').textContent = `${stats.minAttack}-${stats.maxAttack}`;
+            document.getElementById('previewDefense').textContent = stats.defense;
+            document.getElementById('previewSpeed').textContent = stats.speed;
+            document.getElementById('previewCrit').textContent = `${stats.critChance.toFixed(1)}%`;
+            document.getElementById('previewDodge').textContent = `${stats.dodgeChance.toFixed(1)}%`;
+        }
+
+        // Обновление кнопок навыков
+        function updateSkillButtons() {
+            document.querySelectorAll('.skill-button').forEach(button => {
+                const skillName = button.dataset.skill;
+                const action = button.dataset.action;
+
+                if (action === 'plus') {
+                    button.disabled = freeSkillPoints <= 0;
+                } else if (action === 'minus') {
+                    button.disabled = skills[skillName] <= 5;
+                }
+            });
+        }
+
+        // Обработка кликов по кнопкам навыков
+        document.querySelectorAll('.skill-button').forEach(button => {
+            button.addEventListener('click', function(event) {
                 event.preventDefault();
-                event.stopPropagation();
 
-                const classType = this.dataset.class;
-                const isExpanded = this.classList.contains('expanded');
+                const skillName = this.dataset.skill;
+                const action = this.dataset.action;
 
-                // Close all other cards
-                document.querySelectorAll('.class-card').forEach(c => {
-                    c.classList.remove('expanded', 'selected');
-                });
-
-                // Toggle current card
-                if (isExpanded) {
-                    this.classList.remove('expanded', 'selected');
-                    selectedClass = null;
-                } else {
-                    this.classList.add('expanded', 'selected');
-                    selectedClass = classType;
+                if (action === 'plus' && freeSkillPoints > 0) {
+                    skills[skillName]++;
+                    freeSkillPoints--;
+                } else if (action === 'minus' && skills[skillName] > 5) {
+                    skills[skillName]--;
+                    freeSkillPoints++;
                 }
 
-                console.log('Selected class:', selectedClass);
+                updateSkillDisplay(skillName);
+                updateFreePoints();
+                updateStatsPreview();
+                updateSkillButtons();
                 updateCreateButton();
+
+                console.log('Skills updated:', skills, 'free points:', freeSkillPoints);
             });
         });
 
-        // Name input
+        // Ввод имени персонажа
         document.getElementById('characterName').addEventListener('input', function() {
             characterName = this.value.trim();
             console.log('Character name:', characterName);
             updateCreateButton();
         });
 
+        // Обновление кнопки создания
         function updateCreateButton() {
             const button = document.getElementById('createButton');
-            const isDisabled = !selectedClass || !characterName;
+            const isDisabled = !characterName || freeSkillPoints > 0;
             button.disabled = isDisabled;
-            console.log('Button disabled:', isDisabled, 'selectedClass:', selectedClass, 'characterName:', characterName);
+            console.log('Button disabled:', isDisabled, 'name:', characterName, 'free points:', freeSkillPoints);
         }
 
-        // Create character
+        // Создание персонажа
         document.getElementById('createButton').addEventListener('click', async function(event) {
             event.preventDefault();
             console.log('Create button clicked');
-            console.log('selectedClass:', selectedClass, 'characterName:', characterName);
+            console.log('Skills:', skills, 'characterName:', characterName);
 
-            if (!selectedClass || !characterName) {
-                console.log('Validation failed - missing class or name');
+            if (!characterName || freeSkillPoints > 0) {
+                console.log('Validation failed - missing name or unspent points');
                 return;
             }
 
@@ -712,7 +1037,9 @@ console.log('Telegram user data loaded:', telegramUser);
                     body: JSON.stringify({
                         telegram_id: telegramUser.id,
                         name: characterName,
-                        class_type: selectedClass
+                        strength: skills.strength,
+                        agility: skills.agility,
+                        vitality: skills.vitality
                     })
                 });
 
@@ -734,7 +1061,7 @@ console.log('Telegram user data loaded:', telegramUser);
                 const data = await response.json();
 
                 if (data.success) {
-                    successDiv.textContent = `🎉 Персонаж "${data.character.name}" создан! Класс: ${data.character.class_display_name}`;
+                    successDiv.textContent = `🎉 Персонаж "${data.character.name}" создан!`;
                     successDiv.style.display = 'block';
 
                     // Redirect to game after 3 seconds
@@ -745,27 +1072,21 @@ console.log('Telegram user data loaded:', telegramUser);
                     errorDiv.textContent = data.error || 'Ошибка создания персонажа';
                     errorDiv.style.display = 'block';
                     button.disabled = false;
-                    button.textContent = '🎉 Создать персонажа';
+                    button.textContent = 'СОЗДАТЬ ПЕРСОНАЖА';
                 }
             } catch (error) {
                 errorDiv.textContent = 'Ошибка сети. Попробуйте еще раз.';
                 errorDiv.style.display = 'block';
                 button.disabled = false;
-                button.textContent = '🎉 Создать персонажа';
+                button.textContent = 'СОЗДАТЬ ПЕРСОНАЖА';
             }
         });
 
-        // Prevent accidental deselection
-        document.addEventListener('click', function(event) {
-            // Don't deselect if clicking on class cards or their children
-            if (!event.target.closest('.class-card')) {
-                // Optional: you can add logic here if needed
-                console.log('Clicked outside class cards');
-            }
-        });
-
-        // Initialize
+        // Инициализация
         console.log('Initialization complete');
+        updateFreePoints();
+        updateStatsPreview();
+        updateSkillButtons();
         updateCreateButton();
     </script>
 </body>
