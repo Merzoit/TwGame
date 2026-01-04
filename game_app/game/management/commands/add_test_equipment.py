@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
-from game.models import Player, Item, Inventory
+from accounts.models import Player
+from items.models import Item, Inventory
 
 
 class Command(BaseCommand):

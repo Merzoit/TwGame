@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.db import models
-from game.models import Equipment
+from characters.models import Equipment
 
 
 class Command(BaseCommand):

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
-from .services import PlayerService
+from accounts.services import PlayerService
 import json
 
 # Create your views here.
@@ -49,7 +49,7 @@ def home(request):
                 progress_percentage = (character.experience / next_level_exp * 100) if next_level_exp > 0 else 0
 
                 # Автоматически создаем слоты экипировки для персонажа, если их нет
-                from game.models import Equipment
+                from characters.models import Equipment
                 if not character.equipment.exists():
                     Equipment.objects.create(character=character, slot='weapon')
                     Equipment.objects.create(character=character, slot='torso')
@@ -113,7 +113,7 @@ def create_character(request):
             return JsonResponse({'success': False, 'error': 'Недостаточно данных'})
 
         # Проверяем, существует ли уже персонаж с таким именем
-        from .models import Character
+        from characters.models import Character
         if Character.objects.filter(name__iexact=character_name).exists():
             return JsonResponse({'success': False, 'error': f'Персонаж с именем "{character_name}" уже существует. Выберите другое имя.'})
 
