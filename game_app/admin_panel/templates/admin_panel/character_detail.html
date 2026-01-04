@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ character.name }} - TwGame Admin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .admin-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .admin-subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .character-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .character-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .character-info h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .character-owner {
+            color: #718096;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .character-owner i {
+            color: #667eea;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .stats-section {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .stats-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-title i {
+            color: #667eea;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .equipment-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .equipment-slot {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 2px dashed #cbd5e0;
+        }
+
+        .equipment-slot.filled {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .equipment-slot.empty {
+            border-color: #cbd5e0;
+            background: #f8fafc;
+        }
+
+        .slot-title {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .slot-item {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .slot-name {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .edit-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-left: 15px;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+
+            .admin-header {
+                padding: 20px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .admin-title {
+                font-size: 2rem;
+            }
+
+            .content-card {
+                padding: 20px;
+            }
+
+            .character-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .character-info h1 {
+                font-size: 2rem;
+            }
+
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .equipment-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <div>
+                <h1 class="admin-title">🎮 Админ Панель TwGame</h1>
+                <p class="admin-subtitle">Просмотр персонажа</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="/" class="back-btn">
+                    <i class="fas fa-home"></i>
+                    К игре
+                </a>
+            </div>
+        </div>
+
+        <a href="{% url 'game:admin_characters' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Назад к списку персонажей
+        </a>
+
+        <button class="edit-btn" onclick="editCharacter()">
+            <i class="fas fa-edit"></i>
+            Изменить персонажа
+        </button>
+
+        <div class="content-card">
+            <div class="character-header">
+                <div class="character-avatar">
+                    {{ character.name|first|upper }}
+                </div>
+                <div class="character-info">
+                    <h1>{{ character.name }}</h1>
+                    <div class="character-owner">
+                        <i class="fas fa-user"></i>
+                        {{ character.player.first_name }}{% if character.player.last_name %} {{ character.player.last_name }}{% endif %}
+                        (@{{ character.player.username }})
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-value">{{ character.strength }}</div>
+                    <div class="stat-label">Сила</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ character.agility }}</div>
+                    <div class="stat-label">Ловкость</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ character.vitality }}</div>
+                    <div class="stat-label">Живучесть</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ character.free_skill_points }}</div>
+                    <div class="stat-label">Своб. очки</div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stats-section">
+                    <h3 class="stats-title">
+                        <i class="fas fa-chart-line"></i>
+                        Боевые характеристики
+                    </h3>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Минимальная атака:</span>
+                        <span class="stat-value">{{ character.min_attack|floatformat:0 }}</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Максимальная атака:</span>
+                        <span class="stat-value">{{ character.max_attack|floatformat:0 }}</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Защита:</span>
+                        <span class="stat-value">{{ character.defense|floatformat:0 }}</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Шанс крита:</span>
+                        <span class="stat-value">{{ character.crit_chance|floatformat:1 }}%</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Шанс уворота:</span>
+                        <span class="stat-value">{{ character.dodge_chance|floatformat:1 }}%</span>
+                    </div>
+                </div>
+
+                <div class="stats-section">
+                    <h3 class="stats-title">
+                        <i class="fas fa-info-circle"></i>
+                        Информация о персонаже
+                    </h3>
+
+                    <div class="stat-item">
+                        <span class="stat-label">ID персонажа:</span>
+                        <span class="stat-value">{{ character.id }}</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">ID игрока:</span>
+                        <span class="stat-value">{{ character.player.id }}</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Дата создания:</span>
+                        <span class="stat-value">{{ character.created_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Последнее обновление:</span>
+                        <span class="stat-value">{{ character.updated_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if equipment %}
+        <div class="content-card">
+            <h3 style="font-size: 1.5rem; font-weight: 700; color: #2d3748; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-shield-alt" style="color: #667eea;"></i>
+                Экипировка
+            </h3>
+
+            <div class="equipment-section">
+                <div class="equipment-slot {% if equipment.weapon %}filled{% else %}empty{% endif %}">
+                    <div class="slot-title">Оружие</div>
+                    {% if equipment.weapon %}
+                        <div class="slot-item">⚔️</div>
+                        <div class="slot-name">{{ equipment.weapon.name }}</div>
+                    {% else %}
+                        <div class="slot-item" style="color: #cbd5e0;">⚔️</div>
+                        <div class="slot-name" style="color: #cbd5e0;">Пусто</div>
+                    {% endif %}
+                </div>
+
+                <div class="equipment-slot {% if equipment.torso %}filled{% else %}empty{% endif %}">
+                    <div class="slot-title">Торс</div>
+                    {% if equipment.torso %}
+                        <div class="slot-item">🛡️</div>
+                        <div class="slot-name">{{ equipment.torso.name }}</div>
+                    {% else %}
+                        <div class="slot-item" style="color: #cbd5e0;">🛡️</div>
+                        <div class="slot-name" style="color: #cbd5e0;">Пусто</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function editCharacter() {
+            // Заглушка для редактирования персонажа
+            alert('Функция редактирования персонажа будет реализована позже. ID: {{ character.id }}');
+        }
+
+        // Добавим анимации при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.stats-section, .stat-card');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    section.style.transition = 'all 0.5s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

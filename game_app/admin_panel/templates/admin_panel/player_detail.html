@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игрок {{ player.first_name }} - TwGame Admin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .admin-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .admin-subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-item {
+            text-decoration: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #4a5568;
+        }
+
+        .nav-item:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-item i {
+            font-size: 1.1rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-card-full {
+            grid-column: 1 / -1;
+        }
+
+        .content-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-title i {
+            color: #667eea;
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .player-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .player-info h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .player-info p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #718096;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #48bb78;
+            color: white;
+        }
+
+        .status-inactive {
+            background: #ed8936;
+            color: white;
+        }
+
+        .character-section {
+            margin-top: 30px;
+        }
+
+        .character-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .character-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .character-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .character-level {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .character-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .item-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .item-quantity {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .equipment-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .equipment-slot {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 2px dashed #cbd5e0;
+        }
+
+        .equipment-slot.filled {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .equipment-slot.empty {
+            border-color: #cbd5e0;
+            background: #f8fafc;
+        }
+
+        .slot-title {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .slot-item {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .slot-name {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+
+            .admin-header {
+                padding: 20px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .admin-title {
+                font-size: 2rem;
+            }
+
+            .admin-nav {
+                flex-wrap: wrap;
+                padding: 15px;
+            }
+
+            .nav-item {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .player-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .character-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .inventory-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+
+            .equipment-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <div>
+                <h1 class="admin-title">🎮 Админ Панель TwGame</h1>
+                <p class="admin-subtitle">Управление базой данных игры</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="/" class="nav-item" style="background: rgba(102, 126, 234, 0.1);">
+                    <i class="fas fa-home"></i>
+                    К игре
+                </a>
+            </div>
+        </div>
+
+        <nav class="admin-nav">
+            <a href="{% url 'game:admin_dashboard' %}" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                Дашборд
+            </a>
+            <a href="{% url 'game:admin_players' %}" class="nav-item active">
+                <i class="fas fa-users"></i>
+                Игроки
+            </a>
+            <a href="{% url 'game:admin_characters' %}" class="nav-item">
+                <i class="fas fa-user-ninja"></i>
+                Персонажи
+            </a>
+            <a href="{% url 'game:admin_items' %}" class="nav-item">
+                <i class="fas fa-box"></i>
+                Предметы
+            </a>
+            <a href="{% url 'game:admin_inventory' %}" class="nav-item">
+                <i class="fas fa-backpack"></i>
+                Инвентарь
+            </a>
+            <a href="{% url 'game:admin_equipment' %}" class="nav-item">
+                <i class="fas fa-shield-alt"></i>
+                Экипировка
+            </a>
+        </nav>
+
+        <a href="{% url 'game:admin_players' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Назад к списку игроков
+        </a>
+
+        <div class="content-card content-card-full">
+            <div class="player-header">
+                <div class="player-avatar">
+                    {{ player.first_name|first|upper }}
+                </div>
+                <div class="player-info">
+                    <h1>{{ player.first_name }}{% if player.last_name %} {{ player.last_name }}{% endif %}</h1>
+                    <p>@{{ player.username }} • ID: {{ player.telegram_id }}</p>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Дата регистрации</div>
+                    <div class="info-value">{{ player.created_at|date:"d.m.Y H:i" }}</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Twitch статус</div>
+                    <div class="info-value">
+                        {% if player.twitch_connected %}
+                            <span class="status-badge status-active">
+                                <i class="fab fa-twitch"></i> {{ player.twitch_username }} (ID: {{ player.twitch_id }})
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-inactive">Не подключен</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">Статус аккаунта</div>
+                    <div class="info-value">
+                        <span class="status-badge status-active">Активен</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if character %}
+        <div class="content-card content-card-full">
+            <div class="character-section">
+                <h3 class="content-title">
+                    <i class="fas fa-user-ninja"></i>
+                    Персонаж
+                </h3>
+
+                <div class="character-card">
+                    <div class="character-header">
+                        <div class="character-name">{{ character.name }}</div>
+                        <div class="character-level">Уровень 1</div>
+                    </div>
+
+                    <div class="character-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">{{ character.strength }}</div>
+                            <div class="stat-label">Сила</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ character.agility }}</div>
+                            <div class="stat-label">Ловкость</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ character.vitality }}</div>
+                            <div class="stat-label">Живучесть</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ character.min_attack|floatformat:0 }}-{{ character.max_attack|floatformat:0 }}</div>
+                            <div class="stat-label">Атака</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ character.defense|floatformat:0 }}</div>
+                            <div class="stat-label">Защита</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ character.crit_chance|floatformat:1 }}%</div>
+                            <div class="stat-label">Крит. шанс</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ character.dodge_chance|floatformat:1 }}%</div>
+                            <div class="stat-label">Уворот</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="content-grid">
+            <div class="content-card">
+                <h3 class="content-title">
+                    <i class="fas fa-backpack"></i>
+                    Инвентарь ({{ inventory|length }} предметов)
+                </h3>
+
+                {% if inventory %}
+                    <div class="inventory-grid">
+                        {% for item in inventory %}
+                        <div class="item-card">
+                            <div class="item-icon">📦</div>
+                            <div class="item-name">{{ item.item.name }}</div>
+                            <div class="item-quantity">{{ item.quantity }} шт.</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="text-align: center; color: #718096; margin-top: 20px;">Инвентарь пуст</p>
+                {% endif %}
+            </div>
+
+            {% if equipment %}
+            <div class="content-card">
+                <h3 class="content-title">
+                    <i class="fas fa-shield-alt"></i>
+                    Экипировка
+                </h3>
+
+                <div class="equipment-section">
+                    <div class="equipment-slot {% if equipment.weapon %}filled{% else %}empty{% endif %}">
+                        <div class="slot-title">Оружие</div>
+                        {% if equipment.weapon %}
+                            <div class="slot-item">⚔️</div>
+                            <div class="slot-name">{{ equipment.weapon.name }}</div>
+                        {% else %}
+                            <div class="slot-item" style="color: #cbd5e0;">⚔️</div>
+                            <div class="slot-name" style="color: #cbd5e0;">Пусто</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="equipment-slot {% if equipment.torso %}filled{% else %}empty{% endif %}">
+                        <div class="slot-title">Торс</div>
+                        {% if equipment.torso %}
+                            <div class="slot-item">🛡️</div>
+                            <div class="slot-name">{{ equipment.torso.name }}</div>
+                        {% else %}
+                            <div class="slot-item" style="color: #cbd5e0;">🛡️</div>
+                            <div class="slot-name" style="color: #cbd5e0;">Пусто</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Добавим анимации при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.content-card, .character-card, .item-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

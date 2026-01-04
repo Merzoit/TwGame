@@ -50,8 +50,18 @@ INSTALLED_APPS = [
     'corsheaders',
     'whitenoise.runserver_nostatic',
 
+    # Core apps
+    'core',
+
     # Game apps
+    'accounts',
+    'characters',
+    'items',
     'game',
+    'admin_panel',
+    'api',
+    'telegram_bot',
+    'twitch_integration',
 ]
 
 MIDDLEWARE = [
