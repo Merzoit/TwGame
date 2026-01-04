@@ -219,8 +219,18 @@ class PlayerService:
     @staticmethod
     def get_character_equipment(character):
         """Получает экипировку персонажа"""
-        try:
-            return Equipment.objects.get(character=character)
-        except Equipment.DoesNotExist:
+        equipment_queryset = Equipment.objects.filter(character=character)
+
+        if not equipment_queryset.exists():
             # Создаем пустую экипировку, если ее нет
             return Equipment.objects.create(character=character)
+
+        # Если есть несколько записей, оставляем только первую и удаляем остальные
+        equipment = equipment_queryset.first()
+
+        if equipment_queryset.count() > 1:
+            logger.warning(f"Found {equipment_queryset.count()} equipment records for character {character}. Keeping first, deleting others.")
+            # Удаляем дубликаты, оставляя только первый
+            equipment_queryset.exclude(pk=equipment.pk).delete()
+
+        return equipment
