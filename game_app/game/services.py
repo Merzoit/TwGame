@@ -1,5 +1,5 @@
 import logging
-from .models import Player, PlayerProfile, Character
+from .models import Player, PlayerProfile, Character, Equipment
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
@@ -215,3 +215,12 @@ class PlayerService:
                 ]
             }
         }
+
+    @staticmethod
+    def get_character_equipment(character):
+        """Получает экипировку персонажа"""
+        try:
+            return Equipment.objects.get(character=character)
+        except Equipment.DoesNotExist:
+            # Создаем пустую экипировку, если ее нет
+            return Equipment.objects.create(character=character)
