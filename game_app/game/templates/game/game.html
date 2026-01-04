@@ -1192,11 +1192,22 @@
     text-transform: uppercase;
 }
 
-.item-rarity.common { background: #8B8B8B; color: white; }
-.item-rarity.uncommon { background: #4CAF50; color: white; }
-.item-rarity.rare { background: #2196F3; color: white; }
+.item-rarity.gray { background: #9E9E9E; color: white; }
+.item-rarity.green { background: #4CAF50; color: white; }
+.item-rarity.blue { background: #2196F3; color: white; }
 .item-rarity.epic { background: #9C27B0; color: white; }
 .item-rarity.legendary { background: #FF9800; color: white; }
+
+.item-bonuses {
+    margin-top: 8px;
+}
+
+.item-bonuses .bonus {
+    font-size: 0.75rem;
+    color: #4CAF50;
+    margin: 2px 0;
+    font-weight: 500;
+}
 
 .equip-btn {
     background: var(--accent-secondary);
@@ -1623,6 +1634,32 @@
                                             <div class="item-name">{{ item_entry.item.name }}</div>
                                             <div class="item-quantity">x{{ item_entry.quantity }}</div>
                                             <div class="item-rarity {{ item_entry.item.rarity }}">{{ item_entry.item.get_rarity_display }}</div>
+                                            <div class="item-bonuses">
+                                                {% if item_entry.item.strength_bonus %}
+                                                    <div class="bonus">Сила: +{{ item_entry.item.strength_bonus }}</div>
+                                                {% endif %}
+                                                {% if item_entry.item.agility_bonus %}
+                                                    <div class="bonus">Ловкость: +{{ item_entry.item.agility_bonus }}</div>
+                                                {% endif %}
+                                                {% if item_entry.item.vitality_bonus %}
+                                                    <div class="bonus">Живучесть: +{{ item_entry.item.vitality_bonus }}</div>
+                                                {% endif %}
+                                                {% if item_entry.item.attack_bonus %}
+                                                    <div class="bonus">Атака: +{{ item_entry.item.attack_bonus }}</div>
+                                                {% endif %}
+                                                {% if item_entry.item.defense_bonus %}
+                                                    <div class="bonus">Защита: +{{ item_entry.item.defense_bonus }}</div>
+                                                {% endif %}
+                                                {% if item_entry.item.health_bonus %}
+                                                    <div class="bonus">Здоровье: +{{ item_entry.item.health_bonus }}</div>
+                                                {% endif %}
+                                                {% if item_entry.item.crit_chance_bonus %}
+                                                    <div class="bonus">Крит: +{{ item_entry.item.crit_chance_bonus }}%</div>
+                                                {% endif %}
+                                                {% if item_entry.item.dodge_chance_bonus %}
+                                                    <div class="bonus">Уворот: +{{ item_entry.item.dodge_chance_bonus }}%</div>
+                                                {% endif %}
+                                            </div>
                                         </div>
                                         {% if item_entry.item.is_equippable %}
                                         <button class="equip-btn" data-item-id="{{ item_entry.item.id }}">Экипировать</button>
@@ -1647,28 +1684,44 @@
                                 <div class="equipment-slot" data-slot="weapon">
                                     <div class="slot-label">Оружие</div>
                                     <div class="slot-content">
-                                        {% for equip in equipment %}
-                                            {% if equip.slot == 'weapon' %}
-                                                {% if equip.item %}
-                                                    <div class="equipped-item">
-                                                        <div class="item-icon">{{ equip.item.name|slice:":1"|upper }}</div>
-                                                        <div class="item-info">
-                                                            <div class="item-name">{{ equip.item.name }}</div>
-                                                            <div class="item-stats">
-                                                                {% if equip.item.attack_bonus > 0 %}
-                                                                    <span>+{{ equip.item.attack_bonus }} атаки</span>
-                                                                {% endif %}
-                                                            </div>
-                                                        </div>
-                                                        <button class="unequip-btn" data-slot="weapon">Снять</button>
+                                        {% if equipment.weapon %}
+                                            <div class="equipped-item">
+                                                <div class="item-icon">{{ equipment.weapon.name|slice:":1"|upper }}</div>
+                                                <div class="item-info">
+                                                    <div class="item-name">{{ equipment.weapon.name }}</div>
+                                                    <div class="item-rarity {{ equipment.weapon.rarity }}">{{ equipment.weapon.get_rarity_display }}</div>
+                                                    <div class="item-bonuses">
+                                                        {% if equipment.weapon.strength_bonus %}
+                                                            <div class="bonus">Сила: +{{ equipment.weapon.strength_bonus }}</div>
+                                                        {% endif %}
+                                                        {% if equipment.weapon.agility_bonus %}
+                                                            <div class="bonus">Ловкость: +{{ equipment.weapon.agility_bonus }}</div>
+                                                        {% endif %}
+                                                        {% if equipment.weapon.vitality_bonus %}
+                                                            <div class="bonus">Живучесть: +{{ equipment.weapon.vitality_bonus }}</div>
+                                                        {% endif %}
+                                                        {% if equipment.weapon.attack_bonus %}
+                                                            <div class="bonus">Атака: +{{ equipment.weapon.attack_bonus }}</div>
+                                                        {% endif %}
+                                                        {% if equipment.weapon.defense_bonus %}
+                                                            <div class="bonus">Защита: +{{ equipment.weapon.defense_bonus }}</div>
+                                                        {% endif %}
+                                                        {% if equipment.weapon.health_bonus %}
+                                                            <div class="bonus">Здоровье: +{{ equipment.weapon.health_bonus }}</div>
+                                                        {% endif %}
+                                                        {% if equipment.weapon.crit_chance_bonus %}
+                                                            <div class="bonus">Крит: +{{ equipment.weapon.crit_chance_bonus }}%</div>
+                                                        {% endif %}
+                                                        {% if equipment.weapon.dodge_chance_bonus %}
+                                                            <div class="bonus">Уворот: +{{ equipment.weapon.dodge_chance_bonus }}%</div>
+                                                        {% endif %}
                                                     </div>
-                                                {% else %}
-                                                    <div class="empty-slot">Пусто</div>
-                                                {% endif %}
-                                            {% endif %}
-                                        {% empty %}
+                                                </div>
+                                                <button class="unequip-btn" data-slot="weapon">Снять</button>
+                                            </div>
+                                        {% else %}
                                             <div class="empty-slot">Пусто</div>
-                                        {% endfor %}
+                                        {% endif %}
                                     </div>
                                 </div>
 
@@ -1676,31 +1729,44 @@
                                 <div class="equipment-slot" data-slot="torso">
                                     <div class="slot-label">Торс</div>
                                     <div class="slot-content">
-                                        {% for equip in equipment %}
-                                            {% if equip.slot == 'torso' %}
-                                                {% if equip.item %}
-                                                    <div class="equipped-item">
-                                                        <div class="item-icon">{{ equip.item.name|slice:":1"|upper }}</div>
-                                                        <div class="item-info">
-                                                            <div class="item-name">{{ equip.item.name }}</div>
-                                                            <div class="item-stats">
-                                                                {% if equip.item.defense_bonus > 0 %}
-                                                                    <span>+{{ equip.item.defense_bonus }} защиты</span>
-                                                                {% endif %}
-                                                                {% if equip.item.health_bonus > 0 %}
-                                                                    <span>+{{ equip.item.health_bonus }} здоровья</span>
-                                                                {% endif %}
-                                                            </div>
-                                                        </div>
-                                                        <button class="unequip-btn" data-slot="torso">Снять</button>
+                                        {% if equipment.torso %}
+                                            <div class="equipped-item">
+                                                <div class="item-icon">{{ equipment.torso.name|slice:":1"|upper }}</div>
+                                                <div class="item-info">
+                                                    <div class="item-name">{{ equipment.torso.name }}</div>
+                                                    <div class="item-rarity {{ equipment.torso.rarity }}">{{ equipment.torso.get_rarity_display }}</div>
+                                                    <div class="item-bonuses">
+                                                        {% if equipment.torso.strength_bonus %}
+                                                            <div class="bonus">Сила: +{{ equipment.torso.strength_bonus }}</div>
+                                                        {% endif %}
+                                                        {% if equipment.torso.agility_bonus %}
+                                                            <div class="bonus">Ловкость: +{{ equipment.torso.agility_bonus }}</div>
+                                                        {% endif %}
+                                                        {% if equipment.torso.vitality_bonus %}
+                                                            <div class="bonus">Живучесть: +{{ equipment.torso.vitality_bonus }}</div>
+                                                        {% endif %}
+                                                        {% if equipment.torso.attack_bonus %}
+                                                            <div class="bonus">Атака: +{{ equipment.torso.attack_bonus }}</div>
+                                                        {% endif %}
+                                                        {% if equipment.torso.defense_bonus %}
+                                                            <div class="bonus">Защита: +{{ equipment.torso.defense_bonus }}</div>
+                                                        {% endif %}
+                                                        {% if equipment.torso.health_bonus %}
+                                                            <div class="bonus">Здоровье: +{{ equipment.torso.health_bonus }}</div>
+                                                        {% endif %}
+                                                        {% if equipment.torso.crit_chance_bonus %}
+                                                            <div class="bonus">Крит: +{{ equipment.torso.crit_chance_bonus }}%</div>
+                                                        {% endif %}
+                                                        {% if equipment.torso.dodge_chance_bonus %}
+                                                            <div class="bonus">Уворот: +{{ equipment.torso.dodge_chance_bonus }}%</div>
+                                                        {% endif %}
                                                     </div>
-                                                {% else %}
-                                                    <div class="empty-slot">Пусто</div>
-                                                {% endif %}
-                                            {% endif %}
-                                        {% empty %}
+                                                </div>
+                                                <button class="unequip-btn" data-slot="torso">Снять</button>
+                                            </div>
+                                        {% else %}
                                             <div class="empty-slot">Пусто</div>
-                                        {% endfor %}
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -1836,6 +1902,127 @@
                     switchToSection('character-section');
                 });
                 gameTitle.style.cursor = 'pointer';
+            }
+
+            // Обработка кнопок экипировки
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('equip-btn')) {
+                    const itemId = e.target.getAttribute('data-item-id');
+                    equipItem(itemId);
+                } else if (e.target.classList.contains('unequip-btn')) {
+                    const slot = e.target.getAttribute('data-slot');
+                    unequipItem(slot);
+                }
+            });
+
+            // Функция экипировки предмета
+            function equipItem(itemId) {
+                // Получаем telegram_id из URL или из данных
+                const urlParams = new URLSearchParams(window.location.search);
+                const userParam = urlParams.get('user');
+                let telegramId = null;
+
+                if (userParam) {
+                    try {
+                        const userData = JSON.parse(decodeURIComponent(userParam));
+                        telegramId = userData.id;
+                    } catch (e) {
+                        console.error('Ошибка парсинга данных пользователя:', e);
+                        return;
+                    }
+                }
+
+                if (!telegramId) {
+                    showNotification('Ошибка: не удалось определить пользователя', 'error');
+                    return;
+                }
+
+                // Отправляем запрос на сервер
+                fetch('/api/equip-item/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify({
+                        telegram_id: telegramId,
+                        item_id: itemId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Предмет экипирован!', 'success');
+                        // Перезагружаем страницу для обновления данных
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showNotification(data.error || 'Ошибка экипировки', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    showNotification('Ошибка подключения к серверу', 'error');
+                });
+            }
+
+            // Функция снятия предмета
+            function unequipItem(slot) {
+                // Получаем telegram_id из URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const userParam = urlParams.get('user');
+                let telegramId = null;
+
+                if (userParam) {
+                    try {
+                        const userData = JSON.parse(decodeURIComponent(userParam));
+                        telegramId = userData.id;
+                    } catch (e) {
+                        console.error('Ошибка парсинга данных пользователя:', e);
+                        return;
+                    }
+                }
+
+                if (!telegramId) {
+                    showNotification('Ошибка: не удалось определить пользователя', 'error');
+                    return;
+                }
+
+                // Отправляем запрос на сервер
+                fetch('/api/unequip-item/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    body: JSON.stringify({
+                        telegram_id: telegramId,
+                        slot: slot
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Предмет снят!', 'success');
+                        // Перезагружаем страницу для обновления данных
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showNotification(data.error || 'Ошибка снятия предмета', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    showNotification('Ошибка подключения к серверу', 'error');
+                });
+            }
+
+            // Функция получения CSRF токена
+            function getCSRFToken() {
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                return csrfToken ? csrfToken.value : '';
             }
 
             // Функция показа уведомлений

@@ -56,6 +56,7 @@ def home(request):
 
                 # Получаем инвентарь игрока
                 inventory = player.inventory.all().select_related('item') if hasattr(player, 'inventory') else []
+                equipment = PlayerService.get_character_equipment(character)
 
                 # Получаем экипировку персонажа
                 equipment = character.equipment.all().select_related('item') if hasattr(character, 'equipment') else []
@@ -315,3 +316,93 @@ def twitch_callback(request):
         return render(request, 'game/error.html', {
             'error_message': f'Неожиданная ошибка: {str(e)}'
         })
+
+
+@csrf_exempt
+@require_POST
+def equip_item(request):
+    """Экипировка предмета"""
+    try:
+        data = json.loads(request.body)
+        telegram_id = data.get('telegram_id')
+        item_id = data.get('item_id')
+
+        if not telegram_id or not item_id:
+            return JsonResponse({'success': False, 'error': 'Отсутствуют необходимые данные'})
+
+        # Получаем персонажа
+        character = PlayerService.get_character(telegram_id)
+        if not character:
+            return JsonResponse({'success': False, 'error': 'Персонаж не найден'})
+
+        # Получаем предмет
+        try:
+            item = Item.objects.get(id=item_id)
+        except Item.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Предмет не найден'})
+
+        # Проверяем, что предмет можно экипировать и он есть в инвентаре
+        player = PlayerService.get_player(telegram_id)
+        inventory_item = Inventory.objects.filter(player=player, item=item, quantity__gt=0).first()
+        if not inventory_item:
+            return JsonResponse({'success': False, 'error': 'Предмет отсутствует в инвентаре'})
+
+        # Получаем или создаем экипировку персонажа
+        equipment = PlayerService.get_character_equipment(character)
+
+        # Экипируем предмет в соответствующий слот
+        if item.equipment_slot == 'weapon':
+            equipment.weapon = item
+        elif item.equipment_slot == 'torso':
+            equipment.torso = item
+        else:
+            return JsonResponse({'success': False, 'error': 'Неподходящий слот для предмета'})
+
+        equipment.save()
+
+        # Пересчитываем характеристики персонажа
+        character.save()
+
+        return JsonResponse({'success': True})
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+
+@csrf_exempt
+@require_POST
+def unequip_item(request):
+    """Снятие предмета с экипировки"""
+    try:
+        data = json.loads(request.body)
+        telegram_id = data.get('telegram_id')
+        slot = data.get('slot')
+
+        if not telegram_id or not slot:
+            return JsonResponse({'success': False, 'error': 'Отсутствуют необходимые данные'})
+
+        # Получаем персонажа
+        character = PlayerService.get_character(telegram_id)
+        if not character:
+            return JsonResponse({'success': False, 'error': 'Персонаж не найден'})
+
+        # Получаем экипировку персонажа
+        equipment = PlayerService.get_character_equipment(character)
+
+        # Снимаем предмет из слота
+        if slot == 'weapon':
+            equipment.weapon = None
+        elif slot == 'torso':
+            equipment.torso = None
+        else:
+            return JsonResponse({'success': False, 'error': 'Неверный слот'})
+
+        equipment.save()
+
+        # Пересчитываем характеристики персонажа
+        character.save()
+
+        return JsonResponse({'success': True})
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})

@@ -12,4 +12,8 @@ urlpatterns = [
     # Twitch OAuth
     path('auth/twitch/', views.twitch_auth, name='twitch_auth'),
     path('auth/twitch/callback/', views.twitch_callback, name='twitch_callback'),
+
+    # Equipment API
+    path('api/equip-item/', views.equip_item, name='equip_item'),
+    path('api/unequip-item/', views.unequip_item, name='unequip_item'),
 ]

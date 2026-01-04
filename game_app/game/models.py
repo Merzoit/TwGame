@@ -123,15 +123,25 @@ class Character(models.Model):
         base_max_attack = 15
         base_defense = 5
 
-        # Модификаторы от навыков
-        skill_health_bonus = (self.vitality - 5) * 15  # +15 HP за каждый уровень живучести выше 5
-        skill_min_attack_bonus = (self.agility - 5) * 2  # +2 к мин атаке за ловкость
-        skill_max_attack_bonus = (self.strength - 5) * 3  # +3 к макс атаке за силу
-        skill_defense_bonus = (self.vitality - 5) * 2      # +2 к защите за живучесть
-        skill_crit_bonus = (self.strength - 5) * 1.5         # +1.5% крита за силу
-        skill_dodge_bonus = (self.agility - 5) * 1.0         # +1% уворота за ловкость
+        # Применяем бонусы экипировки к первичным характеристикам
+        effective_strength = self.strength + equipment_strength_bonus
+        effective_agility = self.agility + equipment_agility_bonus
+        effective_vitality = self.vitality + equipment_vitality_bonus
 
-        # Бонусы от экипировки
+        # Модификаторы от навыков (используем эффективные значения)
+        skill_health_bonus = (effective_vitality - 5) * 15  # +15 HP за каждый уровень живучести выше 5
+        skill_min_attack_bonus = (effective_agility - 5) * 2  # +2 к мин атаке за ловкость
+        skill_max_attack_bonus = (effective_strength - 5) * 3  # +3 к макс атаке за силу
+        skill_defense_bonus = (effective_vitality - 5) * 2      # +2 к защите за живучесть
+        skill_crit_bonus = (effective_strength - 5) * 1.5         # +1.5% крита за силу
+        skill_dodge_bonus = (effective_agility - 5) * 1.0         # +1% уворота за ловкость
+
+        # Бонусы от экипировки к первичным характеристикам
+        equipment_strength_bonus = 0
+        equipment_agility_bonus = 0
+        equipment_vitality_bonus = 0
+
+        # Бонусы от экипировки к вторичным характеристикам
         equipment_health_bonus = 0
         equipment_min_attack_bonus = 0
         equipment_max_attack_bonus = 0
@@ -142,6 +152,12 @@ class Character(models.Model):
         # Получаем бонусы от экипированных предметов
         for equip in self.equipment.all():
             if equip.item:
+                # Бонусы к первичным характеристикам
+                equipment_strength_bonus += equip.item.strength_bonus
+                equipment_agility_bonus += equip.item.agility_bonus
+                equipment_vitality_bonus += equip.item.vitality_bonus
+
+                # Бонусы к вторичным характеристикам
                 equipment_health_bonus += equip.item.health_bonus
                 equipment_min_attack_bonus += equip.item.attack_bonus
                 equipment_max_attack_bonus += equip.item.attack_bonus
@@ -193,9 +209,9 @@ class Item(models.Model):
 
     # Редкость предметов
     RARITIES = [
-        ('common', 'Обычный'),
-        ('uncommon', 'Необычный'),
-        ('rare', 'Редкий'),
+        ('gray', 'Серый'),
+        ('green', 'Зеленый'),
+        ('blue', 'Синий'),
         ('epic', 'Эпический'),
         ('legendary', 'Легендарный'),
     ]
@@ -208,6 +224,12 @@ class Item(models.Model):
     rarity = models.CharField(max_length=20, choices=RARITIES, default='common', verbose_name="Редкость")
 
     # Свойства предметов
+    # Бонусы к первичным характеристикам
+    strength_bonus = models.IntegerField(default=0, verbose_name="Бонус к силе")
+    agility_bonus = models.IntegerField(default=0, verbose_name="Бонус к ловкости")
+    vitality_bonus = models.IntegerField(default=0, verbose_name="Бонус к живучести")
+
+    # Бонусы к вторичным характеристикам
     attack_bonus = models.IntegerField(default=0, verbose_name="Бонус к атаке")
     defense_bonus = models.IntegerField(default=0, verbose_name="Бонус к защите")
     health_bonus = models.IntegerField(default=0, verbose_name="Бонус к здоровью")
