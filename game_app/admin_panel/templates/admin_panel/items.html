@@ -416,27 +416,27 @@
         </div>
 
         <nav class="admin-nav">
-            <a href="{% url 'game:admin_dashboard' %}" class="nav-item">
+            <a href="{% url 'admin_panel:admin_dashboard' %}" class="nav-item">
                 <i class="fas fa-tachometer-alt"></i>
                 Дашборд
             </a>
-            <a href="{% url 'game:admin_players' %}" class="nav-item">
+            <a href="{% url 'admin_panel:admin_players' %}" class="nav-item">
                 <i class="fas fa-users"></i>
                 Игроки
             </a>
-            <a href="{% url 'game:admin_characters' %}" class="nav-item">
+            <a href="{% url 'admin_panel:admin_characters' %}" class="nav-item">
                 <i class="fas fa-user-ninja"></i>
                 Персонажи
             </a>
-            <a href="{% url 'game:admin_items' %}" class="nav-item active">
+            <a href="{% url 'admin_panel:admin_items' %}" class="nav-item active">
                 <i class="fas fa-box"></i>
                 Предметы
             </a>
-            <a href="{% url 'game:admin_inventory' %}" class="nav-item">
+            <a href="{% url 'admin_panel:admin_inventory' %}" class="nav-item">
                 <i class="fas fa-backpack"></i>
                 Инвентарь
             </a>
-            <a href="{% url 'game:admin_equipment' %}" class="nav-item">
+            <a href="{% url 'admin_panel:admin_equipment' %}" class="nav-item">
                 <i class="fas fa-shield-alt"></i>
                 Экипировка
             </a>
@@ -450,7 +450,7 @@
                 </h2>
 
                 <div style="display: flex; gap: 15px; align-items: center;">
-                    <a href="{% url 'game:admin_item_create' %}" class="create-btn">
+                    <a href="{% url 'admin_panel:admin_item_create' %}" class="create-btn">
                         <i class="fas fa-plus"></i>
                         Создать предмет
                     </a>
@@ -555,7 +555,7 @@
                         </div>
 
                         <div class="item-actions">
-                            <a href="{% url 'game:admin_item_detail' item.id %}" class="action-btn btn-primary">
+                            <a href="{% url 'admin_panel:admin_item_detail' item.id %}" class="action-btn btn-primary">
                                 <i class="fas fa-eye"></i> Просмотр
                             </a>
                             <button class="action-btn btn-secondary" onclick="editItem({{ item.id }})">

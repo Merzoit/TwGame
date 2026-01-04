@@ -430,33 +430,33 @@
         </div>
 
         <nav class="admin-nav">
-            <a href="{% url 'game:admin_dashboard' %}" class="nav-item">
+            <a href="{% url 'admin_panel:admin_dashboard' %}" class="nav-item">
                 <i class="fas fa-tachometer-alt"></i>
                 Дашборд
             </a>
-            <a href="{% url 'game:admin_players' %}" class="nav-item active">
+            <a href="{% url 'admin_panel:admin_players' %}" class="nav-item active">
                 <i class="fas fa-users"></i>
                 Игроки
             </a>
-            <a href="{% url 'game:admin_characters' %}" class="nav-item">
+            <a href="{% url 'admin_panel:admin_characters' %}" class="nav-item">
                 <i class="fas fa-user-ninja"></i>
                 Персонажи
             </a>
-            <a href="{% url 'game:admin_items' %}" class="nav-item">
+            <a href="{% url 'admin_panel:admin_items' %}" class="nav-item">
                 <i class="fas fa-box"></i>
                 Предметы
             </a>
-            <a href="{% url 'game:admin_inventory' %}" class="nav-item">
+            <a href="{% url 'admin_panel:admin_inventory' %}" class="nav-item">
                 <i class="fas fa-backpack"></i>
                 Инвентарь
             </a>
-            <a href="{% url 'game:admin_equipment' %}" class="nav-item">
+            <a href="{% url 'admin_panel:admin_equipment' %}" class="nav-item">
                 <i class="fas fa-shield-alt"></i>
                 Экипировка
             </a>
         </nav>
 
-        <a href="{% url 'game:admin_players' %}" class="back-btn">
+        <a href="{% url 'admin_panel:admin_players' %}" class="back-btn">
             <i class="fas fa-arrow-left"></i>
             Назад к списку игроков
         </a>
