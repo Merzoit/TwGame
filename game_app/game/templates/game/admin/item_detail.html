@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ item.name }} - TwGame Admin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .admin-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .admin-subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .item-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .item-icon-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .item-info h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .item-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .rarity-common { background: #a0aec0; color: white; }
+        .rarity-uncommon { background: #48bb78; color: white; }
+        .rarity-rare { background: #4299e1; color: white; }
+        .rarity-epic { background: #9f7aea; color: white; }
+        .rarity-legendary { background: #ed8936; color: white; }
+
+        .type-badge { background: #e2e8f0; color: #4a5568; }
+
+        .item-description {
+            font-size: 1.1rem;
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .stats-section {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .stats-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-title i {
+            color: #667eea;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .stat-value.positive {
+            color: #48bb78;
+        }
+
+        .stat-value.zero {
+            color: #a0aec0;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .edit-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-left: 15px;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+
+            .admin-header {
+                padding: 20px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .admin-title {
+                font-size: 2rem;
+            }
+
+            .content-card {
+                padding: 20px;
+            }
+
+            .item-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .item-info h1 {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .item-meta {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <div>
+                <h1 class="admin-title">🎮 Админ Панель TwGame</h1>
+                <p class="admin-subtitle">Просмотр предмета</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="/" class="back-btn">
+                    <i class="fas fa-home"></i>
+                    К игре
+                </a>
+            </div>
+        </div>
+
+        <a href="{% url 'game:admin_items' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Назад к списку предметов
+        </a>
+
+        <button class="edit-btn" onclick="editItem()">
+            <i class="fas fa-edit"></i>
+            Изменить предмет
+        </button>
+
+        <div class="content-card">
+            <div class="item-header">
+                <div class="item-icon-large">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="item-info">
+                    <h1>{{ item.name }}</h1>
+                    <div class="item-meta">
+                        <span class="item-badge rarity-{{ item.rarity }}">{{ item.get_rarity_display }}</span>
+                        <span class="item-badge type-badge">{{ item.get_item_type_display }}</span>
+                        {% if item.equipment_slot %}
+                        <span class="item-badge type-badge">Слот: {{ item.equipment_slot }}</span>
+                        {% endif %}
+                        {% if item.is_equippable %}
+                        <span class="item-badge type-badge">Экипируется</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="item-description">
+                {{ item.description }}
+            </div>
+
+            <div class="stats-grid">
+                <div class="stats-section">
+                    <h3 class="stats-title">
+                        <i class="fas fa-chart-line"></i>
+                        Бонусы характеристик
+                    </h3>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Бонус к атаке:</span>
+                        <span class="stat-value {% if item.attack_bonus > 0 %}positive{% else %}zero{% endif %}">
+                            {% if item.attack_bonus > 0 %}+{{ item.attack_bonus }}{% else %}{{ item.attack_bonus }}{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Бонус к защите:</span>
+                        <span class="stat-value {% if item.defense_bonus > 0 %}positive{% else %}zero{% endif %}">
+                            {% if item.defense_bonus > 0 %}+{{ item.defense_bonus }}{% else %}{{ item.defense_bonus }}{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Бонус к здоровью:</span>
+                        <span class="stat-value {% if item.health_bonus > 0 %}positive{% else %}zero{% endif %}">
+                            {% if item.health_bonus > 0 %}+{{ item.health_bonus }}{% else %}{{ item.health_bonus }}{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Бонус к крит. шансу:</span>
+                        <span class="stat-value {% if item.crit_chance_bonus > 0 %}positive{% else %}zero{% endif %}">
+                            {% if item.crit_chance_bonus > 0 %}+{{ item.crit_chance_bonus }}%{% else %}{{ item.crit_chance_bonus }}%{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Бонус к шансу уворота:</span>
+                        <span class="stat-value {% if item.dodge_chance_bonus > 0 %}positive{% else %}zero{% endif %}">
+                            {% if item.dodge_chance_bonus > 0 %}+{{ item.dodge_chance_bonus }}%{% else %}{{ item.dodge_chance_bonus }}%{% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="stats-section">
+                    <h3 class="stats-title">
+                        <i class="fas fa-star"></i>
+                        Основные характеристики
+                    </h3>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Бонус к силе:</span>
+                        <span class="stat-value {% if item.strength_bonus > 0 %}positive{% else %}zero{% endif %}">
+                            {% if item.strength_bonus > 0 %}+{{ item.strength_bonus }}{% else %}{{ item.strength_bonus }}{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Бонус к ловкости:</span>
+                        <span class="stat-value {% if item.agility_bonus > 0 %}positive{% else %}zero{% endif %}">
+                            {% if item.agility_bonus > 0 %}+{{ item.agility_bonus }}{% else %}{{ item.agility_bonus }}{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Бонус к живучести:</span>
+                        <span class="stat-value {% if item.vitality_bonus > 0 %}positive{% else %}zero{% endif %}">
+                            {% if item.vitality_bonus > 0 %}+{{ item.vitality_bonus }}{% else %}{{ item.vitality_bonus }}{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Цена:</span>
+                        <span class="stat-value">{{ item.value }}</span>
+                    </div>
+
+                    <div class="stat-item">
+                        <span class="stat-label">Создан:</span>
+                        <span class="stat-value">{{ item.created_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function editItem() {
+            // Заглушка для редактирования предмета
+            alert('Функция редактирования предмета будет реализована позже. ID: {{ item.id }}');
+        }
+
+        // Добавим анимации при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.stats-section');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    section.style.transition = 'all 0.5s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>

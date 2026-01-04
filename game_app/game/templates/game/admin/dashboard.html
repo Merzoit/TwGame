@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ Панель - TwGame</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .admin-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .admin-subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-item {
+            text-decoration: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #4a5568;
+        }
+
+        .nav-item:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-item i {
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .stat-icon.players { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-icon.characters { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .stat-icon.items { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .stat-icon.inventory { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .dashboard-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-title i {
+            color: #667eea;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .action-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 15px;
+            padding: 25px;
+            text-decoration: none;
+            color: #4a5568;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            color: #2d3748;
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            display: block;
+            color: #667eea;
+        }
+
+        .action-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .action-desc {
+            font-size: 0.9rem;
+            color: #718096;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+
+            .admin-header {
+                padding: 20px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .admin-title {
+                font-size: 2rem;
+            }
+
+            .admin-nav {
+                flex-wrap: wrap;
+                padding: 15px;
+            }
+
+            .nav-item {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <div>
+                <h1 class="admin-title">🎮 Админ Панель TwGame</h1>
+                <p class="admin-subtitle">Управление базой данных игры</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="/" class="nav-item" style="background: rgba(102, 126, 234, 0.1);">
+                    <i class="fas fa-home"></i>
+                    К игре
+                </a>
+            </div>
+        </div>
+
+        <nav class="admin-nav">
+            <a href="{% url 'game:admin_dashboard' %}" class="nav-item active">
+                <i class="fas fa-tachometer-alt"></i>
+                Дашборд
+            </a>
+            <a href="{% url 'game:admin_players' %}" class="nav-item">
+                <i class="fas fa-users"></i>
+                Игроки
+            </a>
+            <a href="{% url 'game:admin_characters' %}" class="nav-item">
+                <i class="fas fa-user-ninja"></i>
+                Персонажи
+            </a>
+            <a href="{% url 'game:admin_items' %}" class="nav-item">
+                <i class="fas fa-box"></i>
+                Предметы
+            </a>
+            <a href="{% url 'game:admin_inventory' %}" class="nav-item">
+                <i class="fas fa-backpack"></i>
+                Инвентарь
+            </a>
+            <a href="{% url 'game:admin_equipment' %}" class="nav-item">
+                <i class="fas fa-shield-alt"></i>
+                Экипировка
+            </a>
+        </nav>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon players">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ stats.players_count }}</div>
+                <div class="stat-label">Всего игроков</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon characters">
+                        <i class="fas fa-user-ninja"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ stats.characters_count }}</div>
+                <div class="stat-label">Всего персонажей</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon items">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ stats.items_count }}</div>
+                <div class="stat-label">Всего предметов</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon inventory">
+                        <i class="fas fa-backpack"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ stats.inventory_count }}</div>
+                <div class="stat-label">Предметов в инвентаре</div>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <h2 class="content-title">
+                <i class="fas fa-bolt"></i>
+                Быстрые действия
+            </h2>
+
+            <div class="quick-actions">
+                <a href="{% url 'game:admin_item_create' %}" class="action-card">
+                    <i class="fas fa-plus-circle action-icon"></i>
+                    <div class="action-title">Создать предмет</div>
+                    <div class="action-desc">Добавить новый предмет в базу данных с характеристиками</div>
+                </a>
+
+                <a href="{% url 'game:admin_players' %}" class="action-card">
+                    <i class="fas fa-search action-icon"></i>
+                    <div class="action-title">Найти игрока</div>
+                    <div class="action-desc">Поиск и управление учетными записями игроков</div>
+                </a>
+
+                <a href="{% url 'game:admin_items' %}" class="action-card">
+                    <i class="fas fa-cog action-icon"></i>
+                    <div class="action-title">Управление предметами</div>
+                    <div class="action-desc">Просмотр и редактирование всех предметов в игре</div>
+                </a>
+
+                <a href="{% url 'game:admin_characters' %}" class="action-card">
+                    <i class="fas fa-user-edit action-icon"></i>
+                    <div class="action-title">Персонажи</div>
+                    <div class="action-desc">Управление персонажами и их характеристиками</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Добавим анимации при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.stat-card, .action-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
