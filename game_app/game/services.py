@@ -234,3 +234,9 @@ class PlayerService:
             equipment_queryset.exclude(pk=equipment.pk).delete()
 
         return equipment
+
+    @staticmethod
+    def get_player_inventory(player):
+        """Получает инвентарь игрока"""
+        from .models import Inventory
+        return Inventory.objects.filter(player=player).select_related('item')
