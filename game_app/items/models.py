@@ -7,11 +7,10 @@ class Item(models.Model):
 
     # Типы предметов
     ITEM_TYPES = [
-        ('weapon', 'Оружие'),
-        ('armor', 'Броня'),
-        ('consumable', 'Расходуемое'),
+        ('equipment', 'Экипировка'),
+        ('craft', 'Крафт'),
+        ('consumable', 'Расходный предмет'),
         ('resource', 'Ресурс'),
-        ('misc', 'Разное'),
     ]
 
     # Слоты экипировки
@@ -121,26 +120,148 @@ class Item(models.Model):
         return self.dodge_chance_bonus if self.is_equippable else 0.0
 
 
+class EquipmentItems(models.Model):
+    """Предметы, которые можно экипировать"""
+
+    # Слоты экипировки
+    EQUIPMENT_SLOTS = [
+        ('weapon', 'оружие'),
+        ('head', 'голова'),
+        ('body', 'тело/торс'),
+        ('legs', 'ноги'),
+        ('hands', 'руки'),
+        ('feet', 'обувь'),
+        ('amulet', 'амулет'),
+        ('ring', 'кольцо'),
+    ]
+
+    # Редкость предметов
+    RARITIES = [
+        ('common', 'обычный (серый)'),
+        ('uncommon', 'необычный (зеленый)'),
+        ('rare', 'редкий (синий)'),
+        ('epic', 'эпический (фиолетовый)'),
+        ('legendary', 'легендарный (оранжевый)'),
+    ]
+
+    item = models.OneToOneField(Item, on_delete=models.CASCADE, related_name='equipment_info', verbose_name="Предмет")
+    equipment_slot = models.CharField(max_length=20, choices=EQUIPMENT_SLOTS, verbose_name="Слот для экипировки")
+    rarity = models.CharField(max_length=20, choices=RARITIES, default='common', verbose_name="Редкость предмета")
+
+    # Бонусы к характеристикам (по всем статам)
+    strength_bonus = models.IntegerField(default=0, verbose_name="Бонус к силе")
+    agility_bonus = models.IntegerField(default=0, verbose_name="Бонус к ловкости")
+    vitality_bonus = models.IntegerField(default=0, verbose_name="Бонус к живучести")
+    attack_bonus = models.IntegerField(default=0, verbose_name="Бонус к атаке")
+    defense_bonus = models.IntegerField(default=0, verbose_name="Бонус к защите")
+    health_bonus = models.IntegerField(default=0, verbose_name="Бонус к здоровью")
+    crit_chance_bonus = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, verbose_name="Бонус к шансу крита (%)")
+    dodge_chance_bonus = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, verbose_name="Бонус к шансу уворота (%)")
+
+    level_requirement = models.IntegerField(default=1, verbose_name="Требуемый уровень")
+
+    class Meta:
+        verbose_name = "Предмет экипировки"
+        verbose_name_plural = "Предметы экипировки"
+
+    def __str__(self):
+        return f"{self.item.name} ({self.get_rarity_display()})"
+
+
+class CraftItems(models.Model):
+    """Предметы для крафта и ресурсы"""
+    item = models.OneToOneField(Item, on_delete=models.CASCADE, related_name='craft_info', verbose_name="Предмет")
+    stack_size = models.IntegerField(default=1, verbose_name="Максимальный размер стопки")
+    is_craftable = models.BooleanField(default=False, verbose_name="Можно ли использовать в крафте")
+
+    class Meta:
+        verbose_name = "Предмет крафта"
+        verbose_name_plural = "Предметы крафта"
+
+    def __str__(self):
+        return f"{self.item.name} (стопка: {self.stack_size})"
+
+
 class Inventory(models.Model):
-    """Инвентарь игрока"""
+    """Хранение предметов игрока"""
 
-    player = models.OneToOneField('accounts.Player', on_delete=models.CASCADE, related_name='inventory', verbose_name="Игрок")
+    # Слоты экипировки для инвентаря
+    EQUIPMENT_SLOTS = [
+        ('weapon', 'оружие'),
+        ('head', 'голова'),
+        ('body', 'тело/торс'),
+        ('legs', 'ноги'),
+        ('hands', 'руки'),
+        ('feet', 'обувь'),
+        ('amulet', 'амулет'),
+        ('ring', 'кольцо'),
+        ('none', 'не экипирован'),
+    ]
+
+    player = models.ForeignKey('accounts.Player', on_delete=models.CASCADE, related_name='inventory', verbose_name="Игрок")
     item = models.ForeignKey(Item, on_delete=models.CASCADE, verbose_name="Предмет")
-    quantity = models.IntegerField(default=1, verbose_name="Количество")
-
-    # Дата получения
-    obtained_at = models.DateTimeField(default=timezone.now, verbose_name="Дата получения")
+    quantity = models.IntegerField(default=1, verbose_name="Количество предметов")
+    is_equipped = models.BooleanField(default=False, verbose_name="Экипирован ли предмет")
+    equipped_slot = models.CharField(max_length=20, choices=EQUIPMENT_SLOTS, default='none', verbose_name="В каком слоте экипирован")
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     class Meta:
         verbose_name = "Инвентарь"
         verbose_name_plural = "Инвентари"
-        unique_together = ['player', 'item']  # Один предмет - одно место в инвентаре
-        ordering = ['-obtained_at']
+        unique_together = ['player', 'item']
 
     def __str__(self):
-        return f"{self.player} - {self.item.name} x{self.quantity}"
+        equipped = " (экипирован)" if self.is_equipped else ""
+        return f"{self.player} - {self.item.name} x{self.quantity}{equipped}"
 
-    @property
-    def total_value(self):
-        """Общая стоимость предметов"""
-        return self.item.value * self.quantity
+
+class PlayerEquipment(models.Model):
+    """Быстрый доступ к экипированным предметам"""
+
+    # Слоты экипировки
+    EQUIPMENT_SLOTS = [
+        ('weapon', 'оружие'),
+        ('head', 'голова'),
+        ('body', 'тело/торс'),
+        ('legs', 'ноги'),
+        ('hands', 'руки'),
+        ('feet', 'обувь'),
+        ('amulet', 'амулет'),
+        ('ring', 'кольцо'),
+    ]
+
+    player = models.OneToOneField('accounts.Player', on_delete=models.CASCADE, related_name='equipment', verbose_name="Игрок")
+
+    # Ссылки на предметы в слотах
+    weapon_slot = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True, blank=True, related_name='weapon_equipped', verbose_name="Оружие")
+    head_slot = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True, blank=True, related_name='head_equipped', verbose_name="Голова")
+    body_slot = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True, blank=True, related_name='body_equipped', verbose_name="Тело")
+    legs_slot = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True, blank=True, related_name='legs_equipped', verbose_name="Ноги")
+    hands_slot = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True, blank=True, related_name='hands_equipped', verbose_name="Руки")
+    feet_slot = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True, blank=True, related_name='feet_equipped', verbose_name="Обувь")
+    amulet_slot = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True, blank=True, related_name='amulet_equipped', verbose_name="Амулет")
+    ring_slot = models.ForeignKey(Item, on_delete=models.SET_NULL, null=True, blank=True, related_name='ring_equipped', verbose_name="Кольцо")
+
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        verbose_name = "Экипировка игрока"
+        verbose_name_plural = "Экипировка игроков"
+
+    def __str__(self):
+        return f"Экипировка {self.player}"
+
+    def get_equipped_items(self):
+        """Возвращает словарь экипированных предметов"""
+        return {
+            'weapon': self.weapon_slot,
+            'head': self.head_slot,
+            'body': self.body_slot,
+            'legs': self.legs_slot,
+            'hands': self.hands_slot,
+            'feet': self.feet_slot,
+            'amulet': self.amulet_slot,
+            'ring': self.ring_slot,
+        }

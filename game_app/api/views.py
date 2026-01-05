@@ -4,12 +4,12 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
-from accounts.models import Player, PlayerProfile
-from characters.models import Character, Equipment
-from items.models import Item, Inventory
+from accounts.models import Player, PlayerStats
+from characters.models import Character, CharacterStats
+from items.models import Item, Inventory, PlayerEquipment
 from .serializers import (
-    PlayerSerializer, PlayerProfileSerializer,
-    CharacterSerializer, EquipmentSerializer,
+    PlayerSerializer, PlayerStatsSerializer,
+    CharacterSerializer, PlayerEquipmentSerializer,
     ItemSerializer, InventorySerializer
 )
 from rest_framework.decorators import api_view
@@ -100,19 +100,22 @@ class InventoryViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
-class EquipmentViewSet(viewsets.ReadOnlyModelViewSet):
-    """ViewSet для экипировки"""
-    queryset = Equipment.objects.select_related('character__player', 'item').all()
-    serializer_class = EquipmentSerializer
+class PlayerEquipmentViewSet(viewsets.ReadOnlyModelViewSet):
+    """ViewSet для экипировки игрока"""
+    queryset = PlayerEquipment.objects.select_related('player').prefetch_related(
+        'weapon_slot', 'head_slot', 'body_slot', 'legs_slot', 'hands_slot', 'feet_slot', 'amulet_slot', 'ring_slot'
+    ).all()
+    serializer_class = PlayerEquipmentSerializer
 
     def get_queryset(self):
-        queryset = Equipment.objects.select_related('character__player', 'item').all()
+        queryset = PlayerEquipment.objects.select_related('player').prefetch_related(
+            'weapon_slot', 'head_slot', 'body_slot', 'legs_slot', 'hands_slot', 'feet_slot', 'amulet_slot', 'ring_slot'
+        ).all()
         search = self.request.query_params.get('search', None)
         if search:
             queryset = queryset.filter(
-                Q(character__name__icontains=search) |
-                Q(character__player__username__icontains=search) |
-                Q(character__player__first_name__icontains=search)
+                Q(player__telegram_username__icontains=search) |
+                Q(player__telegram_id__icontains=search)
             )
         return queryset
 

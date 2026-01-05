@@ -1,28 +1,18 @@
 from django.contrib import admin
-from .models import Character, Equipment
+from .models import Character, CharacterStats
 
 
 @admin.register(Character)
 class CharacterAdmin(admin.ModelAdmin):
-    list_display = ['name', 'player', 'level', 'strength', 'agility', 'vitality', 'max_health', 'created_at']
+    list_display = ['name', 'player', 'level', 'experience', 'created_at']
     list_filter = ['level', 'created_at']
-    search_fields = ['name', 'player__username', 'player__first_name', 'player__telegram_id']
-    readonly_fields = ['created_at', 'updated_at', 'max_health', 'min_attack', 'max_attack', 'defense', 'crit_chance', 'dodge_chance']
-    ordering = ['-level', '-created_at']
+    search_fields = ['name', 'player__telegram_username', 'player__telegram_id']
+    readonly_fields = ['created_at', 'updated_at']
+    ordering = ['-level', '-experience']
 
     fieldsets = (
         ('Основная информация', {
-            'fields': ('player', 'name')
-        }),
-        ('Навыки', {
-            'fields': ('strength', 'agility', 'vitality', 'free_skill_points')
-        }),
-        ('Характеристики', {
-            'fields': ('level', 'experience', 'max_health', 'current_health')
-        }),
-        ('Бойевые параметры', {
-            'fields': ('min_attack', 'max_attack', 'defense', 'crit_chance', 'dodge_chance'),
-            'classes': ('collapse',)
+            'fields': ('player', 'name', 'level', 'experience')
         }),
         ('Системная информация', {
             'fields': ('created_at', 'updated_at'),
@@ -31,10 +21,29 @@ class CharacterAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Equipment)
-class EquipmentAdmin(admin.ModelAdmin):
-    list_display = ['character', 'slot', 'item', 'equipped_at']
-    list_filter = ['slot', 'equipped_at']
-    search_fields = ['character__name', 'item__name']
-    readonly_fields = ['equipped_at']
-    ordering = ['-equipped_at']
+@admin.register(CharacterStats)
+class CharacterStatsAdmin(admin.ModelAdmin):
+    list_display = ['character', 'health', 'max_health', 'strength', 'agility', 'vitality', 'min_attack', 'max_attack', 'defense', 'critical_chance', 'dodge_chance']
+    list_filter = ['strength', 'agility', 'vitality']
+    search_fields = ['character__name', 'character__player__telegram_username']
+    readonly_fields = ['created_at', 'updated_at']
+    ordering = ['-character__level']
+
+    fieldsets = (
+        ('Персонаж', {
+            'fields': ('character',)
+        }),
+        ('Здоровье', {
+            'fields': ('health', 'max_health')
+        }),
+        ('Основные характеристики', {
+            'fields': ('strength', 'agility', 'vitality')
+        }),
+        ('Бойевые характеристики', {
+            'fields': ('min_attack', 'max_attack', 'defense', 'critical_chance', 'dodge_chance')
+        }),
+        ('Системная информация', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )

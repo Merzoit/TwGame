@@ -1,6 +1,6 @@
-from .models import Player, PlayerProfile
-from characters.models import Character, Equipment
-from items.models import Inventory
+from .models import Player, PlayerStats
+from characters.models import Character, CharacterStats
+from items.models import Inventory, PlayerEquipment
 from django.utils import timezone
 
 
@@ -8,20 +8,20 @@ class PlayerService:
     """Сервис для работы с игроками"""
 
     @staticmethod
-    def get_or_create_player(telegram_id, username=None, first_name=None, last_name=None):
+    def get_or_create_player(telegram_id, telegram_username=None, twitch_username=None, twitch_id=None):
         """Получить или создать игрока"""
         player, created = Player.objects.get_or_create(
             telegram_id=telegram_id,
             defaults={
-                'username': username,
-                'first_name': first_name,
-                'last_name': last_name,
+                'telegram_username': telegram_username,
+                'twitch_username': twitch_username,
+                'twitch_id': twitch_id,
             }
         )
 
-        # Если игрок создан, создаем профиль
+        # Если игрок создан, создаем статистику
         if created:
-            PlayerProfile.objects.create(player=player)
+            PlayerStats.objects.create(player=player)
 
         return player, created
 
@@ -41,32 +41,38 @@ class PlayerService:
     @staticmethod
     def create_character(telegram_id, name, strength=5, agility=5, vitality=5):
         """Создать персонажа для игрока"""
-        from django.apps import apps
-        Character = apps.get_model('characters', 'Character')
-
         player = Player.objects.get(telegram_id=telegram_id)
 
         # Проверяем, нет ли уже персонажа
         if hasattr(player, 'character'):
             raise ValueError("У игрока уже есть персонаж")
 
+        # Создаем персонажа
         character = Character.objects.create(
             player=player,
-            name=name,
+            name=name
+        )
+
+        # Создаем статистику персонажа
+        CharacterStats.objects.create(
+            character=character,
             strength=strength,
             agility=agility,
             vitality=vitality
         )
 
+        # Создаем экипировку игрока
+        PlayerEquipment.objects.create(player=player)
+
         return character
 
     @staticmethod
-    def get_player_profile(telegram_id):
-        """Получить профиль игрока"""
+    def get_player_stats(telegram_id):
+        """Получить статистику игрока"""
         try:
             player = Player.objects.get(telegram_id=telegram_id)
-            return player.profile
-        except (Player.DoesNotExist, PlayerProfile.DoesNotExist):
+            return player.stats
+        except (Player.DoesNotExist, PlayerStats.DoesNotExist):
             return None
 
     @staticmethod
@@ -75,31 +81,13 @@ class PlayerService:
         return Inventory.objects.filter(player=player).select_related('item')
 
     @staticmethod
-    def get_character_equipment(character):
-        """Получить экипировку персонажа"""
-        from django.apps import apps
-        Equipment = apps.get_model('characters', 'Equipment')
-
-        equipment_queryset = Equipment.objects.filter(character=character)
-
-        if not equipment_queryset.exists():
-            # Создаем пустую экипировку, если ее нет
-            return Equipment.objects.create(character=character)
-
-        # Если есть несколько записей, оставляем только первую и удаляем остальные
-        equipment = equipment_queryset.first()
-
-        if equipment_queryset.count() > 1:
-            from core.models import GameLog
-            GameLog.objects.create(
-                level='warning',
-                message=f'Found {equipment_queryset.count()} equipment records for character {character}',
-                source='PlayerService.get_character_equipment'
-            )
-            # Удаляем дубликаты, оставляя только первый
-            equipment_queryset.exclude(pk=equipment.pk).delete()
-
-        return equipment
+    def get_player_equipment(player):
+        """Получить экипировку игрока"""
+        try:
+            return PlayerEquipment.objects.get(player=player)
+        except PlayerEquipment.DoesNotExist:
+            # Создаем экипировку, если ее нет
+            return PlayerEquipment.objects.create(player=player)
 
     @staticmethod
     def get_skill_info():
@@ -121,4 +109,5 @@ class PlayerService:
                 'icon': '❤️'
             }
         }
+
 

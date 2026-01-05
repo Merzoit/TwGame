@@ -16,3 +16,4 @@ urlpatterns = [
     path('equipment/', views.admin_equipment, name='admin_equipment'),
 ]
 
+

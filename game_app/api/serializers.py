@@ -1,39 +1,51 @@
 from rest_framework import serializers
-from accounts.models import Player, PlayerProfile
-from characters.models import Character, Equipment
-from items.models import Item, Inventory
+from accounts.models import Player, PlayerStats
+from characters.models import Character, CharacterStats
+from items.models import Item, Inventory, PlayerEquipment
 
 
-class PlayerProfileSerializer(serializers.ModelSerializer):
+class PlayerStatsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PlayerProfile
-        fields = ['level', 'experience', 'gold', 'total_games', 'wins', 'losses', 'win_rate', 'last_login']
+        model = PlayerStats
+        fields = ['total_matches', 'wins', 'gold', 'diamonds', 'win_rate', 'created_at', 'updated_at']
+
+    def get_win_rate(self, obj):
+        return obj.win_rate
 
 
 class PlayerSerializer(serializers.ModelSerializer):
-    profile = PlayerProfileSerializer(read_only=True)
+    stats = PlayerStatsSerializer(read_only=True)
 
     class Meta:
         model = Player
         fields = [
-            'id', 'telegram_id', 'username', 'first_name', 'last_name',
-            'twitch_username', 'twitch_connected', 'is_active', 'created_at', 'profile'
+            'id', 'telegram_id', 'telegram_username', 'twitch_username', 'twitch_id',
+            'twitch_connected', 'created_at', 'updated_at', 'last_login', 'stats'
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class CharacterStatsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CharacterStats
+        fields = [
+            'health', 'max_health', 'strength', 'agility', 'vitality',
+            'min_attack', 'max_attack', 'defense', 'critical_chance', 'dodge_chance',
+            'created_at', 'updated_at'
+        ]
 
 
 class CharacterSerializer(serializers.ModelSerializer):
-    player_name = serializers.CharField(source='player.first_name', read_only=True)
+    player_name = serializers.CharField(source='player.telegram_username', read_only=True)
+    stats = CharacterStatsSerializer(read_only=True)
 
     class Meta:
         model = Character
         fields = [
-            'id', 'player', 'player_name', 'name', 'strength', 'agility', 'vitality',
-            'free_skill_points', 'level', 'experience', 'max_health', 'current_health',
-            'min_attack', 'max_attack', 'defense', 'crit_chance', 'dodge_chance',
-            'created_at'
+            'id', 'player', 'player_name', 'name', 'level', 'experience',
+            'created_at', 'updated_at', 'stats'
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -58,12 +70,31 @@ class InventorySerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'obtained_at', 'total_value']
 
 
-class EquipmentSerializer(serializers.ModelSerializer):
-    character_name = serializers.CharField(source='character.name', read_only=True)
-    item = ItemSerializer(read_only=True)
+class PlayerEquipmentSerializer(serializers.ModelSerializer):
+    player_name = serializers.CharField(source='player.telegram_username', read_only=True)
+    weapon_slot_name = serializers.CharField(source='weapon_slot.name', read_only=True)
+    head_slot_name = serializers.CharField(source='head_slot.name', read_only=True)
+    body_slot_name = serializers.CharField(source='body_slot.name', read_only=True)
+    legs_slot_name = serializers.CharField(source='legs_slot.name', read_only=True)
+    hands_slot_name = serializers.CharField(source='hands_slot.name', read_only=True)
+    feet_slot_name = serializers.CharField(source='feet_slot.name', read_only=True)
+    amulet_slot_name = serializers.CharField(source='amulet_slot.name', read_only=True)
+    ring_slot_name = serializers.CharField(source='ring_slot.name', read_only=True)
 
     class Meta:
-        model = Equipment
-        fields = ['id', 'character', 'character_name', 'slot', 'item', 'equipped_at']
-        read_only_fields = ['id', 'equipped_at']
+        model = PlayerEquipment
+        fields = [
+            'id', 'player', 'player_name',
+            'weapon_slot', 'weapon_slot_name',
+            'head_slot', 'head_slot_name',
+            'body_slot', 'body_slot_name',
+            'legs_slot', 'legs_slot_name',
+            'hands_slot', 'hands_slot_name',
+            'feet_slot', 'feet_slot_name',
+            'amulet_slot', 'amulet_slot_name',
+            'ring_slot', 'ring_slot_name',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
 

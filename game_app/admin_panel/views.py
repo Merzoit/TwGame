@@ -7,9 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from accounts.models import Player, PlayerProfile
-from characters.models import Character, Equipment
-from items.models import Item, Inventory
+from accounts.models import Player, PlayerStats
+from characters.models import Character, CharacterStats
+from items.models import Item, Inventory, EquipmentItems, CraftItems, PlayerEquipment
 
 from accounts.services import PlayerService
 
@@ -49,10 +49,10 @@ def admin_players(request):
 
     if search_query:
         players = players.filter(
-            Q(first_name__icontains=search_query) |
-            Q(last_name__icontains=search_query) |
-            Q(username__icontains=search_query) |
-            Q(telegram_id__icontains=search_query)
+            Q(telegram_username__icontains=search_query) |
+            Q(twitch_username__icontains=search_query) |
+            Q(telegram_id__icontains=search_query) |
+            Q(twitch_id__icontains=search_query)
         )
 
     paginator = Paginator(players.order_by('-id'), 20)
@@ -68,12 +68,14 @@ def admin_players(request):
 def admin_player_detail(request, player_id):
     """Детальная информация об игроке"""
     player = get_object_or_404(Player, id=player_id)
-    character = PlayerService.get_character(player.telegram_id)
-    inventory = PlayerService.get_player_inventory(player)
-    equipment = PlayerService.get_character_equipment(character) if character else None
+    stats = player.stats if hasattr(player, 'stats') else None
+    character = player.character if hasattr(player, 'character') else None
+    inventory = player.inventory.all() if hasattr(player, 'inventory') else []
+    equipment = player.equipment if hasattr(player, 'equipment') else None
 
     return render(request, 'admin_panel/player_detail.html', {
         'player': player,
+        'stats': stats,
         'character': character,
         'inventory': inventory,
         'equipment': equipment,
@@ -91,8 +93,8 @@ def admin_characters(request):
     if search_query:
         characters = characters.filter(
             Q(name__icontains=search_query) |
-            Q(player__first_name__icontains=search_query) |
-            Q(player__username__icontains=search_query)
+            Q(player__telegram_username__icontains=search_query) |
+            Q(player__telegram_id__icontains=search_query)
         )
 
     paginator = Paginator(characters.order_by('-id'), 20)
@@ -107,11 +109,12 @@ def admin_characters(request):
 @login_required
 def admin_character_detail(request, character_id):
     """Детальная информация о персонаже"""
-    character = get_object_or_404(Character, id=character_id)
-    equipment = PlayerService.get_character_equipment(character)
+    character = get_object_or_404(Character.objects.select_related('player', 'stats'), id=character_id)
+    equipment = character.player.equipment if hasattr(character.player, 'equipment') else None
 
     return render(request, 'admin_panel/character_detail.html', {
         'character': character,
+        'stats': character.stats if hasattr(character, 'stats') else None,
         'equipment': equipment,
         'active_tab': 'characters'
     })
@@ -213,41 +216,69 @@ def admin_item_create(request):
                 messages.error(request, 'Пожалуйста, заполните все обязательные поля!')
                 return redirect('admin_panel:admin_item_create')
 
-            # Создаем предмет
+            # Создаем базовый предмет
             item = Item.objects.create(
                 name=name,
                 description=description,
-                rarity=rarity,
                 item_type=item_type,
-                equipment_slot=equipment_slot if equipment_slot else None,
-                value=value,
-                attack_bonus=attack_bonus,
-                defense_bonus=defense_bonus,
-                health_bonus=health_bonus,
-                crit_chance_bonus=crit_chance_bonus,
-                dodge_chance_bonus=dodge_chance_bonus,
-                strength_bonus=strength_bonus,
-                agility_bonus=agility_bonus,
-                vitality_bonus=vitality_bonus,
-                is_craftable=is_craftable
+                cost=value
             )
+
+            # Создаем дополнительные данные в зависимости от типа предмета
+            if item_type == 'equipment':
+                # Создаем экипировку
+                EquipmentItems.objects.create(
+                    item=item,
+                    equipment_slot=equipment_slot,
+                    rarity=rarity,
+                    strength_bonus=strength_bonus,
+                    agility_bonus=agility_bonus,
+                    vitality_bonus=vitality_bonus,
+                    attack_bonus=attack_bonus,
+                    defense_bonus=defense_bonus,
+                    health_bonus=health_bonus,
+                    crit_chance_bonus=crit_chance_bonus,
+                    dodge_chance_bonus=dodge_chance_bonus,
+                    level_requirement=int(request.POST.get('level_requirement', 1))
+                )
+            elif item_type == 'craft':
+                # Создаем предмет крафта
+                CraftItems.objects.create(
+                    item=item,
+                    stack_size=int(request.POST.get('stack_size', 1)),
+                    is_craftable=True
+                )
+            elif item_type == 'resource':
+                # Создаем ресурс
+                CraftItems.objects.create(
+                    item=item,
+                    stack_size=int(request.POST.get('stack_size', 64)),
+                    is_craftable=False
+                )
 
             messages.success(request, f'Предмет "{name}" успешно создан!')
             return redirect('admin_panel:admin_item_detail', item_id=item.id)
 
-        rarities = Item.RARITIES
-        types = Item.ITEM_TYPES
+        item_types = Item.ITEM_TYPES
+        equipment_slots = EquipmentItems.EQUIPMENT_SLOTS
+        rarities = EquipmentItems.RARITIES
 
         return render(request, 'admin_panel/item_create.html', {
+            'item_types': item_types,
+            'equipment_slots': equipment_slots,
             'rarities': rarities,
-            'types': types,
             'active_tab': 'items'
         })
     except Exception as e:
-        # Возвращаем пустые данные в случае ошибки
+        # Возвращаем данные в случае ошибки
+        item_types = Item.ITEM_TYPES
+        equipment_slots = EquipmentItems.EQUIPMENT_SLOTS
+        rarities = EquipmentItems.RARITIES
+
         return render(request, 'admin_panel/item_create.html', {
-            'rarities': [],
-            'types': [],
+            'item_types': item_types,
+            'equipment_slots': equipment_slots,
+            'rarities': rarities,
             'active_tab': 'items',
             'error': str(e)
         })
@@ -262,8 +293,8 @@ def admin_inventory(request):
 
     if search_query:
         inventory = inventory.filter(
-            Q(player__first_name__icontains=search_query) |
-            Q(player__username__icontains=search_query) |
+            Q(player__telegram_username__icontains=search_query) |
+            Q(player__telegram_id__icontains=search_query) |
             Q(item__name__icontains=search_query)
         )
 
@@ -283,13 +314,14 @@ def admin_equipment(request):
         search_query = request.GET.get('search', '')
         page = request.GET.get('page', 1)
 
-        equipment = Equipment.objects.select_related('character', 'character__player', 'weapon', 'torso').all()
+        equipment = PlayerEquipment.objects.select_related('player').prefetch_related(
+            'weapon_slot', 'head_slot', 'body_slot', 'legs_slot', 'hands_slot', 'feet_slot', 'amulet_slot', 'ring_slot'
+        ).all()
 
         if search_query:
             equipment = equipment.filter(
-                Q(character__name__icontains=search_query) |
-                Q(character__player__first_name__icontains=search_query) |
-                Q(character__player__username__icontains=search_query)
+                Q(player__telegram_username__icontains=search_query) |
+                Q(player__telegram_id__icontains=search_query)
             )
 
         paginator = Paginator(equipment.order_by('-id'), 20)

@@ -1,5 +1,7 @@
 import logging
-from .models import Player, PlayerProfile, Character, Equipment
+from accounts.models import Player, PlayerStats
+from characters.models import Character, CharacterStats
+from items.models import PlayerEquipment
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)

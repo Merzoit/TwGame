@@ -8,7 +8,7 @@ router.register(r'players', views.PlayerViewSet)
 router.register(r'characters', views.CharacterViewSet)
 router.register(r'items', views.ItemViewSet)
 router.register(r'inventory', views.InventoryViewSet)
-router.register(r'equipment', views.EquipmentViewSet)
+router.register(r'equipment', views.PlayerEquipmentViewSet)
 router.register(r'game', views.GameViewSet, basename='game')
 
 urlpatterns = [
@@ -16,5 +16,6 @@ urlpatterns = [
     # Дополнительные API endpoints
     path('status/', views.api_status, name='api_status'),
     path('telegram/webhook/', views.telegram_webhook, name='telegram_webhook'),
+    # path('create-admin/', views.create_admin, name='create_admin'),
 ]
 
