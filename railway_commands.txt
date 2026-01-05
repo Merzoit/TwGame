@@ -1,0 +1,47 @@
+# КОМАНДЫ ДЛЯ СБРОСА БД НА RAILWAY
+# Выполняйте по одной в командной строке
+
+# 1. Проверка статуса БД
+railway ssh --project=b594ed19-0f61-46f0-94a8-a64c962c8fd8 --environment=141b8f58-c53e-4670-8e14-03a34285ef26 --service=eb58c45f-3990-474d-9d7c-1d970f1274b1 -- "cd /app/game_app && python manage.py db_status"
+
+# 2. Удаление старых миграций
+railway ssh --project=b594ed19-0f61-46f0-94a8-a64c962c8fd8 --environment=141b8f58-c53e-4670-8e14-03a34285ef26 --service=eb58c45f-3990-474d-9d7c-1d970f1274b1 -- "cd /app/game_app && python manage.py recreate_migrations"
+
+# 3. Создание новых миграций
+railway ssh --project=b594ed19-0f61-46f0-94a8-a64c962c8fd8 --environment=141b8f58-c53e-4670-8e14-03a34285ef26 --service=eb58c45f-3990-474d-9d7c-1d970f1274b1 -- "cd /app/game_app && python manage.py makemigrations"
+
+# 4. Применение миграций
+railway ssh --project=b594ed19-0f61-46f0-94a8-a64c962c8fd8 --environment=141b8f58-c53e-4670-8e14-03a34285ef26 --service=eb58c45f-3990-474d-9d7c-1d970f1274b1 -- "cd /app/game_app && python manage.py migrate --fake-initial"
+
+# 5. Создание суперпользователя
+railway ssh --project=b594ed19-0f61-46f0-94a8-a64c962c8fd8 --environment=141b8f58-c53e-4670-8e14-03a34285ef26 --service=eb58c45f-3990-474d-9d7c-1d970f1274b1 -- "cd /app/game_app && python manage.py create_superuser"
+
+# 6. Создание тестовых предметов
+railway ssh --project=b594ed19-0f61-46f0-94a8-a64c962c8fd8 --environment=141b8f58-c53e-4670-8e14-03a34285ef26 --service=eb58c45f-3990-474d-9d7c-1d970f1274b1 -- "cd /app/game_app && python manage.py create_items"
+
+# 7. Финальная проверка
+railway ssh --project=b594ed19-0f61-46f0-94a8-a64c962c8fd8 --environment=141b8f58-c53e-4670-8e14-03a34285ef26 --service=eb58c45f-3990-474d-9d7c-1d970f1274b1 -- "cd /app/game_app && python manage.py db_status"
+
+# ===========================================
+# ПОЛЕЗНЫЕ КОМАНДЫ ДЛЯ ПРОВЕРКИ
+
+# Проверка статуса Railway CLI
+railway --version
+
+# Проверка авторизации
+railway whoami
+
+# Проверка статуса БД
+python quick_railway_check.py
+
+# ===========================================
+# ЕСЛИ ЧТО-ТО ПОШЛО НЕ ТАК
+
+# Полная пересборка Railway
+railway up
+
+# Просмотр логов
+railway logs
+
+# Перезапуск сервиса
+railway restart
