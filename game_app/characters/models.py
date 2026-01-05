@@ -74,18 +74,18 @@ class Character(models.Model):
         try:
             for equip in Equipment.objects.filter(character=self):
                 if equip.item:
-                    # Бонусы к первичным характеристикам
-                    equipment_strength_bonus += getattr(equip.item, 'strength_bonus', 0)
-                    equipment_agility_bonus += getattr(equip.item, 'agility_bonus', 0)
-                    equipment_vitality_bonus += getattr(equip.item, 'vitality_bonus', 0)
+                    # Бонусы к первичным характеристикам (только от экипировки)
+                    equipment_strength_bonus += equip.item.effective_strength_bonus
+                    equipment_agility_bonus += equip.item.effective_agility_bonus
+                    equipment_vitality_bonus += equip.item.effective_vitality_bonus
 
-                    # Бонусы к вторичным характеристикам
-                    equipment_health_bonus += getattr(equip.item, 'health_bonus', 0)
-                    equipment_min_attack_bonus += getattr(equip.item, 'attack_bonus', 0)
-                    equipment_max_attack_bonus += getattr(equip.item, 'attack_bonus', 0)
-                    equipment_defense_bonus += getattr(equip.item, 'defense_bonus', 0)
-                    equipment_crit_bonus += getattr(equip.item, 'crit_chance_bonus', 0)
-                    equipment_dodge_bonus += getattr(equip.item, 'dodge_chance_bonus', 0)
+                    # Бонусы к вторичным характеристикам (только от экипировки)
+                    equipment_health_bonus += equip.item.effective_health_bonus
+                    equipment_min_attack_bonus += equip.item.effective_attack_bonus
+                    equipment_max_attack_bonus += equip.item.effective_attack_bonus
+                    equipment_defense_bonus += equip.item.effective_defense_bonus
+                    equipment_crit_bonus += equip.item.effective_crit_chance_bonus
+                    equipment_dodge_bonus += equip.item.effective_dodge_chance_bonus
         except Exception:
             # Если модель еще не доступна, пропускаем расчет
             pass

@@ -16,3 +16,4 @@ urlpatterns = [
     # Дополнительные API endpoints
     path('status/', views.api_status, name='api_status'),
 ]
+

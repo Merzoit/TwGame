@@ -66,3 +66,4 @@ class EquipmentSerializer(serializers.ModelSerializer):
         model = Equipment
         fields = ['id', 'character', 'character_name', 'slot', 'item', 'equipped_at']
         read_only_fields = ['id', 'equipped_at']
+

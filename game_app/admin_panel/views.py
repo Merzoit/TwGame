@@ -191,7 +191,7 @@ def admin_item_create(request):
             agility_bonus = int(request.POST.get('agility_bonus', 0))
             vitality_bonus = int(request.POST.get('vitality_bonus', 0))
 
-            is_equippable = request.POST.get('is_equippable') == 'on'
+            is_craftable = request.POST.get('is_craftable') == 'on'
 
             # Валидация обязательных полей
             if not all([name, description, rarity, item_type]):
@@ -214,7 +214,7 @@ def admin_item_create(request):
                 strength_bonus=strength_bonus,
                 agility_bonus=agility_bonus,
                 vitality_bonus=vitality_bonus,
-                is_equippable=is_equippable
+                is_craftable=is_craftable
             )
 
             messages.success(request, f'Предмет "{name}" успешно создан!')

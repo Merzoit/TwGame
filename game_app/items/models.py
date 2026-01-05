@@ -42,7 +42,10 @@ class Item(models.Model):
     equipment_slot = models.CharField(max_length=20, choices=EQUIPMENT_SLOTS, default='none', verbose_name="Слот экипировки")
     rarity = models.CharField(max_length=20, choices=RARITIES, default='common', verbose_name="Редкость")
 
-    # Свойства предметов
+    # Тип предмета (экипировка или крафт)
+    is_craftable = models.BooleanField(default=False, verbose_name="Крафтовый предмет")
+
+    # Свойства предметов (только для экипировки)
     # Бонусы к первичным характеристикам
     strength_bonus = models.IntegerField(default=0, verbose_name="Бонус к силе")
     agility_bonus = models.IntegerField(default=0, verbose_name="Бонус к ловкости")
@@ -75,7 +78,47 @@ class Item(models.Model):
     @property
     def is_equippable(self):
         """Проверяет, можно ли экипировать предмет"""
-        return self.equipment_slot != 'none'
+        return self.equipment_slot != 'none' and not self.is_craftable
+
+    @property
+    def effective_strength_bonus(self):
+        """Эффективный бонус к силе (только для экипировки)"""
+        return self.strength_bonus if self.is_equippable else 0
+
+    @property
+    def effective_agility_bonus(self):
+        """Эффективный бонус к ловкости (только для экипировки)"""
+        return self.agility_bonus if self.is_equippable else 0
+
+    @property
+    def effective_vitality_bonus(self):
+        """Эффективный бонус к живучести (только для экипировки)"""
+        return self.vitality_bonus if self.is_equippable else 0
+
+    @property
+    def effective_attack_bonus(self):
+        """Эффективный бонус к атаке (только для экипировки)"""
+        return self.attack_bonus if self.is_equippable else 0
+
+    @property
+    def effective_defense_bonus(self):
+        """Эффективный бонус к защите (только для экипировки)"""
+        return self.defense_bonus if self.is_equippable else 0
+
+    @property
+    def effective_health_bonus(self):
+        """Эффективный бонус к здоровью (только для экипировки)"""
+        return self.health_bonus if self.is_equippable else 0
+
+    @property
+    def effective_crit_chance_bonus(self):
+        """Эффективный бонус к шансу крита (только для экипировки)"""
+        return self.crit_chance_bonus if self.is_equippable else 0.0
+
+    @property
+    def effective_dodge_chance_bonus(self):
+        """Эффективный бонус к шансу уворота (только для экипировки)"""
+        return self.dodge_chance_bonus if self.is_equippable else 0.0
 
 
 class Inventory(models.Model):

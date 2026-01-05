@@ -4,7 +4,7 @@ import random
 
 
 class Command(BaseCommand):
-    help = 'Создает предметы экипировки для игры'
+    help = 'Создает предметы для игры (экипировка и крафтовые материалы)'
 
     def handle(self, *args, **options):
         # Словарь для описания бонусов по редкости
@@ -110,6 +110,83 @@ class Command(BaseCommand):
                         self.style.SUCCESS(f'Создана броня: {item.name}')
                     )
 
+        # Создаем крафтовые ресурсы
+        craft_resources = [
+            {
+                'name': 'Железная руда',
+                'description': 'Полезная руда для создания оружия и брони',
+                'rarity': 'gray',
+                'value': 5,
+            },
+            {
+                'name': 'Медная руда',
+                'description': 'Базовая руда для простых изделий',
+                'rarity': 'gray',
+                'value': 3,
+            },
+            {
+                'name': 'Золотая руда',
+                'description': 'Дорогая руда для качественных изделий',
+                'rarity': 'green',
+                'value': 15,
+            },
+            {
+                'name': 'Мифриловая руда',
+                'description': 'Редкая руда для магических предметов',
+                'rarity': 'blue',
+                'value': 50,
+            },
+            {
+                'name': 'Драконья чешуя',
+                'description': 'Мощный материал для легендарного снаряжения',
+                'rarity': 'legendary',
+                'value': 500,
+            },
+            {
+                'name': 'Дерево',
+                'description': 'Базовый материал для посохов и луков',
+                'rarity': 'gray',
+                'value': 2,
+            },
+            {
+                'name': 'Магическое дерево',
+                'description': 'Дерево с магическими свойствами',
+                'rarity': 'blue',
+                'value': 40,
+            },
+            {
+                'name': 'Кожа',
+                'description': 'Материал для легкой брони',
+                'rarity': 'gray',
+                'value': 4,
+            },
+            {
+                'name': 'Драконья кожа',
+                'description': 'Прочная кожа для тяжелой брони',
+                'rarity': 'epic',
+                'value': 200,
+            },
+        ]
+
+        for resource_data in craft_resources:
+            Item.objects.get_or_create(
+                name=resource_data['name'],
+                defaults={
+                    'description': resource_data['description'],
+                    'item_type': 'resource',
+                    'equipment_slot': 'none',
+                    'rarity': resource_data['rarity'],
+                    'value': resource_data['value'],
+                    'stackable': True,
+                    'max_stack': 99,
+                    'is_craftable': True,  # Крафтовый предмет
+                }
+            )
+            created_count += 1
+            self.stdout.write(
+                self.style.SUCCESS(f'Создан крафтовый ресурс: {resource_data["name"]}')
+            )
+
         # Создаем золотую монету
         Item.objects.get_or_create(
             name='Золотая монета',
@@ -121,6 +198,7 @@ class Command(BaseCommand):
                 'value': 1,
                 'stackable': True,
                 'max_stack': 999,
+                'is_craftable': True,  # Крафтовый предмет
             }
         )
 

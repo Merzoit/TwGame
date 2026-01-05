@@ -401,8 +401,8 @@
                         </div>
 
                         <div class="checkbox-group">
-                            <input type="checkbox" id="is_equippable" name="is_equippable">
-                            <label for="is_equippable">Предмет можно экипировать</label>
+                            <input type="checkbox" id="is_craftable" name="is_craftable">
+                            <label for="is_craftable">Крафтовый предмет (не дает бонусы)</label>
                         </div>
                     </div>
 
@@ -491,10 +491,28 @@
             }
         }
 
-        // Автоматически устанавливаем is_equippable при выборе слота
+        // Автоматически управляем полями при выборе слота или типа предмета
         document.getElementById('equipment_slot').addEventListener('change', function() {
-            const checkbox = document.getElementById('is_equippable');
-            checkbox.checked = this.value !== '';
+            const craftableCheckbox = document.getElementById('is_craftable');
+            if (this.value !== '') {
+                // Если выбран слот экипировки, предмет не может быть крафтовым
+                craftableCheckbox.checked = false;
+                craftableCheckbox.disabled = true;
+            } else {
+                craftableCheckbox.disabled = false;
+            }
+        });
+
+        // При изменении типа предмета
+        document.getElementById('is_craftable').addEventListener('change', function() {
+            const equipmentSlot = document.getElementById('equipment_slot');
+            if (this.checked) {
+                // Если предмет крафтовый, сбрасываем слот экипировки
+                equipmentSlot.value = '';
+                equipmentSlot.disabled = true;
+            } else {
+                equipmentSlot.disabled = false;
+            }
         });
 
         // Валидация формы перед отправкой

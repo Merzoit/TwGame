@@ -15,3 +15,4 @@ urlpatterns = [
     path('inventory/', views.admin_inventory, name='admin_inventory'),
     path('equipment/', views.admin_equipment, name='admin_equipment'),
 ]
+
