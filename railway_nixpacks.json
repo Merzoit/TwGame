@@ -1,0 +1,22 @@
+{
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "bash start.sh",
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 300
+  },
+  "environments": {
+    "production": {
+      "build": {
+        "builder": "NIXPACKS"
+      },
+      "deploy": {
+        "startCommand": "bash start.sh",
+        "healthcheckPath": "/",
+        "healthcheckTimeout": 300
+      }
+    }
+  }
+}

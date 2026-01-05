@@ -4,7 +4,7 @@
     "dockerfilePath": "./Dockerfile"
   },
   "deploy": {
-    "startCommand": "bash start_railway.sh"
+    "startCommand": "bash start.sh"
   },
   "environments": {
     "production": {
@@ -13,7 +13,7 @@
         "dockerfilePath": "./Dockerfile"
       },
       "deploy": {
-        "startCommand": "bash start_railway.sh"
+        "startCommand": "bash start.sh"
       }
     }
   }

@@ -36,6 +36,9 @@ RUN python manage.py collectstatic --noinput
 # Возвращаемся в корневую директорию приложения
 WORKDIR /app
 
+# Делаем start.sh исполняемым
+RUN chmod +x start.sh
+
 # Создаем непривилегированного пользователя
 RUN useradd --create-home --shell /bin/bash app \
     && chown -R app:app /app
@@ -44,7 +47,7 @@ USER app
 # Открываем порт
 EXPOSE 8000
 
-# Команда запуска
-CMD ["python", "game_app/manage.py", "runserver", "0.0.0.0:8000"]
+# Команда запуска (используем start.sh для Railway)
+CMD ["bash", "start.sh"]
 
 
