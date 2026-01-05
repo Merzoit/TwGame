@@ -82,6 +82,34 @@ ROOT_URLCONF = 'twgame.urls'
 LOGIN_URL = '/admin/login/'
 LOGOUT_REDIRECT_URL = '/'
 
+# CSRF Protection
+CSRF_TRUSTED_ORIGINS = [
+    'https://twgame-production.up.railway.app',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() == 'true'
+CSRF_COOKIE_HTTPONLY = False
+CSRF_USE_SESSIONS = False  # Используем куки вместо сессий для CSRF
+CSRF_COOKIE_DOMAIN = None  # Для работы с поддоменами
+
+# Session settings
+SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
+SESSION_COOKIE_HTTPONLY = True
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+# Security settings
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+# CSRF failure view for debugging
+def csrf_failure(request, reason=""):
+    from django.http import HttpResponse
+    return HttpResponse(f"CSRF Error: {reason}", status=403)
+
+CSRF_FAILURE_VIEW = 'twgame.settings.csrf_failure'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

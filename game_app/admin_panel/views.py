@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 from accounts.models import Player, PlayerProfile
 from characters.models import Character, Equipment
@@ -177,8 +178,12 @@ def admin_item_detail(request, item_id):
     })
 
 @login_required
+@csrf_exempt
 def admin_item_create(request):
     """Создание нового предмета"""
+    # Отладочная информация
+    print(f"User: {request.user}, Is authenticated: {request.user.is_authenticated}")
+
     try:
         if request.method == 'POST':
             # Получаем данные из формы
