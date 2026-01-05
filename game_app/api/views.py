@@ -164,6 +164,35 @@ class GameViewSet(viewsets.ViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['POST'])
+def telegram_webhook(request):
+    """Обработчик webhook от Telegram"""
+    try:
+        import json
+        from telegram import Update
+        from telegram_bot.main import application
+
+        # Получаем данные из запроса
+        data = json.loads(request.body.decode('utf-8'))
+
+        # Создаем Update объект
+        update = Update.de_json(data, application.bot)
+
+        # Обрабатываем update асинхронно
+        import asyncio
+        from asgiref.sync import async_to_sync
+
+        async_to_sync(application.process_update)(update)
+
+        return Response({'status': 'ok'})
+
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Webhook error: {e}")
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=['post'])
     def unequip_item(self, request):
         """Снятие предмета с экипировки"""
@@ -202,3 +231,32 @@ class GameViewSet(viewsets.ViewSet):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def telegram_webhook(request):
+    """Обработчик webhook от Telegram"""
+    try:
+        import json
+        from telegram import Update
+        from telegram_bot.main import application
+
+        # Получаем данные из запроса
+        data = json.loads(request.body.decode('utf-8'))
+
+        # Создаем Update объект
+        update = Update.de_json(data, application.bot)
+
+        # Обрабатываем update асинхронно
+        import asyncio
+        from asgiref.sync import async_to_sync
+
+        async_to_sync(application.process_update)(update)
+
+        return Response({'status': 'ok'})
+
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Webhook error: {e}")
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

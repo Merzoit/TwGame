@@ -15,5 +15,6 @@ urlpatterns = [
     path('', include(router.urls)),
     # Дополнительные API endpoints
     path('status/', views.api_status, name='api_status'),
+    path('telegram/webhook/', views.telegram_webhook, name='telegram_webhook'),
 ]
 
