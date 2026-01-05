@@ -19,7 +19,7 @@ django.setup()
 
 from django.utils import asyncio as django_asyncio
 from asgiref.sync import sync_to_async
-from game.services import PlayerService
+from accounts.services import PlayerService
 
 # Настройки логирования
 logging.basicConfig(
@@ -221,8 +221,24 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 reply_markup=reply_markup
             )
 
+async def setup_webhook():
+    """Настройка webhook"""
+    try:
+        # Удаляем старый webhook
+        await application.bot.delete_webhook()
+
+        # Устанавливаем новый webhook
+        webhook_url = "https://twgame-production.up.railway.app/api/telegram/webhook/"
+        await application.bot.set_webhook(url=webhook_url)
+        logger.info(f"Webhook установлен: {webhook_url}")
+
+    except Exception as e:
+        logger.error(f"Ошибка при настройке webhook: {e}")
+
 def main() -> None:
     """Запуск бота"""
+    global application
+
     # Создаем приложение
     application = Application.builder().token(TOKEN).build()
 
@@ -230,9 +246,14 @@ def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button_handler))
 
-    # Запускаем бота
-    logger.info("Бот запущен!")
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
+    # Настраиваем webhook вместо polling
+    logger.info("Настройка webhook для бота...")
+
+    # Используем sync_to_async для запуска асинхронной функции
+    from asgiref.sync import async_to_sync
+    async_to_sync(setup_webhook)()
+
+    logger.info("Бот запущен с webhook!")
 
 if __name__ == '__main__':
     main()

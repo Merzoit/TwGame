@@ -15,3 +15,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'twgame.settings')
 django.setup()
 
 print("Django initialized successfully")
+
+
+
+
+
