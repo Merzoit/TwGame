@@ -78,6 +78,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'twgame.urls'
 
+# Authentication
+LOGIN_URL = '/admin/login/'
+LOGOUT_REDIRECT_URL = '/'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

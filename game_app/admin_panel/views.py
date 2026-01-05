@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 from accounts.models import Player, PlayerProfile
 from characters.models import Character, Equipment
@@ -12,6 +14,7 @@ from accounts.services import PlayerService
 
 # Admin Panel Views
 
+@login_required
 def admin_dashboard(request):
     """Главная страница админ панели"""
     try:
@@ -35,6 +38,7 @@ def admin_dashboard(request):
         'active_tab': 'dashboard'
     })
 
+@login_required
 def admin_players(request):
     """Управление игроками"""
     search_query = request.GET.get('search', '')
@@ -59,6 +63,7 @@ def admin_players(request):
         'active_tab': 'players'
     })
 
+@login_required
 def admin_player_detail(request, player_id):
     """Детальная информация об игроке"""
     player = get_object_or_404(Player, id=player_id)
@@ -74,6 +79,7 @@ def admin_player_detail(request, player_id):
         'active_tab': 'players'
     })
 
+@login_required
 def admin_characters(request):
     """Управление персонажами"""
     search_query = request.GET.get('search', '')
@@ -97,6 +103,7 @@ def admin_characters(request):
         'active_tab': 'characters'
     })
 
+@login_required
 def admin_character_detail(request, character_id):
     """Детальная информация о персонаже"""
     character = get_object_or_404(Character, id=character_id)
@@ -108,6 +115,7 @@ def admin_character_detail(request, character_id):
         'active_tab': 'characters'
     })
 
+@login_required
 def admin_items(request):
     """Управление предметами"""
     try:
@@ -158,6 +166,7 @@ def admin_items(request):
             'error': str(e)
         })
 
+@login_required
 def admin_item_detail(request, item_id):
     """Детальная информация о предмете"""
     item = get_object_or_404(Item, id=item_id)
@@ -167,6 +176,7 @@ def admin_item_detail(request, item_id):
         'active_tab': 'items'
     })
 
+@login_required
 def admin_item_create(request):
     """Создание нового предмета"""
     try:
@@ -237,6 +247,7 @@ def admin_item_create(request):
             'error': str(e)
         })
 
+@login_required
 def admin_inventory(request):
     """Управление инвентарем"""
     search_query = request.GET.get('search', '')
@@ -260,6 +271,7 @@ def admin_inventory(request):
         'active_tab': 'inventory'
     })
 
+@login_required
 def admin_equipment(request):
     """Управление экипировкой"""
     try:
